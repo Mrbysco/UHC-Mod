@@ -1,0 +1,16 @@
+[
+	{
+	  "modid": "ultrahardcoremod",
+	  "name": "Ultra Hard Coremod",
+	  "description": "A UHC mod made for Modded Minecraft.",
+	  "version": "${version}",
+	  "mcversion": "${mcversion}",
+	  "url": "",
+	  "updateUrl": "",
+	  "authorList": ["Mrbysco", "Svennieke"],
+	  "credits": "A UHC mod highly inspired by Gerrybrano's UHC Blox",
+	  "logoFile": "assets/ultrahardcoremod/logo.png",
+	  "screenshots": [],
+	  "dependencies": []
+	}
+]

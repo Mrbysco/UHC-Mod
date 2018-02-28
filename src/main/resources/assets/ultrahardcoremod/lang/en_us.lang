@@ -1,0 +1,60 @@
+# Config
+ultrahardcoremod.config.title=Ultra Hard Coremod Config
+
+# Item
+item.ultrahardcoremod:uhcbook.name=│ UHC Book│
+
+# Command
+commands.uhc.usage=/uhc
+commands.uhc.reset.usage=/uhc reset
+commands.uhc.reset.success=UHC settings has been reset.
+commands.uhc.respawn.usage=/uhc respawn <team> [player]
+commands.uhc.respawn.success=Respawned %s player(s) to team %s: %s
+commands.uhc.respawn.failure=Could not respawn %s because %s is not online.
+
+# Book info
+book.uhc.team.select=Select team
+book.uhc.team.hover=Join Team %s.
+book.uhc.team.selected=%s has joined team %s
+book.uhc.team.solo=%s is now playing %s
+book.uhc.team.randomize=Randomize Players
+book.uhc.team.randomizer=Randomize
+
+book.uhc.option.reset=Reset Value
+book.uhc.option.location=Current Location
+book.uhc.option.randsize=Random Teams:
+book.uhc.option.maxteams=Max Team Size:
+book.uhc.option.infinite=-1 = Infinite
+
+book.uhc.option.collision=Team Collision:
+book.uhc.option.damage=Team Damage:
+book.uhc.option.difficulty=Difficulty:
+
+book.uhc.option.healthtab=Health In Tab:
+book.uhc.option.healthside=Health On Side:
+book.uhc.option.healthname=Health On Name:
+
+book.uhc.option.bordersize=Worldborder Size
+book.uhc.option.centerx=Worldborder Center X
+book.uhc.option.centerz=Worldborder Center Z
+
+# Team Names
+color.darkred.name=Dark Red
+color.gold.name=Gold
+color.darkgreen.name=Dark Green
+color.darkaqua.name=Dark Aqua
+color.darkblue.name=Dark Blue
+color.darkpurple.name=Dark Purple
+color.darkgray.name=Dark Gray
+
+color.red.name=Red
+color.yellow.name=Yellow
+color.green.name=Green
+color.aqua.name=Aqua
+color.blue.name=Blue
+color.lightpurple.name=Manly Man
+color.gray.name=Gray
+
+color.black.name=Spectator
+color.white.name=Solo
+color.random.name=Randomize

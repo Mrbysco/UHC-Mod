@@ -1,4 +1,4 @@
-package com.Mrbysco.UHC.gui;
+package com.Mrbysco.UHC.gui.enums;
 
 public enum BooleanEnum {
 

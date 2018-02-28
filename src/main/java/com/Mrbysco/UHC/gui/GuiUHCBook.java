@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.lwjgl.input.Keyboard;
 
 import com.Mrbysco.UHC.Reference;
+import com.Mrbysco.UHC.gui.enums.BooleanEnum;
 import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.client.Minecraft;
@@ -126,25 +127,18 @@ public class GuiUHCBook extends GuiScreen{
     	this.resetRandButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(20, i + 43 + 94, j + 85, fontRenderer));
     	this.resetTeamSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(21, i + 43 + 94, j + 99, fontRenderer));
     	
-    	this.collisionButton = (GuiUHCBook.booleanButton)this.addButton(new GuiUHCBook.booleanButton(22, i + 43 + 74, j + 117, fontRenderer, BooleanEnum.COLLISION, world));
-    	this.damageButton = (GuiUHCBook.booleanButton)this.addButton(new GuiUHCBook.booleanButton(23, i + 43 + 74, j + 129, fontRenderer, BooleanEnum.DAMAGE, world));
+    	this.collisionButton = (booleanButton)this.addButton(new booleanButton(22, i + 43 + 74, j + 117, fontRenderer, BooleanEnum.COLLISION, world));
+    	this.damageButton = (booleanButton)this.addButton(new booleanButton(23, i + 43 + 74, j + 129, fontRenderer, BooleanEnum.DAMAGE, world));
 
-    	this.healthTabButton = (GuiUHCBook.booleanButton)this.addButton(new GuiUHCBook.booleanButton(24, i + 43 + 80, j + 113, fontRenderer, BooleanEnum.HEALTHTAB, world));
-    	this.healthSideButton = (GuiUHCBook.booleanButton)this.addButton(new GuiUHCBook.booleanButton(25, i + 43 + 80, j + 125, fontRenderer, BooleanEnum.HEALTHSIDE, world));
-    	this.healthNameButton = (GuiUHCBook.booleanButton)this.addButton(new GuiUHCBook.booleanButton(26, i + 43 + 80, j + 137, fontRenderer, BooleanEnum.HEALTHNAME, world));
+    	this.healthTabButton = (booleanButton)this.addButton(new booleanButton(24, i + 43 + 80, j + 113, fontRenderer, BooleanEnum.HEALTHTAB, world));
+    	this.healthSideButton = (booleanButton)this.addButton(new booleanButton(25, i + 43 + 80, j + 125, fontRenderer, BooleanEnum.HEALTHSIDE, world));
+    	this.healthNameButton = (booleanButton)this.addButton(new booleanButton(26, i + 43 + 80, j + 137, fontRenderer, BooleanEnum.HEALTHNAME, world));
     	
     	this.resetBorderSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(27, i + 43 + 68, j + 36, fontRenderer));
-    	this.resetBorderCenterXButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(28, i + 43 + 92, j + 73, fontRenderer));
-    	this.resetBorderCenterZButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(29, i + 43 + 92, j + 102, fontRenderer));   	
-    	this.centerCurrentXButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(30, i + 43 + 76, j + 74, fontRenderer));
-    	this.centerCurrentZButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(31, i + 43 + 76, j + 103, fontRenderer));   	
-        
-        String centerXString = I18n.format("book.uhc.option.centerx");
-        this.fontRenderer.drawString(centerXString, i + 38, j + 53, 0);
-        drawField(borderCenterXField);
-        
-        String centerZString = I18n.format("book.uhc.option.centerz");
-        this.fontRenderer.drawString(centerZString, i + 38, j + 80, 0);
+    	this.resetBorderCenterXButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(28, i + 43 + 92, j + 61, fontRenderer));
+    	this.resetBorderCenterZButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(29, i + 43 + 92, j + 89, fontRenderer));   	
+    	this.centerCurrentXButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(30, i + 43 + 76, j + 62, fontRenderer));
+    	this.centerCurrentZButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(31, i + 43 + 76, j + 90, fontRenderer));  
         
     	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 80, j + 89, 20, 12);
     	setupField(randSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getRandomTeamSize()));
@@ -155,10 +149,10 @@ public class GuiUHCBook extends GuiScreen{
 		borderSizeField = new GuiTextField(2, fontRenderer, i + 43 + 40, j + 40, 34, 12);
 		setupField(borderSizeField, 4, 0xFFFFAA00, String.valueOf(saveData.getBorderSize()));
 		
-		borderCenterXField = new GuiTextField(3, fontRenderer, i + 43, j + 78, 52, 12);
+		borderCenterXField = new GuiTextField(3, fontRenderer, i + 43, j + 65, 52, 12);
 		setupField(borderCenterXField, 5, 0xFFFFAA00, String.valueOf(saveData.getBorderCenterX()));
 		
-		borderCenterZField = new GuiTextField(4, fontRenderer, i + 43, j + 107, 79, 12);
+		borderCenterZField = new GuiTextField(4, fontRenderer, i + 43, j + 92, 79, 12);
 		setupField(borderCenterZField, 5, 0xFFFFAA00, String.valueOf(saveData.getBorderCenterZ()));
 		
 		difficultyField = new GuiTextField(5, fontRenderer, i + 43 + 52, j + 143, 14, 12);
@@ -179,13 +173,25 @@ public class GuiUHCBook extends GuiScreen{
 	
 	@Override
 	public void updateScreen() {
-		randSizeField.updateCursorCounter();
-		maxTeamSizeField.updateCursorCounter();
+		if(this.currPage == 0)
+		{
+			if(randSizeField != null)
+				randSizeField.updateCursorCounter();
+			if(maxTeamSizeField != null)
+				maxTeamSizeField.updateCursorCounter();
+			if(difficultyField != null)
+				difficultyField.updateCursorCounter();
+		}
 		
-		borderSizeField.updateCursorCounter();
-		borderCenterXField.updateCursorCounter();
-		borderCenterZField.updateCursorCounter();
-		difficultyField.updateCursorCounter();
+		if(this.currPage == 1)
+		{
+			if(borderSizeField != null)
+				borderSizeField.updateCursorCounter();
+			if(borderCenterXField != null)
+				borderCenterXField.updateCursorCounter();
+			if(borderCenterZField != null)
+				borderCenterZField.updateCursorCounter();
+		}
 		super.updateScreen();
 	}
 	
@@ -1020,73 +1026,6 @@ public class GuiUHCBook extends GuiScreen{
 				
 				GlStateManager.popMatrix();
 	        }
-		}
-	}
-	
-	@SideOnly(Side.CLIENT)
-	static class booleanButton extends GuiButton
-	{	
-		private final FontRenderer render;
-		private final World world;
-		private final BooleanEnum enumValue;
-		
-		public booleanButton(int buttonId, int x, int y, FontRenderer renderIn, BooleanEnum enumIn, World worldIn)
-		{
-			super(buttonId, x, y, 40, 8, "");
-			this.render = renderIn;
-			this.world = worldIn;
-			this.enumValue = enumIn;
-		}
-		
-		/**
-		 * Draws this button to the screen.
-		 */
-		public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks)
-		{
-			if (this.visible)
-			{
-				boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-				mc.getTextureManager().bindTexture(BOOK_TEXTURE);
-		        boolean value = getBooleanFromEnum(enumValue);
-		        
-		        int color = 0;
-		        if(value == true)
-		        	color = 0xFF55FF55;
-		        else
-		        	color = 0xFFFF5555;
-		        
-		        render.drawStringWithShadow(String.valueOf(value), this.x, this.y, color);
-			}
-		}
-		
-		public boolean getBooleanFromEnum(BooleanEnum value)
-		{
-			final UHCSaveData data = UHCSaveData.getForWorld(world);
-			boolean correct = false;
-			
-			if(value == value.COLLISION)
-			{
-				correct = data.isTeamCollision();
-			}
-			if(value == value.DAMAGE)
-			{
-				correct = data.isFriendlyFire();
-			}
-			if(value == value.HEALTHTAB)
-			{
-				correct = data.isHealthInTab();
-			}
-			if(value == value.HEALTHSIDE)
-			{
-				correct = data.isHealthOnSide();
-			}
-			if(value == value.HEALTHNAME)
-			{
-				correct = data.isHealthUnderName();
-			}
-			
-			return correct;
 		}
 	}
 }

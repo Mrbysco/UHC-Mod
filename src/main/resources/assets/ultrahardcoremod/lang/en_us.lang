@@ -34,9 +34,9 @@ book.uhc.option.healthtab=Health In Tab:
 book.uhc.option.healthside=Health On Side:
 book.uhc.option.healthname=Health On Name:
 
-book.uhc.option.bordersize=Worldborder Size
-book.uhc.option.centerx=Worldborder Center X
-book.uhc.option.centerz=Worldborder Center Z
+book.uhc.option.bordersize=Worldborder Size:
+book.uhc.option.centerx=Worldborder Center X:
+book.uhc.option.centerz=Worldborder Center Z:
 
 # Team Names
 color.darkred.name=Dark Red
@@ -52,7 +52,7 @@ color.yellow.name=Yellow
 color.green.name=Green
 color.aqua.name=Aqua
 color.blue.name=Blue
-color.lightpurple.name=Manly Man
+color.lightpurple.name=Light Purple
 color.gray.name=Gray
 
 color.black.name=Spectator

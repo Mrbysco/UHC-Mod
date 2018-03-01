@@ -65,6 +65,8 @@ public class GuiUHCBook extends GuiScreen{
     private GuiTextField shrinkTimerField;
     private GuiTextField shrinkSizeField;
     private GuiTextField shrinkOvertimeField;
+    private GuiTextField timeLockTimerField;
+    private GuiTextField minMarkTimerField;
     
     private ResetButton resetRandButton;
     private ResetButton resetTeamSizeButton;
@@ -87,6 +89,11 @@ public class GuiUHCBook extends GuiScreen{
     private TextButton ShrinkModeButton;
     
     private booleanButton shrinkButton;
+    private booleanButton timeLockButton;
+    private TextButton timeModeButton;
+    private ResetButton resetTimeLockTimerButton;
+    private booleanButton minuteMarkButton;
+    private ResetButton resetMinuteMarkTimerButton;
     
     /** UHC save data */
     private UHCSaveData saveData;
@@ -155,6 +162,12 @@ public class GuiUHCBook extends GuiScreen{
     	this.resetShrinkOverTimeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(35, i + 43 + 92, j + 128, fontRenderer));   	
     	this.ShrinkModeButton = (TextButton)this.addButton(new TextButton(36, i + 43 + 31, j + 140, saveData.getShrinkMode(), mc));
     	
+    	this.timeLockButton = (booleanButton)this.addButton(new booleanButton(37, i + 43 + 46, j + 24, fontRenderer, saveData.isTimeLock(), world));  
+    	this.timeModeButton = (TextButton)this.addButton(new TextButton(38, i + 43 + 32, j + 52, saveData.getTimeMode(), mc));  
+    	this.resetTimeLockTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(39, i + 43 + 92, j + 38, fontRenderer));
+    	this.resetMinuteMarkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(40, i + 43 + 92, j + 77, fontRenderer));
+    	this.minuteMarkButton = (booleanButton)this.addButton(new booleanButton(41, i + 43 + 56, j + 64, fontRenderer, saveData.isMinuteMark(), world));  
+
     	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 80, j + 89, 20, 8);
     	setupField(randSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getRandomTeamSize()));
 
@@ -181,6 +194,12 @@ public class GuiUHCBook extends GuiScreen{
 		
 		shrinkOvertimeField = new GuiTextField(8, fontRenderer, i + 43 + 32, j + 129, 34, 8);
 		setupField(shrinkOvertimeField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkOvertime()));
+		
+		timeLockTimerField = new GuiTextField(9, fontRenderer, i + 43 + 52, j + 41, 34, 8);
+		setupField(timeLockTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getTimeLockTimer()));
+		
+		minMarkTimerField = new GuiTextField(10, fontRenderer, i + 43 + 38, j + 80, 34, 8);
+		setupField(minMarkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getMinuteMarkTime()));
 		
         this.updateButtons();
 	}
@@ -221,6 +240,14 @@ public class GuiUHCBook extends GuiScreen{
 				shrinkSizeField.updateCursorCounter();
 			if(shrinkOvertimeField != null)
 				shrinkOvertimeField.updateCursorCounter();
+		}
+		
+		if(this.currPage == 2)
+		{
+			if(timeLockTimerField != null)
+				timeLockTimerField.updateCursorCounter();
+			if(minMarkTimerField != null)
+				minMarkTimerField.updateCursorCounter();
 		}
 		super.updateScreen();
 	}
@@ -300,6 +327,16 @@ public class GuiUHCBook extends GuiScreen{
     	this.resetShrinkSizeButton.visible = this.currPage == 1;
     	this.resetShrinkOverTimeButton.visible = this.currPage == 1;
     	this.ShrinkModeButton.visible = this.currPage == 1;
+    	
+    	this.timeLockButton.visible = this.currPage == 2;
+    	this.timeModeButton.visible = this.currPage == 2;
+    	this.resetTimeLockTimerButton.visible = this.currPage == 2;
+    	this.timeLockTimerField.setVisible(this.currPage == 2);
+    	this.timeLockTimerField.setEnabled(this.currPage == 2);
+    	this.minMarkTimerField.setVisible(this.currPage == 2);
+    	this.minMarkTimerField.setEnabled(this.currPage == 2);
+    	this.minuteMarkButton.visible = this.currPage == 2;
+    	this.resetMinuteMarkTimerButton.visible = this.currPage == 2;
     }
     
     public void drawField(GuiTextField field)
@@ -327,6 +364,11 @@ public class GuiUHCBook extends GuiScreen{
         int j1 = this.fontRenderer.getStringWidth(s4);
         this.fontRenderer.drawString(s4, i - j1 + 192 - 44, 18, 0);
         
+		String minuteMessageString = I18n.format("book.uhc.option.minutes");
+		String locationString = I18n.format("book.uhc.option.location");
+		String resetString = I18n.format("book.uhc.option.reset");
+
+		super.drawScreen(mouseX, mouseY, partialTicks);
 	    if(this.currPage == 0)
 	    {
 	        String teamSelect = I18n.format("book.uhc.team.select");
@@ -402,7 +444,6 @@ public class GuiUHCBook extends GuiScreen{
 	        
 			boolean flag = mouseX >= shrinkTimerField.x && mouseY >= shrinkTimerField.y && mouseX < shrinkTimerField.x + shrinkTimerField.width && mouseY < shrinkTimerField.y + shrinkTimerField.height;
 			boolean flag1 = mouseX >= shrinkOvertimeField.x && mouseY >= shrinkOvertimeField.y && mouseX < shrinkOvertimeField.x + shrinkOvertimeField.width && mouseY < shrinkOvertimeField.y + shrinkOvertimeField.height;
-			String minuteMessageString = I18n.format("book.uhc.option.minutes");
 			if((flag && shrinkTimerField.isFocused() == false) || (flag1 && shrinkOvertimeField.isFocused() == false))
 			{
 		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
@@ -411,6 +452,45 @@ public class GuiUHCBook extends GuiScreen{
 	    
 	    if(this.currPage == 2)
 	    {
+	    	String TimeLockString = I18n.format("book.uhc.option.timelock");
+	    	this.fontRenderer.drawString(TimeLockString, i + 38, j + 28, 0xFF555555);
+	    	drawField(timeLockTimerField);
+	    	
+	    	String TimeLockTimerString = I18n.format("book.uhc.option.timelocktimer");
+	    	this.fontRenderer.drawString(TimeLockTimerString, i + 44, j + 41, 0xFF555555);
+	    	
+	    	String TimeLockModeString = I18n.format("book.uhc.option.timelockmode");
+	    	this.fontRenderer.drawString(TimeLockModeString, i + 44, j + 53, 0xFF555555);
+			
+			String timeModeDayText = I18n.format("book.uhc.option.timemodeday"); 
+			int dayInt = fontRenderer.getStringWidth(timeModeDayText);
+			String timeModeNightText = I18n.format("book.uhc.option.timemodenight"); 
+			int nightInt = fontRenderer.getStringWidth(timeModeNightText);
+
+			if(timeModeButton.isMouseOver() == true)
+			{
+				String TimeMode = saveData.getTimeMode();
+				if(TimeMode.equals("Day"))
+			        this.drawCenteredString(fontRenderer, timeModeDayText, mouseX, mouseY + 5, 0xFFFFAA00);
+
+				if(TimeMode.equals("Night"))
+			        this.drawCenteredString(fontRenderer, timeModeNightText, mouseX, mouseY + 5, 0xFFFFAA00);
+			}
+			
+			String minMarkString = I18n.format("book.uhc.option.minmark");
+	    	this.fontRenderer.drawString(minMarkString, i + 38, j + 68, 0xFF555555);
+
+			String minMarkTimerString = I18n.format("book.uhc.option.minmarktime");
+	    	this.fontRenderer.drawString(minMarkTimerString, i + 44, j + 80, 0xFF555555);
+			drawField(minMarkTimerField);
+			
+			boolean flag = mouseX >= timeLockTimerField.x && mouseY >= timeLockTimerField.y && mouseX < timeLockTimerField.x + timeLockTimerField.width && mouseY < timeLockTimerField.y + timeLockTimerField.height;
+			boolean flag1 = mouseX >= minMarkTimerField.x && mouseY >= minMarkTimerField.y && mouseX < minMarkTimerField.x + minMarkTimerField.width && mouseY < minMarkTimerField.y + minMarkTimerField.height;
+			if((flag && timeLockTimerField.isFocused() == false) || (flag1 && minMarkTimerField.isFocused() == false))
+			{
+		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
+			}
+			
 			String healthInTabString = I18n.format("book.uhc.option.healthtab");
 	        this.fontRenderer.drawString(healthInTabString, i + 43, j + 114, 0xFF555555);
 	        
@@ -421,7 +501,23 @@ public class GuiUHCBook extends GuiScreen{
 	        this.fontRenderer.drawString(healthUnderNameString, i + 43, j + 138, 0xFF555555);
 	    }
 	    
-        super.drawScreen(mouseX, mouseY, partialTicks);
+	    for(GuiButton button : buttonList)
+		{
+			if(button instanceof LocationButton && button.visible)
+			{
+				if(button.isMouseOver())
+				{
+					this.drawCenteredString(fontRenderer, locationString, mouseX, mouseY - 14, 0xFFFF5555);
+				}
+			}
+			if(button instanceof ResetButton && button.visible)
+			{
+				if(button.isMouseOver())
+				{
+					this.drawCenteredString(fontRenderer, resetString, mouseX, mouseY - 14, 0xFFFF5555);
+				}
+			}
+		}
     }
     
     @Override
@@ -666,6 +762,48 @@ public class GuiUHCBook extends GuiScreen{
             		ShrinkModeButton.setText(saveData.getShrinkMode());
             	}
             }
+            else if(button.id == 37 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	boolean flag = saveData.isTimeLock();
+            	timeLockButton.setBoolean(!flag);
+            	saveData.setTimeLock(!flag);
+            	saveData.markDirty();
+            }
+            else if(button.id == 38 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	String mode = saveData.getTimeMode();
+            	if(mode.equals("Day"))
+            	{
+            		saveData.setTimeMode("Night");
+            		saveData.markDirty();
+            		timeModeButton.setText(saveData.getTimeMode());
+            	}
+            	if(mode.equals("Night"))
+            	{
+            		saveData.setTimeMode("Day");
+            		saveData.markDirty();
+            		timeModeButton.setText(saveData.getTimeMode());
+            	}
+            }
+            else if(button.id == 39 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	saveData.setTimeLockTimer(60);
+            	saveData.markDirty();
+            	timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
+            }
+            else if(button.id == 40 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	saveData.setMinuteMarkTime(30);
+            	saveData.markDirty();
+            	minMarkTimerField.setText(String.valueOf(saveData.getMinuteMarkTime()));
+            }
+            else if(button.id == 41 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	boolean flag = saveData.isMinuteMark();
+            	minuteMarkButton.setBoolean(!flag);
+            	saveData.setMinuteMark(!flag);
+            	saveData.markDirty();
+            }
             
             this.updateButtons();
         }
@@ -728,6 +866,19 @@ public class GuiUHCBook extends GuiScreen{
             		shrinkSizeField.setText(String.valueOf(saveData.getShrinkSize()));
             	if(shrinkOvertimeField.isFocused() == false)
             		shrinkOvertimeField.setText(String.valueOf(saveData.getShrinkOvertime()));
+        	}
+        	
+        	if(this.currPage == 2)
+        	{
+        		if(timeLockTimerField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+        			timeLockTimerField.setText("");
+        		if(minMarkTimerField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+        			minMarkTimerField.setText("");
+        		
+        		if(timeLockTimerField.isFocused() == false)
+        			timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
+        		if(minMarkTimerField.isFocused() == false)
+        			minMarkTimerField.setText(String.valueOf(saveData.getMinuteMarkTime()));
         	}
         }
         
@@ -923,8 +1074,51 @@ public class GuiUHCBook extends GuiScreen{
     				
     				shrinkOvertimeField.setFocused(false);
     			}
-    			
-    			
+    		}
+    	}
+    	if (this.currPage == 2)
+    	{
+    		if(timeLockTimerField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			timeLockTimerField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(minMarkTimerField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			minMarkTimerField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		
+    		if (keyCode == Keyboard.KEY_RETURN)
+    		{
+    			/* Shrink Timer Field */
+    			if(timeLockTimerField.isFocused())
+    			{
+    				String timeLockTimer = timeLockTimerField.getText();
+    				
+    				if(timeLockTimer.isEmpty())
+    					timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
+    				else
+    				{
+    					saveData.setTimeLockTimer(Integer.parseInt(timeLockTimer));
+    					saveData.markDirty();
+    				}
+    				
+    				timeLockTimerField.setFocused(false);
+    			}
+    			/* Minute Mark Timer Field */
+    			if(minMarkTimerField.isFocused())
+    			{
+    				String minuteMarkTimer = minMarkTimerField.getText();
+    				
+    				if(minuteMarkTimer.isEmpty())
+    					minMarkTimerField.setText(String.valueOf(saveData.getMinuteMarkTime()));
+    				else
+    				{
+    					saveData.setMinuteMarkTime(Integer.parseInt(minuteMarkTimer));
+    					saveData.markDirty();
+    				}
+    				
+    				minMarkTimerField.setFocused(false);
+    			}
     		}
     	}
     }
@@ -1050,12 +1244,12 @@ public class GuiUHCBook extends GuiScreen{
         {
             if (this.visible)
             {
-            	boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            	this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             	GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         		mc.getTextureManager().bindTexture(BOOK_TEXTURE);
         		int textureX = 0;
         		int textureY = 192;
-        		if (flag)
+        		if (this.hovered)
         			textureX += 23;
         		if (!isForward)
         			textureY += 13;
@@ -1082,22 +1276,14 @@ public class GuiUHCBook extends GuiScreen{
 		{
 			if (this.visible)
 			{
-				boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				mc.getTextureManager().bindTexture(BOOK_TEXTURE);
 				int textureX = 0;
 				int textureY = 218;
-				if (flag)
+				if (this.hovered)
 					textureX += 16;
 				drawTexturedModalRect(x, y,  textureX, textureY, 16, 13);
-				
-				String text = I18n.format("book.uhc.option.reset");
-		        int j1 = render.getStringWidth(text);
-
-				if(flag)
-				{
-					this.drawCenteredString(render, text, mouseX, mouseY - 14, 0xFFFF5555);
-				}
 			}
 		}
 	}
@@ -1120,22 +1306,15 @@ public class GuiUHCBook extends GuiScreen{
 		{
 			if (this.visible)
 			{
-				boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				mc.getTextureManager().bindTexture(BOOK_TEXTURE);
 				int textureX = 0;
 				int textureY = 232;
-				if (flag)
+				if (this.hovered)
 					textureX += 15;
+				
 				drawTexturedModalRect(x, y,  textureX, textureY, 15, 13);
-				
-				String text = I18n.format("book.uhc.option.location");
-				int j1 = render.getStringWidth(text);
-				
-				if(flag)
-				{
-					this.drawCenteredString(render, text, mouseX, mouseY - 14, 0xFFFF5555);
-				}
 			}
 		}
 	}

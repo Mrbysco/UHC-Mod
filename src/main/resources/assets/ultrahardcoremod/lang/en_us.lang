@@ -46,6 +46,15 @@ book.uhc.option.shrinksize=Size:
 book.uhc.option.shrinkovertime=Over:
 book.uhc.option.shrinkmode=Mode:
 
+book.uhc.option.timelock=Time Lock:
+book.uhc.option.timelocktimer=Time until:
+book.uhc.option.timelockmode=Mode:
+book.uhc.option.timemodeday=Time will stop at daytime
+book.uhc.option.timemodenight=Time will stop at night
+
+book.uhc.option.minmark=Minute Mark:
+book.uhc.option.minmarktime=Every:
+
 # Team Names
 color.darkred.name=Dark Red
 color.gold.name=Gold

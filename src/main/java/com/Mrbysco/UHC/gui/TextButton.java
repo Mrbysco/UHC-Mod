@@ -3,7 +3,6 @@ package com.Mrbysco.UHC.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -43,7 +42,7 @@ public class TextButton extends GuiButton
 		if (this.visible)
 		{
 			FontRenderer renderer = mc.fontRenderer;
-			boolean hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+			this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			int colorInt = this.color;
 			if (packedFGColour != 0)
             {

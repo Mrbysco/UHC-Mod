@@ -42,6 +42,13 @@ public class UHCSaveData extends WorldSavedData{
 	private int shrinkOvertime;
 	private String shrinkMode;
 
+	private boolean timeLock;
+	private int timeLockTimer;
+	private String timeMode;
+	
+	private boolean minuteMark;
+	private int minuteMarkTime;
+	
 	public UHCSaveData(String name) {
 		super(name);
 		
@@ -66,11 +73,19 @@ public class UHCSaveData extends WorldSavedData{
 		this.borderCenterZ = -1;
 		this.originalBorderCenterX = -1;
 		this.originalBorderCenterZ = -1;
+		
 		this.shrinkEnabled = false;
 		this.shrinkTimer = 60;
 		this.shrinkSize = 256;
 		this.shrinkOvertime = 60;
 		this.shrinkMode = "Shrink";
+		
+		this.timeLock = false;
+		this.timeLockTimer = 60;
+		this.timeMode = "Day";
+		
+		this.minuteMark = false;
+		this.minuteMarkTime = 30;
 	}
 	
 	public UHCSaveData() {
@@ -97,11 +112,19 @@ public class UHCSaveData extends WorldSavedData{
 		this.borderCenterZ = -1;
 		this.originalBorderCenterX = -1;
 		this.originalBorderCenterZ = -1;
+		
 		this.shrinkEnabled = false;
 		this.shrinkTimer = 60;
 		this.shrinkSize = 256;
 		this.shrinkOvertime = 60;
 		this.shrinkMode = "Shrink";
+		
+		this.timeLock = false;
+		this.timeLockTimer = 60;
+		this.timeMode = "Day";
+		
+		this.minuteMark = false;
+		this.minuteMarkTime = 30;
 	}
 	
 	public void resetAll() {
@@ -124,11 +147,19 @@ public class UHCSaveData extends WorldSavedData{
 		this.borderSize = 2048;
 		this.borderCenterX = -1;
 		this.borderCenterZ = -1;
+		
 		this.shrinkEnabled = false;
 		this.shrinkTimer = 60;
 		this.shrinkSize = 256;
 		this.shrinkOvertime = 60;
 		this.shrinkMode = "Shrink";
+		
+		this.timeLock = false;
+		this.timeLockTimer = 60;
+		this.timeMode = "Day";
+		
+		this.minuteMark = false;
+		this.minuteMarkTime = 30;
 	}
 	public boolean isUhcOnGoing() {
 		return uhcOnGoing;
@@ -322,6 +353,46 @@ public class UHCSaveData extends WorldSavedData{
 		this.shrinkMode = shrinkMode;
 	}
 	
+	public boolean isTimeLock() {
+		return timeLock;
+	}
+	
+	public void setTimeLock(boolean timeLock) {
+		this.timeLock = timeLock;
+	}
+	
+	public int getTimeLockTimer() {
+		return timeLockTimer;
+	}
+	
+	public void setTimeLockTimer(int timeLockTimer) {
+		this.timeLockTimer = timeLockTimer;
+	}
+	
+	public String getTimeMode() {
+		return timeMode;
+	}
+	
+	public void setTimeMode(String timeMode) {
+		this.timeMode = timeMode;
+	}
+	
+	public boolean isMinuteMark() {
+		return minuteMark;
+	}
+	
+	public void setMinuteMark(boolean minuteMark) {
+		this.minuteMark = minuteMark;
+	}
+	
+	public int getMinuteMarkTime() {
+		return minuteMarkTime;
+	}
+	
+	public void setMinuteMarkTime(int minuteMarkTime) {
+		this.minuteMarkTime = minuteMarkTime;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcOnGoing = nbt.getBoolean("UHCStarted");
@@ -351,8 +422,15 @@ public class UHCSaveData extends WorldSavedData{
 		shrinkSize = nbt.getInteger("shrinkSize");
 		shrinkOvertime = nbt.getInteger("shrinkOvertime");
 		shrinkMode = nbt.getString("shrinkMode");
+		
+		timeLock = nbt.getBoolean("timeLock");
+		timeLockTimer = nbt.getInteger("timeLockTimer");
+		timeMode = nbt.getString("timeMode");
+		
+		minuteMark = nbt.getBoolean("minuteMark");
+		minuteMarkTime = nbt.getInteger("minuteMarkTime");
 	}
-
+	
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setBoolean("UHCStarted", uhcOnGoing);
@@ -383,6 +461,12 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setInteger("shrinkOvertime", shrinkOvertime);
 		compound.setString("shrinkMode", shrinkMode);
 
+		compound.setBoolean("timeMode", timeLock);
+		compound.setInteger("timeLockTimer", timeLockTimer);
+		compound.setString("timeMode", timeMode);
+		
+		compound.setBoolean("minuteMark", minuteMark);
+		compound.setInteger("minuteMarkTime", minuteMarkTime);
 		return compound;
 	}
 	

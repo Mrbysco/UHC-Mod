@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -175,6 +176,25 @@ public class UHCHandler {
 			newData.setInteger("deathDim", originalPlayer.dimension);
 			System.out.println("death positions saved");
 			newPlayer.setSpawnPoint(deathPos, true);
+		}
+	}
+	
+	@SubscribeEvent
+	public void DimensionChangeEvent(EntityTravelToDimensionEvent event)
+	{
+		if(event.getEntity() instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer)event.getEntity();
+			World world = player.world;
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			if(saveData.isUhcOnGoing() && saveData.isNetherEnabled() == false)
+			{
+				if(event.getDimension() == -1)
+				{
+					event.setCanceled(true);
+				}
+			}
+			
 		}
 	}
 	

@@ -45,6 +45,12 @@ book.uhc.option.shrinktimer=Time until:
 book.uhc.option.shrinksize=Size:
 book.uhc.option.shrinkovertime=Over:
 book.uhc.option.shrinkmode=Mode:
+book.uhc.option.shrinkmodeshrink=Shrink the border
+book.uhc.option.shrinkmodeshrink2=over the amount of minutes
+book.uhc.option.shrinkmodearena=Instantly shrink
+book.uhc.option.shrinkmodearena2=and re-spread players
+book.uhc.option.shrinkmodecontrol=Control point shrinks
+book.uhc.option.shrinkmodecontrol2=the border when occupied
 
 book.uhc.option.timelock=Time Lock:
 book.uhc.option.timelocktimer=Time until:
@@ -54,6 +60,8 @@ book.uhc.option.timemodenight=Time will stop at night
 
 book.uhc.option.minmark=Minute Mark:
 book.uhc.option.minmarktime=Every:
+
+book.uhc.option.nether=Nether Travel:
 
 # Team Names
 color.darkred.name=Dark Red

@@ -49,6 +49,8 @@ public class UHCSaveData extends WorldSavedData{
 	private boolean minuteMark;
 	private int minuteMarkTime;
 	
+	private boolean netherEnabled;
+	
 	public UHCSaveData(String name) {
 		super(name);
 		
@@ -86,6 +88,8 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
+		
+		this.netherEnabled = true;
 	}
 	
 	public UHCSaveData() {
@@ -125,6 +129,8 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
+		
+		this.netherEnabled = true;
 	}
 	
 	public void resetAll() {
@@ -160,6 +166,8 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
+		
+		this.netherEnabled = true;
 	}
 	public boolean isUhcOnGoing() {
 		return uhcOnGoing;
@@ -393,6 +401,14 @@ public class UHCSaveData extends WorldSavedData{
 		this.minuteMarkTime = minuteMarkTime;
 	}
 	
+	public boolean isNetherEnabled() {
+		return netherEnabled;
+	}
+	
+	public void setNetherEnabled(boolean netherEnabled) {
+		this.netherEnabled = netherEnabled;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcOnGoing = nbt.getBoolean("UHCStarted");
@@ -429,6 +445,8 @@ public class UHCSaveData extends WorldSavedData{
 		
 		minuteMark = nbt.getBoolean("minuteMark");
 		minuteMarkTime = nbt.getInteger("minuteMarkTime");
+		
+		netherEnabled = nbt.getBoolean("netherEnabled");
 	}
 	
 	@Override
@@ -467,6 +485,8 @@ public class UHCSaveData extends WorldSavedData{
 		
 		compound.setBoolean("minuteMark", minuteMark);
 		compound.setInteger("minuteMarkTime", minuteMarkTime);
+		
+		compound.setBoolean("netherEnabled", netherEnabled);
 		return compound;
 	}
 	

@@ -95,6 +95,8 @@ public class GuiUHCBook extends GuiScreen{
     private booleanButton minuteMarkButton;
     private ResetButton resetMinuteMarkTimerButton;
     
+    private booleanButton netherButton;
+    
     /** UHC save data */
     private UHCSaveData saveData;
     /** Player data */
@@ -162,11 +164,13 @@ public class GuiUHCBook extends GuiScreen{
     	this.resetShrinkOverTimeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(35, i + 43 + 92, j + 128, fontRenderer));   	
     	this.ShrinkModeButton = (TextButton)this.addButton(new TextButton(36, i + 43 + 31, j + 140, saveData.getShrinkMode(), mc));
     	
-    	this.timeLockButton = (booleanButton)this.addButton(new booleanButton(37, i + 43 + 46, j + 24, fontRenderer, saveData.isTimeLock(), world));  
+    	this.timeLockButton = (booleanButton)this.addButton(new booleanButton(37, i + 43 + 56, j + 24, fontRenderer, saveData.isTimeLock(), world));  
     	this.timeModeButton = (TextButton)this.addButton(new TextButton(38, i + 43 + 32, j + 52, saveData.getTimeMode(), mc));  
-    	this.resetTimeLockTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(39, i + 43 + 92, j + 38, fontRenderer));
-    	this.resetMinuteMarkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(40, i + 43 + 92, j + 77, fontRenderer));
+    	this.resetTimeLockTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(39, i + 43 + 80, j + 38, fontRenderer));
+    	this.resetMinuteMarkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(40, i + 43 + 80, j + 77, fontRenderer));
     	this.minuteMarkButton = (booleanButton)this.addButton(new booleanButton(41, i + 43 + 56, j + 64, fontRenderer, saveData.isMinuteMark(), world));  
+    	
+    	this.netherButton = (booleanButton)this.addButton(new booleanButton(42, i + 43 + 80, j + 94, fontRenderer, saveData.isNetherEnabled(), world));  
 
     	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 80, j + 89, 20, 8);
     	setupField(randSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getRandomTeamSize()));
@@ -174,7 +178,7 @@ public class GuiUHCBook extends GuiScreen{
 		maxTeamSizeField = new GuiTextField(1, fontRenderer, i + 43 + 80, j + 101, 20, 8);
 		setupField(maxTeamSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getMaxTeamSize()));
 
-		borderSizeField = new GuiTextField(2, fontRenderer, i + 43 + 40, j + 40, 34, 8);
+		borderSizeField = new GuiTextField(2, fontRenderer, i + 43 + 40, j + 40, 32, 8);
 		setupField(borderSizeField, 4, 0xFFFFAA00, String.valueOf(saveData.getBorderSize()));
 		
 		borderCenterXField = new GuiTextField(3, fontRenderer, i + 55, j + 64, 52, 8);
@@ -186,19 +190,19 @@ public class GuiUHCBook extends GuiScreen{
 		difficultyField = new GuiTextField(5, fontRenderer, i + 43 + 52, j + 144, 14, 8);
 		setupField(difficultyField, 1, 0xFFFFAA00, String.valueOf(saveData.getDifficulty()));
 	    
-		shrinkTimerField = new GuiTextField(6, fontRenderer, i + 43 + 52, j + 107, 34, 8);
+		shrinkTimerField = new GuiTextField(6, fontRenderer, i + 43 + 52, j + 107, 32, 8);
 		setupField(shrinkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkTimer()));
 		
-		shrinkSizeField = new GuiTextField(7, fontRenderer, i + 43 + 28, j + 118, 34, 8);
+		shrinkSizeField = new GuiTextField(7, fontRenderer, i + 43 + 28, j + 118, 32, 8);
 		setupField(shrinkSizeField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkSize()));
 		
-		shrinkOvertimeField = new GuiTextField(8, fontRenderer, i + 43 + 32, j + 129, 34, 8);
+		shrinkOvertimeField = new GuiTextField(8, fontRenderer, i + 43 + 32, j + 129, 32, 8);
 		setupField(shrinkOvertimeField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkOvertime()));
 		
-		timeLockTimerField = new GuiTextField(9, fontRenderer, i + 43 + 52, j + 41, 34, 8);
+		timeLockTimerField = new GuiTextField(9, fontRenderer, i + 43 + 52, j + 41, 32, 8);
 		setupField(timeLockTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getTimeLockTimer()));
 		
-		minMarkTimerField = new GuiTextField(10, fontRenderer, i + 43 + 38, j + 80, 34, 8);
+		minMarkTimerField = new GuiTextField(10, fontRenderer, i + 43 + 38, j + 80, 32, 8);
 		setupField(minMarkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getMinuteMarkTime()));
 		
         this.updateButtons();
@@ -337,6 +341,7 @@ public class GuiUHCBook extends GuiScreen{
     	this.minMarkTimerField.setEnabled(this.currPage == 2);
     	this.minuteMarkButton.visible = this.currPage == 2;
     	this.resetMinuteMarkTimerButton.visible = this.currPage == 2;
+    	this.netherButton.visible = this.currPage == 2;
     }
     
     public void drawField(GuiTextField field)
@@ -448,6 +453,32 @@ public class GuiUHCBook extends GuiScreen{
 			{
 		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 			}
+			
+			String ShrinkModeShrink = I18n.format("book.uhc.option.shrinkmodeshrink");
+			String ShrinkModeShrink2 = I18n.format("book.uhc.option.shrinkmodeshrink2");
+			String ShrinkModeArena = I18n.format("book.uhc.option.shrinkmodearena");
+			String ShrinkModeArena2 = I18n.format("book.uhc.option.shrinkmodearena2");
+			String ShrinkModeControl = I18n.format("book.uhc.option.shrinkmodecontrol");
+			String ShrinkModeControl2 = I18n.format("book.uhc.option.shrinkmodecontrol2");
+			if(ShrinkModeButton.isMouseOver() == true)
+			{
+				String ShrinkMode = saveData.getShrinkMode();
+				if(ShrinkMode.equals("Shrink"))
+				{
+					this.drawCenteredString(fontRenderer, ShrinkModeShrink, mouseX, mouseY + 5, 0xFFFFAA00);
+					this.drawCenteredString(fontRenderer, ShrinkModeShrink2, mouseX, mouseY + 15, 0xFFFFAA00);
+				}
+				if(ShrinkMode.equals("Arena"))
+				{
+					this.drawCenteredString(fontRenderer, ShrinkModeArena, mouseX, mouseY + 5, 0xFFFFAA00);
+					this.drawCenteredString(fontRenderer, ShrinkModeArena2, mouseX, mouseY + 15, 0xFFFFAA00);
+				}
+				if(ShrinkMode.equals("Control"))
+				{
+					this.drawCenteredString(fontRenderer, ShrinkModeControl, mouseX, mouseY + 5, 0xFFFFAA00);
+					this.drawCenteredString(fontRenderer, ShrinkModeControl2, mouseX, mouseY + 15, 0xFFFFAA00);
+				}
+			}
 	    }
 	    
 	    if(this.currPage == 2)
@@ -472,7 +503,6 @@ public class GuiUHCBook extends GuiScreen{
 				String TimeMode = saveData.getTimeMode();
 				if(TimeMode.equals("Day"))
 			        this.drawCenteredString(fontRenderer, timeModeDayText, mouseX, mouseY + 5, 0xFFFFAA00);
-
 				if(TimeMode.equals("Night"))
 			        this.drawCenteredString(fontRenderer, timeModeNightText, mouseX, mouseY + 5, 0xFFFFAA00);
 			}
@@ -491,14 +521,18 @@ public class GuiUHCBook extends GuiScreen{
 		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 			}
 			
+			
+			String netherTravelString = I18n.format("book.uhc.option.nether");
+	        this.fontRenderer.drawString(netherTravelString, i + 38, j + 98, 0xFF555555);
+
 			String healthInTabString = I18n.format("book.uhc.option.healthtab");
-	        this.fontRenderer.drawString(healthInTabString, i + 43, j + 114, 0xFF555555);
+	        this.fontRenderer.drawString(healthInTabString, i + 38, j + 114, 0xFF555555);
 	        
 			String healthOnSideString = I18n.format("book.uhc.option.healthside");
-	        this.fontRenderer.drawString(healthOnSideString, i + 43, j + 126, 0xFF555555);
+	        this.fontRenderer.drawString(healthOnSideString, i + 38, j + 126, 0xFF555555);
 
 			String healthUnderNameString = I18n.format("book.uhc.option.healthname");
-	        this.fontRenderer.drawString(healthUnderNameString, i + 43, j + 138, 0xFF555555);
+	        this.fontRenderer.drawString(healthUnderNameString, i + 38, j + 138, 0xFF555555);
 	    }
 	    
 	    for(GuiButton button : buttonList)
@@ -802,6 +836,13 @@ public class GuiUHCBook extends GuiScreen{
             	boolean flag = saveData.isMinuteMark();
             	minuteMarkButton.setBoolean(!flag);
             	saveData.setMinuteMark(!flag);
+            	saveData.markDirty();
+            }
+            else if(button.id == 42 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	boolean flag = saveData.isNetherEnabled();
+            	netherButton.setBoolean(!flag);
+            	saveData.setNetherEnabled(!flag);
             	saveData.markDirty();
             }
             

@@ -1,8 +1,6 @@
 package com.Mrbysco.UHC.gui;
 
 import com.Mrbysco.UHC.Reference;
-import com.Mrbysco.UHC.gui.enums.BooleanEnum;
-import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -20,14 +18,18 @@ public class booleanButton extends GuiButton
 
 	private final FontRenderer render;
 	private final World world;
-	private final BooleanEnum enumValue;
+	private Boolean booleanValue;
 	
-	public booleanButton(int buttonId, int x, int y, FontRenderer renderIn, BooleanEnum enumIn, World worldIn)
+	public booleanButton(int buttonId, int x, int y, FontRenderer renderIn, Boolean booleanIn, World worldIn)
 	{
 		super(buttonId, x, y, 15, 13, "");
 		this.render = renderIn;
 		this.world = worldIn;
-		this.enumValue = enumIn;
+		this.booleanValue = booleanIn;
+	}
+	
+	public void setBoolean(Boolean value){
+		this.booleanValue = value;
 	}
 	
 	/**
@@ -45,44 +47,10 @@ public class booleanButton extends GuiButton
 			if (flag)
 				textureY += 14;
 			
-	        boolean value = getBooleanFromEnum(enumValue);
-			if (value)
+			if (booleanValue)
 				textureX += 15;
 	        
 			drawTexturedModalRect(x, y,  textureX, textureY, 15, 13);
 		}
-	}
-	
-	public boolean getBooleanFromEnum(BooleanEnum value)
-	{
-		final UHCSaveData data = UHCSaveData.getForWorld(world);
-		boolean correct = false;
-		
-		if(value == value.COLLISION)
-		{
-			correct = data.isTeamCollision();
-		}
-		if(value == value.DAMAGE)
-		{
-			correct = data.isFriendlyFire();
-		}
-		if(value == value.HEALTHTAB)
-		{
-			correct = data.isHealthInTab();
-		}
-		if(value == value.HEALTHSIDE)
-		{
-			correct = data.isHealthOnSide();
-		}
-		if(value == value.HEALTHNAME)
-		{
-			correct = data.isHealthUnderName();
-		}
-		if(value == value.SHRINK)
-		{
-			correct = data.isShrinkEnabled();
-		}
-		
-		return correct;
 	}
 }

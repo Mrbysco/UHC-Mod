@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.lwjgl.input.Keyboard;
 
 import com.Mrbysco.UHC.Reference;
-import com.Mrbysco.UHC.gui.enums.BooleanEnum;
 import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.client.Minecraft;
@@ -137,12 +136,12 @@ public class GuiUHCBook extends GuiScreen{
     	this.resetRandButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(20, i + 43 + 94, j + 85, fontRenderer));
     	this.resetTeamSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(21, i + 43 + 94, j + 99, fontRenderer));
     	
-    	this.collisionButton = (booleanButton)this.addButton(new booleanButton(22, i + 43 + 74, j + 113, fontRenderer, BooleanEnum.COLLISION, world));
-    	this.damageButton = (booleanButton)this.addButton(new booleanButton(23, i + 43 + 74, j + 127, fontRenderer, BooleanEnum.DAMAGE, world));
+    	this.collisionButton = (booleanButton)this.addButton(new booleanButton(22, i + 43 + 74, j + 113, fontRenderer, saveData.isTeamCollision(), world));
+    	this.damageButton = (booleanButton)this.addButton(new booleanButton(23, i + 43 + 74, j + 127, fontRenderer, saveData.isFriendlyFire(), world));
 
-    	this.healthTabButton = (booleanButton)this.addButton(new booleanButton(24, i + 43 + 80, j + 109, fontRenderer, BooleanEnum.HEALTHTAB, world));
-    	this.healthSideButton = (booleanButton)this.addButton(new booleanButton(25, i + 43 + 80, j + 122, fontRenderer, BooleanEnum.HEALTHSIDE, world));
-    	this.healthNameButton = (booleanButton)this.addButton(new booleanButton(26, i + 43 + 80, j + 135, fontRenderer, BooleanEnum.HEALTHNAME, world));
+    	this.healthTabButton = (booleanButton)this.addButton(new booleanButton(24, i + 43 + 80, j + 109, fontRenderer, saveData.isHealthInTab(), world));
+    	this.healthSideButton = (booleanButton)this.addButton(new booleanButton(25, i + 43 + 80, j + 122, fontRenderer, saveData.isHealthOnSide(), world));
+    	this.healthNameButton = (booleanButton)this.addButton(new booleanButton(26, i + 43 + 80, j + 135, fontRenderer, saveData.isHealthUnderName(), world));
     	
     	this.resetBorderSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(27, i + 43 + 68, j + 36, fontRenderer));
     	this.resetBorderCenterXButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(28, i + 43 + 92, j + 60, fontRenderer));
@@ -150,7 +149,7 @@ public class GuiUHCBook extends GuiScreen{
     	this.centerCurrentXButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(30, i + 43 + 76, j + 60, fontRenderer));
     	this.centerCurrentZButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(31, i + 43 + 76, j + 74, fontRenderer));
     	
-    	this.shrinkButton = (booleanButton)this.addButton(new booleanButton(32, i + 43 + 70, j + 90, fontRenderer, BooleanEnum.SHRINK, world));  
+    	this.shrinkButton = (booleanButton)this.addButton(new booleanButton(32, i + 43 + 70, j + 90, fontRenderer, saveData.isShrinkEnabled(), world));  
     	this.resetShrinkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(33, i + 43 + 92, j + 104, fontRenderer));
     	this.resetShrinkSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(34, i + 43 + 92, j + 116, fontRenderer));
     	this.resetShrinkOverTimeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(35, i + 43 + 92, j + 128, fontRenderer));   	
@@ -532,12 +531,14 @@ public class GuiUHCBook extends GuiScreen{
             else if(button.id == 22 && playerData.getBoolean("canEditUHC") == true)
             {
             	boolean flag = saveData.isTeamCollision();
+            	collisionButton.setBoolean(!flag);
             	saveData.setTeamCollision(!flag);
             	saveData.markDirty();
             }
             else if(button.id == 23 && playerData.getBoolean("canEditUHC") == true)
             {
             	boolean flag = saveData.isFriendlyFire();
+            	damageButton.setBoolean(!flag);
             	saveData.setFriendlyFire(!flag);
             	saveData.markDirty();
             }
@@ -545,6 +546,9 @@ public class GuiUHCBook extends GuiScreen{
             {
             	if(saveData.isHealthInTab() == false)
             	{
+            		healthTabButton.setBoolean(true);
+            		healthSideButton.setBoolean(false);
+            		healthNameButton.setBoolean(false);
             		saveData.setHealthInTab(true);
             		saveData.setHealthOnSide(false);
             		saveData.setHealthUnderName(false);
@@ -555,6 +559,9 @@ public class GuiUHCBook extends GuiScreen{
             {
             	if(saveData.isHealthOnSide() == false)
             	{
+            		healthTabButton.setBoolean(false);
+            		healthSideButton.setBoolean(true);
+            		healthNameButton.setBoolean(false);
 	        		saveData.setHealthInTab(false);
 	        		saveData.setHealthOnSide(true);
 	        		saveData.setHealthUnderName(false);
@@ -565,6 +572,9 @@ public class GuiUHCBook extends GuiScreen{
             {
             	if(saveData.isHealthUnderName() == false)
             	{
+            		healthTabButton.setBoolean(false);
+            		healthSideButton.setBoolean(false);
+            		healthNameButton.setBoolean(true);
 	        		saveData.setHealthInTab(false);
 	        		saveData.setHealthOnSide(false);
 	        		saveData.setHealthUnderName(true);
@@ -611,6 +621,7 @@ public class GuiUHCBook extends GuiScreen{
             else if(button.id == 32 && playerData.getBoolean("canEditUHC") == true)
             {
             	boolean flag = saveData.isShrinkEnabled();
+            	shrinkButton.setBoolean(!flag);
             	saveData.setShrinkEnabled(!flag);
             	saveData.markDirty();
             }

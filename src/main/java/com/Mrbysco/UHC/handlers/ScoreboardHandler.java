@@ -83,6 +83,8 @@ public class ScoreboardHandler {
 					if(scoreboard.getObjectiveInDisplaySlot(0) != score)
 					{
 						scoreboard.setObjectiveInDisplaySlot(0, score);
+						scoreboard.setObjectiveInDisplaySlot(1, null);
+						scoreboard.setObjectiveInDisplaySlot(2, null);
 					}
 				}
 			}
@@ -93,7 +95,9 @@ public class ScoreboardHandler {
 					ScoreObjective score = scoreboard.getObjective("health");
 					if(scoreboard.getObjectiveInDisplaySlot(1) != score)
 					{
+						scoreboard.setObjectiveInDisplaySlot(0, null);
 						scoreboard.setObjectiveInDisplaySlot(1, score);
+						scoreboard.setObjectiveInDisplaySlot(2, null);
 					}
 				}
 			}
@@ -104,10 +108,9 @@ public class ScoreboardHandler {
 					ScoreObjective score = scoreboard.getObjective("health");
 					if(scoreboard.getObjectiveInDisplaySlot(2) != score)
 					{
-						scoreboard.setObjectiveInDisplaySlot(2, score);
-						
 						scoreboard.setObjectiveInDisplaySlot(0, null);
 						scoreboard.setObjectiveInDisplaySlot(1, null);
+						scoreboard.setObjectiveInDisplaySlot(2, score);
 					}
 				}
 			}

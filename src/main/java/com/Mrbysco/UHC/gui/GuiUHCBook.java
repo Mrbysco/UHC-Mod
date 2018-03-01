@@ -63,6 +63,10 @@ public class GuiUHCBook extends GuiScreen{
     private GuiTextField borderCenterZField;
     private GuiTextField difficultyField;
     
+    private GuiTextField shrinkTimerField;
+    private GuiTextField shrinkSizeField;
+    private GuiTextField shrinkOvertimeField;
+    
     private ResetButton resetRandButton;
     private ResetButton resetTeamSizeButton;
     
@@ -78,6 +82,12 @@ public class GuiUHCBook extends GuiScreen{
     private ResetButton resetBorderCenterZButton;
     private LocationButton centerCurrentXButton;
     private LocationButton centerCurrentZButton;
+    private ResetButton resetShrinkTimerButton;
+    private ResetButton resetShrinkSizeButton;
+    private ResetButton resetShrinkOverTimeButton;
+    private TextButton ShrinkModeButton;
+    
+    private booleanButton shrinkButton;
     
     /** UHC save data */
     private UHCSaveData saveData;
@@ -127,36 +137,51 @@ public class GuiUHCBook extends GuiScreen{
     	this.resetRandButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(20, i + 43 + 94, j + 85, fontRenderer));
     	this.resetTeamSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(21, i + 43 + 94, j + 99, fontRenderer));
     	
-    	this.collisionButton = (booleanButton)this.addButton(new booleanButton(22, i + 43 + 74, j + 117, fontRenderer, BooleanEnum.COLLISION, world));
-    	this.damageButton = (booleanButton)this.addButton(new booleanButton(23, i + 43 + 74, j + 129, fontRenderer, BooleanEnum.DAMAGE, world));
+    	this.collisionButton = (booleanButton)this.addButton(new booleanButton(22, i + 43 + 74, j + 113, fontRenderer, BooleanEnum.COLLISION, world));
+    	this.damageButton = (booleanButton)this.addButton(new booleanButton(23, i + 43 + 74, j + 127, fontRenderer, BooleanEnum.DAMAGE, world));
 
-    	this.healthTabButton = (booleanButton)this.addButton(new booleanButton(24, i + 43 + 80, j + 113, fontRenderer, BooleanEnum.HEALTHTAB, world));
-    	this.healthSideButton = (booleanButton)this.addButton(new booleanButton(25, i + 43 + 80, j + 125, fontRenderer, BooleanEnum.HEALTHSIDE, world));
-    	this.healthNameButton = (booleanButton)this.addButton(new booleanButton(26, i + 43 + 80, j + 137, fontRenderer, BooleanEnum.HEALTHNAME, world));
+    	this.healthTabButton = (booleanButton)this.addButton(new booleanButton(24, i + 43 + 80, j + 109, fontRenderer, BooleanEnum.HEALTHTAB, world));
+    	this.healthSideButton = (booleanButton)this.addButton(new booleanButton(25, i + 43 + 80, j + 122, fontRenderer, BooleanEnum.HEALTHSIDE, world));
+    	this.healthNameButton = (booleanButton)this.addButton(new booleanButton(26, i + 43 + 80, j + 135, fontRenderer, BooleanEnum.HEALTHNAME, world));
     	
     	this.resetBorderSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(27, i + 43 + 68, j + 36, fontRenderer));
-    	this.resetBorderCenterXButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(28, i + 43 + 92, j + 61, fontRenderer));
-    	this.resetBorderCenterZButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(29, i + 43 + 92, j + 89, fontRenderer));   	
-    	this.centerCurrentXButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(30, i + 43 + 76, j + 62, fontRenderer));
-    	this.centerCurrentZButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(31, i + 43 + 76, j + 90, fontRenderer));  
-        
-    	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 80, j + 89, 20, 12);
+    	this.resetBorderCenterXButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(28, i + 43 + 92, j + 60, fontRenderer));
+    	this.resetBorderCenterZButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(29, i + 43 + 92, j + 74, fontRenderer));
+    	this.centerCurrentXButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(30, i + 43 + 76, j + 60, fontRenderer));
+    	this.centerCurrentZButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(31, i + 43 + 76, j + 74, fontRenderer));
+    	
+    	this.shrinkButton = (booleanButton)this.addButton(new booleanButton(32, i + 43 + 70, j + 90, fontRenderer, BooleanEnum.SHRINK, world));  
+    	this.resetShrinkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(33, i + 43 + 92, j + 104, fontRenderer));
+    	this.resetShrinkSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(34, i + 43 + 92, j + 116, fontRenderer));
+    	this.resetShrinkOverTimeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(35, i + 43 + 92, j + 128, fontRenderer));   	
+    	this.ShrinkModeButton = (TextButton)this.addButton(new TextButton(36, i + 43 + 31, j + 140, saveData.getShrinkMode(), mc));
+    	
+    	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 80, j + 89, 20, 8);
     	setupField(randSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getRandomTeamSize()));
 
-		maxTeamSizeField = new GuiTextField(1, fontRenderer, i + 43 + 80, j + 101, 20, 12);
+		maxTeamSizeField = new GuiTextField(1, fontRenderer, i + 43 + 80, j + 101, 20, 8);
 		setupField(maxTeamSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getMaxTeamSize()));
 
-		borderSizeField = new GuiTextField(2, fontRenderer, i + 43 + 40, j + 40, 34, 12);
+		borderSizeField = new GuiTextField(2, fontRenderer, i + 43 + 40, j + 40, 34, 8);
 		setupField(borderSizeField, 4, 0xFFFFAA00, String.valueOf(saveData.getBorderSize()));
 		
-		borderCenterXField = new GuiTextField(3, fontRenderer, i + 43, j + 65, 52, 12);
+		borderCenterXField = new GuiTextField(3, fontRenderer, i + 55, j + 64, 52, 8);
 		setupField(borderCenterXField, 5, 0xFFFFAA00, String.valueOf(saveData.getBorderCenterX()));
 		
-		borderCenterZField = new GuiTextField(4, fontRenderer, i + 43, j + 92, 79, 12);
+		borderCenterZField = new GuiTextField(4, fontRenderer, i + 55, j + 76, 79, 8);
 		setupField(borderCenterZField, 5, 0xFFFFAA00, String.valueOf(saveData.getBorderCenterZ()));
 		
-		difficultyField = new GuiTextField(5, fontRenderer, i + 43 + 52, j + 143, 14, 12);
+		difficultyField = new GuiTextField(5, fontRenderer, i + 43 + 52, j + 144, 14, 8);
 		setupField(difficultyField, 1, 0xFFFFAA00, String.valueOf(saveData.getDifficulty()));
+	    
+		shrinkTimerField = new GuiTextField(6, fontRenderer, i + 43 + 52, j + 107, 34, 8);
+		setupField(shrinkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkTimer()));
+		
+		shrinkSizeField = new GuiTextField(7, fontRenderer, i + 43 + 28, j + 118, 34, 8);
+		setupField(shrinkSizeField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkSize()));
+		
+		shrinkOvertimeField = new GuiTextField(8, fontRenderer, i + 43 + 32, j + 129, 34, 8);
+		setupField(shrinkOvertimeField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkOvertime()));
 		
         this.updateButtons();
 	}
@@ -191,6 +216,12 @@ public class GuiUHCBook extends GuiScreen{
 				borderCenterXField.updateCursorCounter();
 			if(borderCenterZField != null)
 				borderCenterZField.updateCursorCounter();
+			if(shrinkTimerField != null)
+				shrinkTimerField.updateCursorCounter();
+			if(shrinkSizeField != null)
+				shrinkSizeField.updateCursorCounter();
+			if(shrinkOvertimeField != null)
+				shrinkOvertimeField.updateCursorCounter();
 		}
 		super.updateScreen();
 	}
@@ -252,15 +283,24 @@ public class GuiUHCBook extends GuiScreen{
     	this.borderCenterXField.setEnabled(this.currPage == 1);
     	this.borderCenterZField.setEnabled(this.currPage == 1);
     	
-    	this.borderSizeField.setVisible(this.currPage == 1);
-    	this.borderSizeField.setEnabled(this.currPage == 1);
+    	this.shrinkTimerField.setVisible(this.currPage == 1);
+    	this.shrinkTimerField.setEnabled(this.currPage == 1);
+    	this.shrinkSizeField.setVisible(this.currPage == 1);
+    	this.shrinkSizeField.setEnabled(this.currPage == 1);
+    	this.shrinkOvertimeField.setVisible(this.currPage == 1);
+    	this.shrinkOvertimeField.setEnabled(this.currPage == 1);
     	
     	this.resetBorderSizeButton.visible = this.currPage == 1;
     	this.resetBorderCenterXButton.visible = this.currPage == 1;
     	this.resetBorderCenterZButton.visible = this.currPage == 1;
     	this.centerCurrentXButton.visible = this.currPage == 1;
     	this.centerCurrentZButton.visible = this.currPage == 1;
-
+    	
+    	this.shrinkButton.visible = this.currPage == 1;
+    	this.resetShrinkTimerButton.visible = this.currPage == 1;
+    	this.resetShrinkSizeButton.visible = this.currPage == 1;
+    	this.resetShrinkOverTimeButton.visible = this.currPage == 1;
+    	this.ShrinkModeButton.visible = this.currPage == 1;
     }
     
     public void drawField(GuiTextField field)
@@ -293,12 +333,12 @@ public class GuiUHCBook extends GuiScreen{
 	        String teamSelect = I18n.format("book.uhc.team.select");
 	        
 	        String randSizeString = I18n.format("book.uhc.option.randsize");
-	        this.fontRenderer.drawString(randSizeString, i + 43, j + 89, 0);
+	        this.fontRenderer.drawString(randSizeString, i + 43, j + 89, 0xFF555555);
 	        drawField(randSizeField);
 
 	        
 	        String maxTeamSizeString = I18n.format("book.uhc.option.maxteams");
-	        this.fontRenderer.drawString(maxTeamSizeString, i + 43, j + 101, 0);
+	        this.fontRenderer.drawString(maxTeamSizeString, i + 43, j + 101, 0xFF555555);
 	        drawField(maxTeamSizeField);
 
 			boolean flag = mouseX >= maxTeamSizeField.x && mouseY >= maxTeamSizeField.y && mouseX < maxTeamSizeField.x + maxTeamSizeField.width && mouseY < maxTeamSizeField.y + maxTeamSizeField.height;
@@ -306,7 +346,7 @@ public class GuiUHCBook extends GuiScreen{
 			
 			if(isColorNotHovered() && !flag)
 	        {
-    	        this.fontRenderer.drawString(teamSelect, i + 65, j + 28, 0);
+    	        this.fontRenderer.drawString(teamSelect, i + 65, j + 28, 0xFF555555);
         	}
 			
 			if(flag && maxTeamSizeField.isFocused() == false)
@@ -315,41 +355,71 @@ public class GuiUHCBook extends GuiScreen{
 			}
 			
 			String teamCollisionString = I18n.format("book.uhc.option.collision");
-	        this.fontRenderer.drawString(teamCollisionString, i + 43, j + 118, 0);
+	        this.fontRenderer.drawString(teamCollisionString, i + 43, j + 118, 0xFF555555);
 
 			String teamDamageString = I18n.format("book.uhc.option.damage");
-	        this.fontRenderer.drawString(teamDamageString, i + 43, j + 131, 0);
+	        this.fontRenderer.drawString(teamDamageString, i + 43, j + 131, 0xFF555555);
 
 			String difficultyString = I18n.format("book.uhc.option.difficulty");
-	        this.fontRenderer.drawString(difficultyString, i + 43, j + 144, 0);
+	        this.fontRenderer.drawString(difficultyString, i + 43, j + 144, 0xFF555555);
 	        drawField(difficultyField);
 	    }
 	    
 	    if(this.currPage == 1)
 	    {
 	    	String borderSizeString = I18n.format("book.uhc.option.bordersize");
-	        this.fontRenderer.drawString(borderSizeString, i + 48, j + 28, 0);
+	        this.fontRenderer.drawString(borderSizeString, i + 48, j + 28, 0xFF555555);
 	        drawField(borderSizeField);
 	        
-	        String centerXString = I18n.format("book.uhc.option.centerx");
-	        this.fontRenderer.drawString(centerXString, i + 38, j + 53, 0);
+	        String centerString = I18n.format("book.uhc.option.bordercenter");
+	        this.fontRenderer.drawString(centerString, i + 42, j + 53, 0xFF555555);
+	        
+	        String centerxString = I18n.format("book.uhc.option.bordercenterx");
+	        this.fontRenderer.drawString(centerxString, i + 42, j + 64, 0xFF555555);
 	        drawField(borderCenterXField);
 	        
-	        String centerZString = I18n.format("book.uhc.option.centerz");
-	        this.fontRenderer.drawString(centerZString, i + 38, j + 80, 0);
+	        String centerZString = I18n.format("book.uhc.option.bordercenterz");
+	        this.fontRenderer.drawString(centerZString, i + 42, j + 76, 0xFF555555);
 	        drawField(borderCenterZField);
+	        
+	        String ShrinkString = I18n.format("book.uhc.option.shrinkenabled");
+	        this.fontRenderer.drawString(ShrinkString, i + 38, j + 94, 0xFF555555);
+	        
+	        String ShrinkTimerString = I18n.format("book.uhc.option.shrinktimer");
+	        this.fontRenderer.drawString(ShrinkTimerString, i + 44, j + 107, 0xFF555555);
+	        drawField(shrinkTimerField);
+	        
+	        String ShrinkSizeString = I18n.format("book.uhc.option.shrinksize");
+	        this.fontRenderer.drawString(ShrinkSizeString, i + 44, j + 118, 0xFF555555);
+	        drawField(shrinkSizeField);
+	        
+	        String ShrinkOvertimeString = I18n.format("book.uhc.option.shrinkovertime");
+	        this.fontRenderer.drawString(ShrinkOvertimeString, i + 44, j + 129, 0xFF555555);
+	        drawField(shrinkOvertimeField);
+	        
+	        String ShrinkModeString = I18n.format("book.uhc.option.shrinkmode");
+	        this.fontRenderer.drawString(ShrinkModeString, i + 44, j + 140, 0xFF555555);
+	        drawField(shrinkOvertimeField);
+	        
+			boolean flag = mouseX >= shrinkTimerField.x && mouseY >= shrinkTimerField.y && mouseX < shrinkTimerField.x + shrinkTimerField.width && mouseY < shrinkTimerField.y + shrinkTimerField.height;
+			boolean flag1 = mouseX >= shrinkOvertimeField.x && mouseY >= shrinkOvertimeField.y && mouseX < shrinkOvertimeField.x + shrinkOvertimeField.width && mouseY < shrinkOvertimeField.y + shrinkOvertimeField.height;
+			String minuteMessageString = I18n.format("book.uhc.option.minutes");
+			if((flag && shrinkTimerField.isFocused() == false) || (flag1 && shrinkOvertimeField.isFocused() == false))
+			{
+		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
+			}
 	    }
 	    
 	    if(this.currPage == 2)
 	    {
 			String healthInTabString = I18n.format("book.uhc.option.healthtab");
-	        this.fontRenderer.drawString(healthInTabString, i + 43, j + 114, 0xFFAA0000);
+	        this.fontRenderer.drawString(healthInTabString, i + 43, j + 114, 0xFF555555);
 	        
 			String healthOnSideString = I18n.format("book.uhc.option.healthside");
-	        this.fontRenderer.drawString(healthOnSideString, i + 43, j + 126, 0xFFAA0000);
+	        this.fontRenderer.drawString(healthOnSideString, i + 43, j + 126, 0xFF555555);
 
 			String healthUnderNameString = I18n.format("book.uhc.option.healthname");
-	        this.fontRenderer.drawString(healthUnderNameString, i + 43, j + 138, 0xFFAA0000);
+	        this.fontRenderer.drawString(healthUnderNameString, i + 43, j + 138, 0xFF555555);
 	    }
 	    
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -467,7 +537,7 @@ public class GuiUHCBook extends GuiScreen{
             }
             else if(button.id == 23 && playerData.getBoolean("canEditUHC") == true)
             {
-            	boolean flag = saveData.isTeamCollision();
+            	boolean flag = saveData.isFriendlyFire();
             	saveData.setFriendlyFire(!flag);
             	saveData.markDirty();
             }
@@ -538,6 +608,53 @@ public class GuiUHCBook extends GuiScreen{
             	saveData.markDirty();
             	borderCenterZField.setText(String.valueOf(saveData.getBorderCenterZ()));
             }
+            else if(button.id == 32 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	boolean flag = saveData.isShrinkEnabled();
+            	saveData.setShrinkEnabled(!flag);
+            	saveData.markDirty();
+            }
+            
+            else if(button.id == 33 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	saveData.setShrinkTimer(60);
+            	saveData.markDirty();
+            	shrinkTimerField.setText(String.valueOf(saveData.getShrinkTimer()));
+            }
+            else if(button.id == 34 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	saveData.setShrinkSize(256);
+            	saveData.markDirty();
+            	shrinkSizeField.setText(String.valueOf(saveData.getShrinkSize()));
+            }
+            else if(button.id == 35 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	saveData.setShrinkOvertime(60);
+            	saveData.markDirty();
+            	shrinkOvertimeField.setText(String.valueOf(saveData.getShrinkOvertime()));
+            }
+            else if(button.id == 36 && playerData.getBoolean("canEditUHC") == true)
+            {
+            	String mode = saveData.getShrinkMode();
+            	if(mode.equals("Shrink"))
+            	{
+            		saveData.setShrinkMode("Arena");
+            		saveData.markDirty();
+            		ShrinkModeButton.setText(saveData.getShrinkMode());
+            	}
+            	if(mode.equals("Arena"))
+            	{
+            		saveData.setShrinkMode("Control");
+            		saveData.markDirty();
+            		ShrinkModeButton.setText(saveData.getShrinkMode());
+            	}
+            	if(mode.equals("Control"))
+            	{
+            		saveData.setShrinkMode("Shrink");
+            		saveData.markDirty();
+            		ShrinkModeButton.setText(saveData.getShrinkMode());
+            	}
+            }
             
             this.updateButtons();
         }
@@ -581,6 +698,12 @@ public class GuiUHCBook extends GuiScreen{
             		borderCenterXField.setText("");
             	if(borderCenterZField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
             		borderCenterZField.setText("");
+            	if(shrinkTimerField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            		shrinkTimerField.setText("");
+            	if(shrinkSizeField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            		shrinkSizeField.setText("");
+            	if(shrinkOvertimeField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            		shrinkOvertimeField.setText("");
             	
             	if(borderSizeField.isFocused() == false)
             		borderSizeField.setText(String.valueOf(saveData.getBorderSize()));
@@ -588,6 +711,12 @@ public class GuiUHCBook extends GuiScreen{
             		borderCenterXField.setText(String.valueOf(saveData.getBorderCenterX()));
             	if(borderCenterZField.isFocused() == false)
             		borderCenterZField.setText(String.valueOf(saveData.getBorderCenterZ()));
+            	if(shrinkTimerField.isFocused() == false)
+            		shrinkTimerField.setText(String.valueOf(saveData.getShrinkTimer()));
+            	if(shrinkSizeField.isFocused() == false)
+            		shrinkSizeField.setText(String.valueOf(saveData.getShrinkSize()));
+            	if(shrinkOvertimeField.isFocused() == false)
+            		shrinkOvertimeField.setText(String.valueOf(saveData.getShrinkOvertime()));
         	}
         }
         
@@ -598,36 +727,21 @@ public class GuiUHCBook extends GuiScreen{
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
     	super.keyTyped(typedChar, keyCode);
     	
-    	if(randSizeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
-		{
-    		randSizeField.textboxKeyTyped(typedChar, keyCode);
-		}
-		if(maxTeamSizeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
-		{
-    		maxTeamSizeField.textboxKeyTyped(typedChar, keyCode);
-		}
-		if(difficultyField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
-		{
-			difficultyField.textboxKeyTyped(typedChar, keyCode);
-		}
-		
-		if(borderSizeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
-		{
-			borderSizeField.textboxKeyTyped(typedChar, keyCode);
-		}
-		if(borderCenterXField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK 
-				|| keyCode == Keyboard.KEY_PERIOD || keyCode == Keyboard.KEY_MINUS))
-		{
-			borderCenterXField.textboxKeyTyped(typedChar, keyCode);
-		}
-		if(borderCenterZField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK 
-				|| keyCode == Keyboard.KEY_PERIOD || keyCode == Keyboard.KEY_MINUS))
-		{
-			borderCenterZField.textboxKeyTyped(typedChar, keyCode);
-		}
-		
     	if(this.currPage == 0)
     	{
+    		if(randSizeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+        		randSizeField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(maxTeamSizeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+        		maxTeamSizeField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(difficultyField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			difficultyField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		
     		if (keyCode == Keyboard.KEY_RETURN)
     		{
     			if(randSizeField.isFocused())
@@ -679,8 +793,36 @@ public class GuiUHCBook extends GuiScreen{
     	
     	if(this.currPage == 1)
     	{
+    		if(borderSizeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			borderSizeField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(borderCenterXField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK 
+    				|| keyCode == Keyboard.KEY_PERIOD || keyCode == Keyboard.KEY_MINUS))
+    		{
+    			borderCenterXField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(borderCenterZField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK 
+    				|| keyCode == Keyboard.KEY_PERIOD || keyCode == Keyboard.KEY_MINUS))
+    		{
+    			borderCenterZField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(shrinkTimerField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			shrinkTimerField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(shrinkSizeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			shrinkSizeField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(shrinkOvertimeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			shrinkOvertimeField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		
     		if (keyCode == Keyboard.KEY_RETURN)
     		{
+    			/* Border Size Field */
     			if(borderSizeField.isFocused())
     			{
     				String borderSize = borderSizeField.getText();
@@ -695,7 +837,7 @@ public class GuiUHCBook extends GuiScreen{
     				
     				borderSizeField.setFocused(false);
     			}
-    			
+    			/* Border Center X Field */
     			if(borderCenterXField.isFocused())
     			{
     				String borderX = borderCenterXField.getText();
@@ -710,7 +852,7 @@ public class GuiUHCBook extends GuiScreen{
     			
     				borderCenterXField.setFocused(false);
     			}
-    			
+    			/* Border Center Z Field */
     			if(borderCenterZField.isFocused())
     			{
     				String borderZ = borderCenterZField.getText();
@@ -725,6 +867,53 @@ public class GuiUHCBook extends GuiScreen{
     			
     				borderCenterZField.setFocused(false);
     			}
+    			/* Shrink Timer Field */
+    			if(shrinkTimerField.isFocused())
+    			{
+    				String shrinkTimer = shrinkTimerField.getText();
+    				
+    				if(shrinkTimer.isEmpty())
+    					shrinkTimerField.setText(String.valueOf(saveData.getShrinkTimer()));
+    				else
+    				{
+    					saveData.setShrinkTimer(Integer.parseInt(shrinkTimer));
+    					saveData.markDirty();
+    				}
+    				
+    				shrinkTimerField.setFocused(false);
+    			}
+    			/* Shrink Size Field */
+    			if(shrinkSizeField.isFocused())
+    			{
+    				String shrinkSize = shrinkSizeField.getText();
+    				
+    				if(shrinkSize.isEmpty())
+    					shrinkSizeField.setText(String.valueOf(saveData.getShrinkSize()));
+    				else
+    				{
+    					saveData.setShrinkSize(Integer.parseInt(shrinkSize));
+    					saveData.markDirty();
+    				}
+    				
+    				shrinkSizeField.setFocused(false);
+    			}
+    			/* Shrink Over Time Field */
+    			if(shrinkOvertimeField.isFocused())
+    			{
+    				String ShrinkOverTime = shrinkOvertimeField.getText();
+    				
+    				if(ShrinkOverTime.isEmpty())
+    					shrinkOvertimeField.setText(String.valueOf(saveData.getShrinkOvertime()));
+    				else
+    				{
+    					saveData.setShrinkOvertime(Integer.parseInt(ShrinkOverTime));
+    					saveData.markDirty();
+    				}
+    				
+    				shrinkOvertimeField.setFocused(false);
+    			}
+    			
+    			
     		}
     	}
     }
@@ -909,7 +1098,7 @@ public class GuiUHCBook extends GuiScreen{
 		
 		public LocationButton(int buttonId, int x, int y, FontRenderer renderIn)
 		{
-			super(buttonId, x, y, 15, 13, "");
+			super(buttonId, x, y, 14, 13, "");
 			this.render = renderIn;
 		}
 		

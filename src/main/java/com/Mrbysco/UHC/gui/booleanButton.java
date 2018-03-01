@@ -1,5 +1,6 @@
 package com.Mrbysco.UHC.gui;
 
+import com.Mrbysco.UHC.Reference;
 import com.Mrbysco.UHC.gui.enums.BooleanEnum;
 import com.Mrbysco.UHC.init.UHCSaveData;
 
@@ -7,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -14,13 +16,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class booleanButton extends GuiButton
 {	
+	public static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/book.png");
+
 	private final FontRenderer render;
 	private final World world;
 	private final BooleanEnum enumValue;
 	
 	public booleanButton(int buttonId, int x, int y, FontRenderer renderIn, BooleanEnum enumIn, World worldIn)
 	{
-		super(buttonId, x, y, 40, 8, "");
+		super(buttonId, x, y, 15, 13, "");
 		this.render = renderIn;
 		this.world = worldIn;
 		this.enumValue = enumIn;
@@ -35,15 +39,17 @@ public class booleanButton extends GuiButton
 		{
 			boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+			mc.getTextureManager().bindTexture(BOOK_TEXTURE);
+			int textureX = 47;
+			int textureY = 192;
+			if (flag)
+				textureY += 14;
+			
 	        boolean value = getBooleanFromEnum(enumValue);
+			if (value)
+				textureX += 15;
 	        
-	        int color = 0;
-	        if(value == true)
-	        	color = 0xFF55FF55;
-	        else
-	        	color = 0xFFFF5555;
-	        
-	        render.drawStringWithShadow(String.valueOf(value), this.x, this.y, color);
+			drawTexturedModalRect(x, y,  textureX, textureY, 15, 13);
 		}
 	}
 	
@@ -71,6 +77,10 @@ public class booleanButton extends GuiButton
 		if(value == value.HEALTHNAME)
 		{
 			correct = data.isHealthUnderName();
+		}
+		if(value == value.SHRINK)
+		{
+			correct = data.isShrinkEnabled();
 		}
 		
 		return correct;

@@ -23,41 +23,48 @@ public class BorderHandler {
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 			WorldInfo settings = world.getWorldInfo();
 
-			if(saveData.getOriginalBorderCenterX() == -1)
+			if(saveData.isUhcOnGoing())
 			{
-				double originalX = settings.getBorderCenterX();
-				saveData.setOriginalBorderCenterX(originalX);
+				
 			}
-			if(saveData.getOriginalBorderCenterZ() == -1)
+			else
 			{
-				double originalZ = settings.getBorderCenterX();
-				saveData.setOriginalBorderCenterZ(originalZ);
-			}
-			
-			if(saveData.getBorderCenterX() == -1)
-			{
-				if(saveData.getOriginalBorderCenterX() != -1)
+				if(saveData.getOriginalBorderCenterX() == -1)
 				{
-					double originalX = saveData.getOriginalBorderCenterX();
-					saveData.setBorderCenterX(originalX);
+					double originalX = settings.getBorderCenterX();
+					saveData.setOriginalBorderCenterX(originalX);
 				}
-				else
+				if(saveData.getOriginalBorderCenterZ() == -1)
 				{
 					double originalZ = settings.getBorderCenterX();
-					saveData.setBorderCenterZ(originalZ);
+					saveData.setOriginalBorderCenterZ(originalZ);
 				}
-			}
-			if(saveData.getBorderCenterZ() == -1)
-			{
-				if(saveData.getOriginalBorderCenterX() != -1)
+				
+				if(saveData.getBorderCenterX() == -1)
 				{
-					double originalZ = saveData.getOriginalBorderCenterZ();
-					saveData.setBorderCenterZ(originalZ);
+					if(saveData.getOriginalBorderCenterX() != -1)
+					{
+						double originalX = saveData.getOriginalBorderCenterX();
+						saveData.setBorderCenterX(originalX);
+					}
+					else
+					{
+						double originalZ = settings.getBorderCenterX();
+						saveData.setBorderCenterZ(originalZ);
+					}
 				}
-				else
+				if(saveData.getBorderCenterZ() == -1)
 				{
-					double originalZ = settings.getBorderCenterX();
-					saveData.setBorderCenterZ(originalZ);
+					if(saveData.getOriginalBorderCenterX() != -1)
+					{
+						double originalZ = saveData.getOriginalBorderCenterZ();
+						saveData.setBorderCenterZ(originalZ);
+					}
+					else
+					{
+						double originalZ = settings.getBorderCenterX();
+						saveData.setBorderCenterZ(originalZ);
+					}
 				}
 			}
 		}

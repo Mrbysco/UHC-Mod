@@ -6,7 +6,8 @@ public enum BooleanEnum {
 	DAMAGE,
 	HEALTHTAB,
 	HEALTHSIDE,
-	HEALTHNAME;
+	HEALTHNAME,
+	SHRINK;
 	
 	private BooleanEnum() {
 

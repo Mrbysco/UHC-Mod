@@ -25,6 +25,7 @@ book.uhc.option.location=Current Location
 book.uhc.option.randsize=Random Teams:
 book.uhc.option.maxteams=Max Team Size:
 book.uhc.option.infinite=-1 = Infinite
+book.uhc.option.minutes=In Minutes
 
 book.uhc.option.collision=Team Collision:
 book.uhc.option.damage=Team Damage:
@@ -35,8 +36,15 @@ book.uhc.option.healthside=Health On Side:
 book.uhc.option.healthname=Health On Name:
 
 book.uhc.option.bordersize=Worldborder Size:
-book.uhc.option.centerx=Worldborder Center X:
-book.uhc.option.centerz=Worldborder Center Z:
+book.uhc.option.bordercenter=Worldborder Center
+book.uhc.option.bordercenterx=X:
+book.uhc.option.bordercenterz=Z:
+
+book.uhc.option.shrinkenabled=Border Shrink:
+book.uhc.option.shrinktimer=Time until:
+book.uhc.option.shrinksize=Size:
+book.uhc.option.shrinkovertime=Over:
+book.uhc.option.shrinkmode=Mode:
 
 # Team Names
 color.darkred.name=Dark Red

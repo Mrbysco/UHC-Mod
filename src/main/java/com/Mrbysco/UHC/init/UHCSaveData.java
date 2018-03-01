@@ -35,6 +35,12 @@ public class UHCSaveData extends WorldSavedData{
 	private double borderCenterZ;
 	private double originalBorderCenterX;
 	private double originalBorderCenterZ;
+	
+	private boolean shrinkEnabled;
+	private int shrinkTimer;
+	private int shrinkSize;
+	private int shrinkOvertime;
+	private String shrinkMode;
 
 	public UHCSaveData(String name) {
 		super(name);
@@ -60,6 +66,11 @@ public class UHCSaveData extends WorldSavedData{
 		this.borderCenterZ = -1;
 		this.originalBorderCenterX = -1;
 		this.originalBorderCenterZ = -1;
+		this.shrinkEnabled = false;
+		this.shrinkTimer = 60;
+		this.shrinkSize = 256;
+		this.shrinkOvertime = 60;
+		this.shrinkMode = "Shrink";
 	}
 	
 	public UHCSaveData() {
@@ -86,6 +97,11 @@ public class UHCSaveData extends WorldSavedData{
 		this.borderCenterZ = -1;
 		this.originalBorderCenterX = -1;
 		this.originalBorderCenterZ = -1;
+		this.shrinkEnabled = false;
+		this.shrinkTimer = 60;
+		this.shrinkSize = 256;
+		this.shrinkOvertime = 60;
+		this.shrinkMode = "Shrink";
 	}
 	
 	public void resetAll() {
@@ -108,6 +124,11 @@ public class UHCSaveData extends WorldSavedData{
 		this.borderSize = 2048;
 		this.borderCenterX = -1;
 		this.borderCenterZ = -1;
+		this.shrinkEnabled = false;
+		this.shrinkTimer = 60;
+		this.shrinkSize = 256;
+		this.shrinkOvertime = 60;
+		this.shrinkMode = "Shrink";
 	}
 	public boolean isUhcOnGoing() {
 		return uhcOnGoing;
@@ -261,6 +282,46 @@ public class UHCSaveData extends WorldSavedData{
 		this.originalBorderCenterZ = originalBorderCenterZ;
 	}
 	
+	public boolean isShrinkEnabled() {
+		return shrinkEnabled;
+	}
+	
+	public void setShrinkEnabled(boolean shrinkEnabled) {
+		this.shrinkEnabled = shrinkEnabled;
+	}
+	
+	public int getShrinkTimer() {
+		return shrinkTimer;
+	}
+	
+	public void setShrinkTimer(int shrinkTimer) {
+		this.shrinkTimer = shrinkTimer;
+	}
+	
+	public int getShrinkSize() {
+		return shrinkSize;
+	}
+	
+	public void setShrinkSize(int shrinkSize) {
+		this.shrinkSize = shrinkSize;
+	}
+	
+	public int getShrinkOvertime() {
+		return shrinkOvertime;
+	}
+	
+	public void setShrinkOvertime(int shrinkOvertime) {
+		this.shrinkOvertime = shrinkOvertime;
+	}
+
+	public String getShrinkMode() {
+		return shrinkMode;
+	}
+	
+	public void setShrinkMode(String shrinkMode) {
+		this.shrinkMode = shrinkMode;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcOnGoing = nbt.getBoolean("UHCStarted");
@@ -284,6 +345,12 @@ public class UHCSaveData extends WorldSavedData{
 		borderCenterZ = nbt.getDouble("borderCenterZ");
 		originalBorderCenterX = nbt.getDouble("originalBorderCenterX");
 		originalBorderCenterZ = nbt.getDouble("originalBorderCenterZ");
+		
+		shrinkEnabled = nbt.getBoolean("shrinkEnabled");
+		shrinkTimer = nbt.getInteger("shrinkTimer");
+		shrinkSize = nbt.getInteger("shrinkSize");
+		shrinkOvertime = nbt.getInteger("shrinkOvertime");
+		shrinkMode = nbt.getString("shrinkMode");
 	}
 
 	@Override
@@ -309,6 +376,13 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setDouble("borderCenterZ", borderCenterZ);
 		compound.setDouble("originalBorderCenterX", originalBorderCenterX);
 		compound.setDouble("originalBorderCenterZ", originalBorderCenterZ);
+		
+		compound.setBoolean("shrinkEnabled", shrinkEnabled);
+		compound.setInteger("shrinkTimer", shrinkTimer);
+		compound.setInteger("shrinkSize", shrinkSize);
+		compound.setInteger("shrinkOvertime", shrinkOvertime);
+		compound.setString("shrinkMode", shrinkMode);
+
 		return compound;
 	}
 	

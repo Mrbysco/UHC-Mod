@@ -178,7 +178,8 @@ public class GuiUHCBook extends GuiScreen{
 	private NBTTagCompound playerData;
 
 	
-	public GuiUHCBook(EntityPlayer player, UHCSaveData data) {
+	public GuiUHCBook(EntityPlayer player) {
+		UHCSaveData data = UHCSaveData.getForWorld(player.world);
         this.editingPlayer = player;
         this.playerData = player.getEntityData();
         this.saveData = data;

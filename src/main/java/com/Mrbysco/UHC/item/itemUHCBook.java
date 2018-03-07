@@ -5,7 +5,6 @@ import java.util.List;
 import com.Mrbysco.UHC.Reference;
 import com.Mrbysco.UHC.UltraHardCoremod;
 import com.Mrbysco.UHC.init.GuiHandler;
-import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,9 +36,7 @@ public class itemUHCBook extends Item{
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {	
-		UHCSaveData saveData = UHCSaveData.getForWorld(worldIn);
-		
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {			
 		playerIn.openGui(UltraHardCoremod.instance, GuiHandler.GUI_UHC_BOOK, worldIn, 0, 0, 0);
 		
 		return super.onItemRightClick(worldIn, playerIn, handIn);

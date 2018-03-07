@@ -28,7 +28,7 @@ public class UHCHandler {
 	
 	@SubscribeEvent
 	public void UHCBookEvent(TickEvent.WorldTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && !event.world.isRemote)
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
 			ItemStack bookStack = new ItemStack(ModItems.uhc_book);
@@ -39,7 +39,7 @@ public class UHCHandler {
 			editStack.setTagInfo("lore", new NBTTagString("You have the power to edit the main UHC settings"));
 
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-
+			System.out.println(saveData.getRandomTeamSize());
 			List<Entity> entityList = world.loadedEntityList;
 			
 			for(Entity entity : entityList)
@@ -86,19 +86,22 @@ public class UHCHandler {
 
 	@SubscribeEvent
     public void playerEditUHCEvent(PlayerTickEvent event) {
-		EntityPlayer player = event.player;
-		NBTTagCompound entityData = player.getEntityData();
-		World world = player.world;
-		
-		if(!world.isRemote)
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
-			if (!entityData.hasKey("canEditUHC"))
-				entityData.setBoolean("canEditUHC", false);
+			EntityPlayer player = event.player;
+			NBTTagCompound entityData = player.getEntityData();
+			World world = player.world;
 			
-			if(entityData.getBoolean("canEditUHC") == false)
+			if(!world.isRemote)
 			{
-				if (player.canUseCommand(2, ""))
-					entityData.setBoolean("canEditUHC", true);
+				if (!entityData.hasKey("canEditUHC"))
+					entityData.setBoolean("canEditUHC", false);
+				
+				if(entityData.getBoolean("canEditUHC") == false)
+				{
+					if (player.canUseCommand(2, ""))
+						entityData.setBoolean("canEditUHC", true);
+				}
 			}
 		}
 	}
@@ -109,7 +112,7 @@ public class UHCHandler {
 		EntityPlayer player = event.player;
 		UHCSaveData saveData = UHCSaveData.getForWorld(player.world);
 
-		if (saveData.isUhcOnGoing())
+		if (saveData.isUhcOnGoing() && !player.world.isRemote)
 		{
 			player.setGameType(GameType.SPECTATOR);
 		}
@@ -152,25 +155,28 @@ public class UHCHandler {
 			NBTTagCompound originalData = originalPlayer.getEntityData();
 			NBTTagCompound newData = newPlayer.getEntityData();
 			
-			if(saveData.isUhcOnGoing()) 
+			if(!newPlayer.world.isRemote)
 			{
-				newPlayer.setGameType(GameType.SPECTATOR);
+				if(saveData.isUhcOnGoing()) 
+				{
+					newPlayer.setGameType(GameType.SPECTATOR);
+				}
+				
+				if(originalData.hasKey("canEditUHC"))
+				{
+					if(originalData.getBoolean("canEditUHC"))
+						newData.setBoolean("canEditUHC", true);
+					else
+						newData.setBoolean("canEditUHC", false);
+				}
+				
+				BlockPos deathPos = originalPlayer.getPosition();
+				newData.setInteger("deathX", deathPos.getX());
+				newData.setInteger("deathY", deathPos.getY());
+				newData.setInteger("deathZ", deathPos.getZ());
+				newData.setInteger("deathDim", originalPlayer.dimension);
+				newPlayer.setSpawnPoint(deathPos, true);
 			}
-			
-			if(originalData.hasKey("canEditUHC"))
-			{
-				if(originalData.getBoolean("canEditUHC"))
-					newData.setBoolean("canEditUHC", true);
-				else
-					newData.setBoolean("canEditUHC", false);
-			}
-			
-			BlockPos deathPos = originalPlayer.getPosition();
-			newData.setInteger("deathX", deathPos.getX());
-			newData.setInteger("deathY", deathPos.getY());
-			newData.setInteger("deathZ", deathPos.getZ());
-			newData.setInteger("deathDim", originalPlayer.dimension);
-			newPlayer.setSpawnPoint(deathPos, true);
 		}
 	}
 	
@@ -182,7 +188,7 @@ public class UHCHandler {
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			World world = player.world;
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			if(saveData.isUhcOnGoing() && saveData.isNetherEnabled() == false)
+			if(saveData.isUhcOnGoing() && saveData.isNetherEnabled() == false && !world.isRemote)
 			{
 				if(event.getDimension() == -1)
 				{

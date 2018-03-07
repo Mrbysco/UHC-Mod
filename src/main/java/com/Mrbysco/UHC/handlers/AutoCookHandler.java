@@ -27,7 +27,7 @@ public class AutoCookHandler {
 		List<ItemStack> drops = event.getDrops();
 		UHCSaveData saveData = UHCSaveData.getForWorld(world);
 
-		if(saveData.isAutoCook())
+		if(saveData.isAutoCook() && !world.isRemote)
 		{
 			for(ItemStack drop : drops)
 			{
@@ -71,7 +71,7 @@ public class AutoCookHandler {
 		List<EntityItem> drops = event.getDrops();
 		UHCSaveData saveData = UHCSaveData.getForWorld(world);
 
-		if(saveData.isAutoCook())
+		if(saveData.isAutoCook() && !world.isRemote)
 		{
 			for(EntityItem drop : drops)
 			{
@@ -114,7 +114,7 @@ public class AutoCookHandler {
 		EntityItem item = event.getEntityItem();
 		UHCSaveData saveData = UHCSaveData.getForWorld(world);
 
-		if(saveData.isAutoCook())
+		if(saveData.isAutoCook() && !world.isRemote)
 		{
 			for(AutoCookInfo info : CookList.autoCookList)
 			{

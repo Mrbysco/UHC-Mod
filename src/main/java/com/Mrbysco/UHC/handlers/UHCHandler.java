@@ -16,19 +16,19 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class UHCHandler {
 	
 	@SubscribeEvent
 	public void UHCBookEvent(TickEvent.WorldTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && !event.world.isRemote)
 		{
 			World world = event.world;
 			ItemStack bookStack = new ItemStack(ModItems.uhc_book);
@@ -37,10 +37,10 @@ public class UHCHandler {
 			editStack.addEnchantment(Enchantments.VANISHING_CURSE, 1);;
 			editStack.setStackDisplayName("Editors Monacle");
 			editStack.setTagInfo("lore", new NBTTagString("You have the power to edit the main UHC settings"));
-			
+
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 
-			List<Entity> entityList = world.getLoadedEntityList();
+			List<Entity> entityList = world.loadedEntityList;
 			
 			for(Entity entity : entityList)
 			{
@@ -49,8 +49,9 @@ public class UHCHandler {
 					EntityPlayer player = (EntityPlayer) entity;
 					NBTTagCompound entityData = player.getEntityData();
 
-					if (!world.isRemote && entityData.hasKey("canEditUHC") && saveData.isUhcOnGoing() == false)
+					if (entityData.getBoolean("canEditUHC") == true && saveData.isUhcOnGoing() == false)
 					{
+						//System.out.println(entityData.toString());
 						if (player.inventory.getStackInSlot(39) == editStack)
 						{
 							return;
@@ -58,22 +59,16 @@ public class UHCHandler {
 						if (player.inventory.getStackInSlot(39).isEmpty())
 						{
 							player.inventory.setInventorySlotContents(39, editStack);
-
 						}
 					}
+					if (entityData.getBoolean("canEditUHC") == false)
+					{
+						player.inventory.removeStackFromSlot(39);
+					}
 					
-					if (!world.isRemote && !player.inventory.hasItemStack(bookStack) && (saveData.isUhcOnGoing() == false))
+					if (!player.inventory.hasItemStack(bookStack) && (saveData.isUhcOnGoing() == false))
 					{
 						player.inventory.addItemStackToInventory(bookStack);
-					}
-					
-					if (!world.isRemote && player.inventory.hasItemStack(bookStack) && (saveData.isUhcOnGoing() == true))
-					{
-						int slot = player.inventory.getSlotFor(bookStack);
-						if (slot != -1)
-						{
-							player.inventory.removeStackFromSlot(slot);
-						}
 					}
 				}
 				
@@ -90,27 +85,26 @@ public class UHCHandler {
 	}
 
 	@SubscribeEvent
-    public void onPlayerJoin(EntityJoinWorldEvent event) {
-		if (event.getEntity() instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) event.getEntity();
-			NBTTagCompound entityData = player.getEntityData();
-				
+    public void playerEditUHCEvent(PlayerTickEvent event) {
+		EntityPlayer player = event.player;
+		NBTTagCompound entityData = player.getEntityData();
+		World world = player.world;
+		
+		if(!world.isRemote)
+		{
 			if (!entityData.hasKey("canEditUHC"))
+				entityData.setBoolean("canEditUHC", false);
+			
+			if(entityData.getBoolean("canEditUHC") == false)
 			{
-				if (!event.getWorld().isRemote) {
-					entityData.setBoolean("canEditUHC", false);
-				}
-			}
-			if (player.canUseCommand(2, "")) {
-				if (!event.getWorld().isRemote) {
+				if (player.canUseCommand(2, ""))
 					entityData.setBoolean("canEditUHC", true);
-				}
 			}
 		}
 	}
 	
 	@SubscribeEvent
-	public void onNewPlayerJoin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event)
+	public void onNewPlayerJoin(PlayerLoggedInEvent event)
 	{
 		EntityPlayer player = event.player;
 		UHCSaveData saveData = UHCSaveData.getForWorld(player.world);
@@ -132,8 +126,8 @@ public class UHCHandler {
 			if(source instanceof EntityPlayer)
 			{
 				EntityPlayer sourcePlayer = (EntityPlayer) source;
-				if (sourcePlayer.canUseCommand(2, "")) {
-					if (!world.isRemote) {
+				if (!world.isRemote) {
+					if (sourcePlayer.canUseCommand(2, "")) {
 						if(!player.canUseCommand(2, ""))
 						{
 							if(entityData.hasKey("canEditUHC"))
@@ -165,8 +159,10 @@ public class UHCHandler {
 			
 			if(originalData.hasKey("canEditUHC"))
 			{
-				originalData.getBoolean("canEditUHC");
-				newData.setBoolean("canEditUHC", true);
+				if(originalData.getBoolean("canEditUHC"))
+					newData.setBoolean("canEditUHC", true);
+				else
+					newData.setBoolean("canEditUHC", false);
 			}
 			
 			BlockPos deathPos = originalPlayer.getPosition();
@@ -174,7 +170,6 @@ public class UHCHandler {
 			newData.setInteger("deathY", deathPos.getY());
 			newData.setInteger("deathZ", deathPos.getZ());
 			newData.setInteger("deathDim", originalPlayer.dimension);
-			System.out.println("death positions saved");
 			newPlayer.setSpawnPoint(deathPos, true);
 		}
 	}
@@ -194,88 +189,6 @@ public class UHCHandler {
 					event.setCanceled(true);
 				}
 			}
-			
-		}
-	}
-	
-	@SubscribeEvent
-	public void TestItemEvent(PlayerInteractEvent event) {		
-		EntityPlayer player = (EntityPlayer) event.getEntityPlayer();
-		World world = player.world;
-		ItemStack stack = player.getHeldItem(event.getHand());
-		NBTTagCompound entityData = player.getEntityData();
-
-		boolean flag = entityData.getBoolean("canEditUHC");
-		
-		UHCSaveData saveData = UHCSaveData.getForWorld(event.getWorld());
-		
-		if (stack.getItem() == Items.STICK && flag)
-		{
-			if(player.isSneaking())
-			{
-				stack.setStackDisplayName("uhcOnGoing = false");
-				saveData.setUhcOnGoing(false);
-				saveData.markDirty();
-			}
-			else
-			{
-				stack.setStackDisplayName("uhcOnGoing = true");
-				saveData.setUhcOnGoing(true);
-				saveData.markDirty();
-			}	
-		}
-		
-		if (stack.getItem() == Items.CARROT_ON_A_STICK && flag)
-		{
-			if(player.isSneaking())
-			{
-				stack.setStackDisplayName("itemConversion = false");
-				saveData.setItemConversion(false);
-				saveData.markDirty();
-			}
-			else
-			{
-				stack.setStackDisplayName("itemConversion = true");
-				saveData.setItemConversion(true);
-				saveData.markDirty();
-			}	
-		}
-		
-		if (stack.getItem() == Items.BOWL && flag)
-		{
-			if(player.isSneaking())
-			{
-				stack.setStackDisplayName("autoCook = false");
-				saveData.setAutoCook(false);
-				saveData.markDirty();
-			}
-			else
-			{
-				stack.setStackDisplayName("autoCook = true");
-				saveData.setAutoCook(true);
-				saveData.markDirty();
-			}	
-		}
-		
-		if (stack.getItem() == Items.ARROW && flag)
-		{
-			if(player.isSneaking())
-			{
-				stack.setStackDisplayName("customHealth = 20 [default]");
-				saveData.setMaxHealth(20);
-				saveData.markDirty();
-			}
-			else
-			{
-				stack.setStackDisplayName("customHealth = 40");
-				saveData.setMaxHealth(40);
-				saveData.markDirty();
-			}	
-		}
-		
-		if (stack.getItem() == Items.BUCKET && flag)
-		{
-			stack.setStackDisplayName(String.valueOf(saveData.getDifficulty()));
 		}
 	}
 }

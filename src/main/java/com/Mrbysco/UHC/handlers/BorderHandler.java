@@ -1,12 +1,13 @@
 package com.Mrbysco.UHC.handlers;
 
 import com.Mrbysco.UHC.init.UHCSaveData;
+import com.Mrbysco.UHC.init.UHCTimerData;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.WorldInfo;
+import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -21,22 +22,40 @@ public class BorderHandler {
 			NBTTagCompound entityData = player.getEntityData();
 			Scoreboard scoreboard = world.getScoreboard();
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			WorldInfo settings = world.getWorldInfo();
-
+			UHCTimerData timerData = UHCTimerData.getForWorld(world);
+    		WorldBorder border = world.getWorldBorder();
+    		
 			if(saveData.isUhcOnGoing())
 			{
-				
+				if(saveData.isShrinkEnabled())
+				{
+					String shrinkMode = saveData.getShrinkMode();
+					//shrink time * 60 as worldborder checks in seconds
+		    		
+					if(shrinkMode.equals("Shrink"))
+					{
+						
+					}
+					if(shrinkMode.equals("Arena"))
+					{
+
+					}
+					if(shrinkMode.equals("Control"))
+					{
+
+					}
+				}
 			}
 			else
 			{
 				if(saveData.getOriginalBorderCenterX() == -1)
 				{
-					double originalX = settings.getBorderCenterX();
+					double originalX = border.getCenterX();
 					saveData.setOriginalBorderCenterX(originalX);
 				}
 				if(saveData.getOriginalBorderCenterZ() == -1)
 				{
-					double originalZ = settings.getBorderCenterX();
+					double originalZ = border.getCenterX();
 					saveData.setOriginalBorderCenterZ(originalZ);
 				}
 				
@@ -49,7 +68,7 @@ public class BorderHandler {
 					}
 					else
 					{
-						double originalZ = settings.getBorderCenterX();
+						double originalZ = border.getCenterX();
 						saveData.setBorderCenterZ(originalZ);
 					}
 				}
@@ -62,7 +81,7 @@ public class BorderHandler {
 					}
 					else
 					{
-						double originalZ = settings.getBorderCenterX();
+						double originalZ = border.getCenterX();
 						saveData.setBorderCenterZ(originalZ);
 					}
 				}

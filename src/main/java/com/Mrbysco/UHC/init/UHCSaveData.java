@@ -11,6 +11,7 @@ public class UHCSaveData extends WorldSavedData{
 
 	private static final String DATA_NAME = Reference.MOD_ID + "_data";
 	
+	private boolean uhcStarting;
 	private boolean uhcOnGoing;
 	
 	private boolean friendlyFire;
@@ -48,8 +49,18 @@ public class UHCSaveData extends WorldSavedData{
 	
 	private boolean minuteMark;
 	private int minuteMarkTime;
+	private boolean timedNames;
+	private int nameTimer;
+	private boolean timedGlow;
+	private int glowTime;
 	
 	private boolean netherEnabled;
+	private boolean regenPotions;
+	private boolean level2Potions;
+	private boolean notchApples;
+	
+	private boolean weatherEnabled;
+	private boolean mobGriefing;
 	
 	public UHCSaveData(String name) {
 		super(name);
@@ -60,6 +71,7 @@ public class UHCSaveData extends WorldSavedData{
 		this.healthOnSide = false;
 		this.healthUnderName = false;
 		
+		this.uhcStarting = false;
 		this.uhcOnGoing = false;
 		this.autoCook = false;
 		this.itemConversion = false;
@@ -88,10 +100,20 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
+		this.timedNames = false;
+		this.nameTimer = 30;
+		this.timedGlow = false;
+		this.glowTime = 30;
 		
 		this.netherEnabled = true;
+		this.regenPotions = true;
+		this.level2Potions = true;
+		this.notchApples = true;
+		
+		this.weatherEnabled = true;
+		this.mobGriefing = true;
 	}
-	
+
 	public UHCSaveData() {
 		super(DATA_NAME);
 		
@@ -101,6 +123,7 @@ public class UHCSaveData extends WorldSavedData{
 		this.healthOnSide = false;
 		this.healthUnderName = false;
 
+		this.uhcStarting = false;
 		this.uhcOnGoing = false;
 		this.autoCook = false;
 		this.itemConversion = false;
@@ -129,8 +152,18 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
+		this.timedNames = false;
+		this.nameTimer = 30;
+		this.timedGlow = false;
+		this.glowTime = 30;
 		
 		this.netherEnabled = true;
+		this.regenPotions = true;
+		this.level2Potions = true;
+		this.notchApples = true;
+		
+		this.weatherEnabled = true;
+		this.mobGriefing = true;
 	}
 	
 	public void resetAll() {
@@ -140,6 +173,7 @@ public class UHCSaveData extends WorldSavedData{
 		this.healthOnSide = false;
 		this.healthUnderName = false;
 
+		this.uhcStarting = false;
 		this.uhcOnGoing = false;
 		this.autoCook = false;
 		this.itemConversion = false;
@@ -166,9 +200,28 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
+		this.timedNames = false;
+		this.nameTimer = 30;
+		this.timedGlow = false;
+		this.glowTime = 30;
 		
 		this.netherEnabled = true;
+		this.regenPotions = true;
+		this.level2Potions = true;
+		this.notchApples = true;
+		
+		this.weatherEnabled = true;
+		this.mobGriefing = true;
 	}
+	
+	public boolean isUhcStarting() {
+		return uhcStarting;
+	}
+	
+	public void setUhcStarting(boolean uhcStarting) {
+		this.uhcStarting = uhcStarting;
+	}
+	
 	public boolean isUhcOnGoing() {
 		return uhcOnGoing;
 	}
@@ -409,9 +462,82 @@ public class UHCSaveData extends WorldSavedData{
 		this.netherEnabled = netherEnabled;
 	}
 	
+	public boolean isRegenPotions() {
+		return regenPotions;
+	}
+	
+	public void setRegenPotions(boolean regenPotions) {
+		this.regenPotions = regenPotions;
+	}
+	
+	public boolean isLevel2Potions() {
+		return level2Potions;
+	}
+	
+	public void setLevel2Potions(boolean level2Potions) {
+		this.level2Potions = level2Potions;
+	}
+	
+	public boolean isNotchApples() {
+		return notchApples;
+	}
+	
+	public void setNotchApples(boolean notchApples) {
+		this.notchApples = notchApples;
+	}
+	
+	public boolean isTimedNames() {
+		return timedNames;
+	}
+	
+	public void setTimedNames(boolean timedNames) {
+		this.timedNames = timedNames;
+	}
+	
+	public int getNameTimer() {
+		return nameTimer;
+	}
+	
+	public void setNameTimer(int nameTimer) {
+		this.nameTimer = nameTimer;
+	}
+	
+	public boolean isTimedGlow() {
+		return timedGlow;
+	}
+	
+	public void setTimedGlow(boolean timedGlow) {
+		this.timedGlow = timedGlow;
+	}
+	
+	public int getGlowTime() {
+		return glowTime;
+	}
+	
+	public void setGlowTime(int glowTime) {
+		this.glowTime = glowTime;
+	}
+	
+	public boolean isWeatherEnabled() {
+		return weatherEnabled;
+	}
+	
+	public void setWeatherEnabled(boolean weatherEnabled) {
+		this.weatherEnabled = weatherEnabled;
+	}
+	
+	public boolean isMobGriefing() {
+		return mobGriefing;
+	}
+	
+	public void setMobGriefing(boolean mobGriefing) {
+		this.mobGriefing = mobGriefing;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-		uhcOnGoing = nbt.getBoolean("UHCStarted");
+		uhcStarting = nbt.getBoolean("uhcStarting");
+		uhcOnGoing = nbt.getBoolean("uhcOnGoing");
 		autoCook = nbt.getBoolean("autoCook");
 		itemConversion = nbt.getBoolean("itemConversion");
 		applyCustomHealth = nbt.getBoolean("CustomHealthApplied");
@@ -445,13 +571,20 @@ public class UHCSaveData extends WorldSavedData{
 		
 		minuteMark = nbt.getBoolean("minuteMark");
 		minuteMarkTime = nbt.getInteger("minuteMarkTime");
-		
+		timedNames = nbt.getBoolean("timedNames");
+		nameTimer = nbt.getInteger("nameTimer");
+		timedGlow = nbt.getBoolean("timedGlow");
+		glowTime = nbt.getInteger("glowTime");
+
 		netherEnabled = nbt.getBoolean("netherEnabled");
+		weatherEnabled = nbt.getBoolean("weatherEnabled");
+		mobGriefing = nbt.getBoolean("mobGriefing");
 	}
 	
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		compound.setBoolean("UHCStarted", uhcOnGoing);
+		compound.setBoolean("uhcStarting", uhcStarting);
+		compound.setBoolean("uhcOnGoing", uhcOnGoing);
 		compound.setBoolean("autoCook", autoCook);
 		compound.setBoolean("itemConversion", itemConversion);
 		compound.setBoolean("CustomHealthApplied", applyCustomHealth);
@@ -485,8 +618,14 @@ public class UHCSaveData extends WorldSavedData{
 		
 		compound.setBoolean("minuteMark", minuteMark);
 		compound.setInteger("minuteMarkTime", minuteMarkTime);
+		compound.setBoolean("timedNames", timedNames);
+		compound.setInteger("nameTimer", nameTimer);
+		compound.setBoolean("timedGlow", timedGlow);
+		compound.setInteger("glowTime", glowTime);
 		
 		compound.setBoolean("netherEnabled", netherEnabled);
+		compound.setBoolean("weatherEnabled", weatherEnabled);
+		compound.setBoolean("mobGriefing", mobGriefing);
 		return compound;
 	}
 	

@@ -23,17 +23,21 @@ public class PlayerHealthHandler {
 			
 			double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
 			
-			if(playerHealth != saveData.getMaxHealth() && saveData.isApplyCustomHealth())
+			if(saveData.isUhcStarting())
 			{
-				this.setHealth(player, saveData.getMaxHealth(), saveData.getMaxHealth());
-	            entityData.setBoolean("modifiedMaxHealth", true);
-			}
-			
-			if(playerHealth != saveData.getMaxHealth() && entityData.getBoolean("revival"));
-			{
-				this.setHealth(player, saveData.getMaxHealth(), saveData.getMaxHealth());
-	            entityData.setBoolean("modifiedMaxHealth", true);
-	            entityData.setBoolean("revival", false);
+				boolean flag = saveData.isApplyCustomHealth();
+				if(playerHealth != saveData.getMaxHealth() && flag)
+				{
+					this.setHealth(player, saveData.getMaxHealth(), saveData.getMaxHealth());
+		            entityData.setBoolean("modifiedMaxHealth", true);
+				}
+				
+				if(playerHealth != saveData.getMaxHealth() && flag && entityData.getBoolean("revival"));
+				{
+					this.setHealth(player, saveData.getMaxHealth(), saveData.getMaxHealth());
+		            entityData.setBoolean("modifiedMaxHealth", true);
+		            entityData.setBoolean("revival", false);
+				}
 			}
 			
 		} 

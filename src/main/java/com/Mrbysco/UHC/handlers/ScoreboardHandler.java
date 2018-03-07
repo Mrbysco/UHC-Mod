@@ -47,21 +47,7 @@ public class ScoreboardHandler {
 					}
 				}
 			}
-			
-			if(saveData.isUhcOnGoing() && player.getTeam() == null)
-			{
-				scoreboard.addPlayerToTeam(player.getName(), "solo");
-			}
-			
-			if(scoreboard.getTeam("solo") == null)
-			{
-				ScorePlayerTeam team = scoreboard.createTeam("solo");
-				team.setPrefix(TextFormatting.WHITE.toString());
-				team.setColor(TextFormatting.WHITE);
-				team.setAllowFriendlyFire(true);
-				team.setCollisionRule(CollisionRule.ALWAYS);
-			}
-			
+
 			if(scoreboard.getTeam("spectator") == null)
 			{
 				ScorePlayerTeam team = scoreboard.createTeam("spectator");
@@ -117,8 +103,7 @@ public class ScoreboardHandler {
 			
 			for (ScorePlayerTeam team : scoreboard.getTeams())
 			{
-				boolean flag = team != scoreboard.getTeam("solo");
-				if(saveData.isFriendlyFire() && flag)
+				if(saveData.isFriendlyFire())
 				{
 					if (team.getAllowFriendlyFire() != true)
 					{
@@ -133,7 +118,7 @@ public class ScoreboardHandler {
 					}
 				}
 				
-				if(saveData.isTeamCollision() && flag)
+				if(saveData.isTeamCollision())
 				{
 					if (team.getCollisionRule() != CollisionRule.ALWAYS)
 					{
@@ -149,21 +134,16 @@ public class ScoreboardHandler {
 				}
 			}
 
-			ScorePlayerTeam team = scoreboard.getPlayersTeam(player.getName());
-			if (team != null)
+			if (saveData.isUhcOnGoing() == false)
 			{
-				Collection<PotionEffect> effects = player.getActivePotionEffects();				
-				if (saveData.isUhcOnGoing() == false)
-				{
-					if(player.isGlowing() == false)
-						player.setGlowing(true);
-					else
-						return;
-				}
+				if(player.isGlowing() == false)
+					player.setGlowing(true);
 				else
-				{
-					player.setGlowing(false);
-				}
+					return;
+			}
+			else
+			{
+				player.setGlowing(false);
 			}
 			
 			if(scoreboard.getPlayersTeam(player.getName()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing())

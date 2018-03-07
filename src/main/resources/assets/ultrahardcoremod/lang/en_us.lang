@@ -45,12 +45,6 @@ book.uhc.option.shrinktimer=Time until:
 book.uhc.option.shrinksize=Size:
 book.uhc.option.shrinkovertime=Over:
 book.uhc.option.shrinkmode=Mode:
-book.uhc.option.shrinkmodeshrink=Shrink the border
-book.uhc.option.shrinkmodeshrink2=over the amount of minutes
-book.uhc.option.shrinkmodearena=Instantly shrink
-book.uhc.option.shrinkmodearena2=and re-spread players
-book.uhc.option.shrinkmodecontrol=Control point shrinks
-book.uhc.option.shrinkmodecontrol2=the border when occupied
 
 book.uhc.option.timelock=Time Lock:
 book.uhc.option.timelocktimer=Time until:
@@ -60,8 +54,57 @@ book.uhc.option.timemodenight=Time will stop at night
 
 book.uhc.option.minmark=Minute Mark:
 book.uhc.option.minmarktime=Every:
+book.uhc.option.timedname=Timed Names:
+book.uhc.option.timednametime=After:
+book.uhc.option.timedglow=Timed Glow:
+book.uhc.option.timedglowtime=After:
 
 book.uhc.option.nether=Nether Travel:
+book.uhc.option.regenpotion=Regen Potions:
+book.uhc.option.level2potion=Level 2 Potions:
+book.uhc.option.notchapples=Notch Apples:
+book.uhc.option.autocook=Auto Cook:
+book.uhc.option.convertion=Item Conversion:
+
+book.uhc.option.weather=Weather Cycle:
+book.uhc.option.mobgriefing=Mob Griefing:
+
+book.uhc.explain.shrinkmodeshrink=Shrink the border
+book.uhc.explain.shrinkmodeshrink2=over the amount of minutes.
+book.uhc.explain.shrinkmodearena=Instantly shrink
+book.uhc.explain.shrinkmodearena2=and re-spread players.
+book.uhc.explain.shrinkmodecontrol=Control point shrinks
+book.uhc.explain.shrinkmodecontrol2=the border when occupied.
+
+book.uhc.explain.timelock=When enabled time will lock to the specified.
+book.uhc.explain.minmark=When enabled mode Every specified amount of
+book.uhc.explain.minmark2=minutes a message will display in chat.
+book.uhc.explain.timename=When enabled Enemy names will be
+book.uhc.explain.timename2=hidden for x amount of minutes.
+book.uhc.explain.timeglow=When enabled Players will glow after
+book.uhc.explain.timeglow2=specified Amount of minutes.
+
+book.uhc.explain.nether=When disabled players can't travel to the nether.
+book.uhc.explain.regenpotion=When disabled Ghast tears will convert to gold ingots
+book.uhc.explain.regenpotion2=preventing the brewing of regeneration potions.
+book.uhc.explain.level2potion=When disabled Glowstone dust will convert to 
+book.uhc.explain.level2potion2=Glowstone preventing the brewing of level 2 potions.
+book.uhc.explain.notchapple=When disabled Notch apples will convert 
+book.uhc.explain.notchapple2=to their old crafting materials.
+
+book.uhc.explain.autocook=When enabled vanilla ores and
+book.uhc.explain.autocook2=food will be smelted/cooked
+book.uhc.explain.autocook3=
+book.uhc.explain.autocook4=New smelting can be added with CraftTweaker.
+
+book.uhc.explain.itemconvert=When enabled will do nothing unless
+book.uhc.explain.itemconvert2=item conversions are added
+book.uhc.explain.itemconvert3=through CraftTweaker 
+book.uhc.explain.itemconvert4=
+book.uhc.explain.itemconvert5=Given items will convert to given materials.
+
+book.uhc.explain.weather=When disabled doWeatherCycle will be disabled.
+book.uhc.explain.mobgriefing=When disabled mobGriefing will be disabled.
 
 # Team Names
 color.darkred.name=Dark Red

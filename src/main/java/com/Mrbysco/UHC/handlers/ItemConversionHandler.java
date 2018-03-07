@@ -5,6 +5,8 @@ import com.Mrbysco.UHC.lists.ConversionList;
 import com.Mrbysco.UHC.lists.info.ItemConversionInfo;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -21,11 +23,37 @@ public class ItemConversionHandler {
 			World world = player.world;
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 
+			if (saveData.isNotchApples())
+			{
+				if (!world.isRemote)
+				{
+					for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
+			        {
+						ItemStack findStack = player.inventory.getStackInSlot(i);
+			            Item item = findStack.getItem();
+			            int meta = findStack.getMetadata();
+			            if(!findStack.isEmpty() && item == Items.GOLDEN_APPLE && meta == 1)
+			            {
+			            	ItemStack itemstack = player.inventory.getStackInSlot(i);
+			                ItemStack stack = itemstack.copy();
+			                int count = stack.getCount();
+			                
+			                ItemStack gold_block = new ItemStack(Blocks.GOLD_BLOCK, 8);
+			                ItemStack apple = new ItemStack(Items.APPLE, 1);
+			                
+			                giveResult(player, copyStack(gold_block), count);
+							giveResult(player, copyStack(apple), count);
+			            }
+			            
+			        }
+				}
+			}
+			
 			if (saveData.isItemConversion())
 			{
 				for (ItemConversionInfo info : ConversionList.conversionList)
 				{
-					if (!player.world.isRemote)
+					if (!world.isRemote)
 					{
 						for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
 				        {

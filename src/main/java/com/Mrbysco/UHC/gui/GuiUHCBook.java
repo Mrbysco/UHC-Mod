@@ -1,11 +1,22 @@
 package com.Mrbysco.UHC.gui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.lwjgl.input.Keyboard;
 
 import com.Mrbysco.UHC.Reference;
 import com.Mrbysco.UHC.init.UHCSaveData;
+import com.Mrbysco.UHC.packets.ModPackethandler;
+import com.Mrbysco.UHC.packets.UHCPacketMessage;
+import com.Mrbysco.UHC.packets.UHCPacketTeam;
+import com.Mrbysco.UHC.packets.UHCPage1Packet;
+import com.Mrbysco.UHC.packets.UHCPage2Packet;
+import com.Mrbysco.UHC.packets.UHCPage3Packet;
+import com.Mrbysco.UHC.packets.UHCPage4Packet;
+import com.Mrbysco.UHC.packets.UHCStartPacket;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -13,15 +24,13 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import scala.util.Random;
@@ -32,16 +41,14 @@ public class GuiUHCBook extends GuiScreen{
 	public static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/book.png");
     /** The player editing the UHC Settings */
     private final EntityPlayer editingPlayer;
-    /** The world */
-    private final World world;
-    /** The current scoreboard */
-    private final Scoreboard scoreboard;
     /** The image size */
     private final int bookImageWidth = 192;
     private final int bookImageHeight = 192;
     /** The total amount of pages */
-    private int bookTotalPages = 4;
+    private int bookTotalPages = 5;
     private int currPage;
+    
+    protected ArrayList<GuiTextField> textBoxList = new ArrayList<GuiTextField>();
     
     /** Buttons */
     private NextPageButton buttonNextPage;
@@ -52,7 +59,7 @@ public class GuiUHCBook extends GuiScreen{
     
     private GuiButtonColor buttonRed, buttonYellow, buttonGreen, buttonAqua, buttonBlue, buttonLightPurple, buttonGray;
     
-    private GuiButtonColor buttonBlack,  buttonSolo, buttonRandomize;
+    private GuiButtonColor buttonBlack, buttonSolo, buttonRandomize;
     
     private GuiTextField randSizeField;
     private GuiTextField maxTeamSizeField;
@@ -67,6 +74,8 @@ public class GuiUHCBook extends GuiScreen{
     private GuiTextField shrinkOvertimeField;
     private GuiTextField timeLockTimerField;
     private GuiTextField minMarkTimerField;
+    private GuiTextField nameTimerField;
+    private GuiTextField glowTimerField;
     
     private ResetButton resetRandButton;
     private ResetButton resetTeamSizeButton;
@@ -94,20 +103,135 @@ public class GuiUHCBook extends GuiScreen{
     private ResetButton resetTimeLockTimerButton;
     private booleanButton minuteMarkButton;
     private ResetButton resetMinuteMarkTimerButton;
+    private booleanButton nameButton;
+    private ResetButton resetNameTimerButton;
+    private booleanButton glowButton;
+    private ResetButton resetGlowTimerButton;
+    
+    private booleanButton autoCookButton;
+    private booleanButton itemConvertButton;
     
     private booleanButton netherButton;
+    private booleanButton regenPotionsButton;
+    private booleanButton level2PotionsButton;
+    private booleanButton notchApplesButton;
     
+    private booleanButton weatherButton;
+    private booleanButton mobGriefingButton;
+    
+    private StartButton UHCStartButton;
+
     /** UHC save data */
     private UHCSaveData saveData;
-    /** Player data */
+	
+	private boolean uhcStarting;
+	private boolean uhcOnGoing;
+	
+	private boolean friendlyFire;
+	private boolean teamCollision;
+	private boolean healthInTab;
+	private boolean healthOnSide;
+	private boolean healthUnderName;
+	
+	private boolean doDaylightCycle;
+	private boolean autoCook;
+	private boolean itemConversion;
+	private boolean applyCustomHealth;
+	private int maxHealth;
+	
+	private int randomTeamSize;
+	private int maxTeamSize;
+	
+	private int difficulty;
+	
+	private int borderSize;
+	private double borderCenterX;
+	private double borderCenterZ;
+	private double originalBorderCenterX;
+	private double originalBorderCenterZ;
+	
+	private boolean shrinkEnabled;
+	private int shrinkTimer;
+	private int shrinkSize;
+	private int shrinkOvertime;
+	private String shrinkMode;
+
+	private boolean timeLock;
+	private int timeLockTimer;
+	private String timeMode;
+	
+	private boolean minuteMark;
+	private int minuteMarkTime;
+	private boolean timedNames;
+	private int nameTimer;
+	private boolean timedGlow;
+	private int glowTime;
+	
+	private boolean netherEnabled;
+	private boolean regenPotions;
+	private boolean level2Potions;
+	private boolean notchApples;
+	
+	private boolean weatherEnabled;
+	private boolean mobGriefing;
+	
 	private NBTTagCompound playerData;
 
-	public GuiUHCBook(EntityPlayer player, World world) {
+	
+	public GuiUHCBook(EntityPlayer player, UHCSaveData data) {
         this.editingPlayer = player;
-        this.world = world;
-        this.scoreboard = world.getScoreboard();
-        this.saveData = UHCSaveData.getForWorld(player.world);
         this.playerData = player.getEntityData();
+        this.saveData = data;
+        this.uhcStarting = data.isUhcStarting();
+        this.uhcOnGoing = data.isUhcOnGoing();
+        	
+        this.friendlyFire = data.isFriendlyFire();
+        this.teamCollision = data.isTeamCollision();
+        this.healthInTab = data.isHealthInTab();
+        this.healthOnSide = data.isHealthOnSide();
+        this.healthUnderName = data.isHealthUnderName();
+        	
+        this.doDaylightCycle = data.DoDaylightCycle();
+        this.autoCook = data.isAutoCook();
+        this.itemConversion = data.isItemConversion();
+        this.applyCustomHealth = data.isApplyCustomHealth();
+        this.maxHealth = data.getMaxHealth();
+        	
+        this.randomTeamSize = data.getRandomTeamSize();
+        this.maxTeamSize = data.getMaxTeamSize();
+        	
+        this.difficulty = data.getDifficulty();
+        	
+        this.borderSize = data.getBorderSize();
+        this.borderCenterX = data.getBorderCenterX();
+        this.borderCenterZ = data.getBorderCenterZ();
+        this.originalBorderCenterX = data.getOriginalBorderCenterX();
+        this.originalBorderCenterZ = data.getOriginalBorderCenterZ();
+        	
+        this.shrinkEnabled = data.isShrinkEnabled();
+        this.shrinkTimer = data.getShrinkTimer();
+        this.shrinkSize = data.getShrinkSize();
+        this.shrinkOvertime = data.getShrinkOvertime();
+        this.shrinkMode = data.getShrinkMode();
+
+        this.timeLock = data.isTimeLock();
+        this.timeLockTimer = data.getTimeLockTimer();
+        this.timeMode = data.getTimeMode();
+        	
+        this.minuteMark = data.isMinuteMark();
+        this.minuteMarkTime = data.getMinuteMarkTime();
+        this.timedNames = data.isTimedNames();
+        this.nameTimer = data.getNameTimer();
+        this.timedGlow = data.isTimedGlow();
+        this.glowTime = data.getGlowTime();
+        	
+        this.netherEnabled = data.isNetherEnabled();
+        this.regenPotions = data.isRegenPotions();
+        this.level2Potions = data.isLevel2Potions();
+        this.notchApples = data.isNotchApples();
+        	
+        this.weatherEnabled = data.isWeatherEnabled();
+        this.mobGriefing = data.isMobGriefing();
 	}
 	
 	@Override
@@ -145,12 +269,12 @@ public class GuiUHCBook extends GuiScreen{
     	this.resetRandButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(20, i + 43 + 94, j + 85, fontRenderer));
     	this.resetTeamSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(21, i + 43 + 94, j + 99, fontRenderer));
     	
-    	this.collisionButton = (booleanButton)this.addButton(new booleanButton(22, i + 43 + 74, j + 113, fontRenderer, saveData.isTeamCollision(), world));
-    	this.damageButton = (booleanButton)this.addButton(new booleanButton(23, i + 43 + 74, j + 127, fontRenderer, saveData.isFriendlyFire(), world));
+    	this.collisionButton = (booleanButton)this.addButton(new booleanButton(22, i + 43 + 74, j + 113, fontRenderer, saveData.isTeamCollision()));
+    	this.damageButton = (booleanButton)this.addButton(new booleanButton(23, i + 43 + 74, j + 127, fontRenderer, saveData.isFriendlyFire()));
 
-    	this.healthTabButton = (booleanButton)this.addButton(new booleanButton(24, i + 43 + 80, j + 109, fontRenderer, saveData.isHealthInTab(), world));
-    	this.healthSideButton = (booleanButton)this.addButton(new booleanButton(25, i + 43 + 80, j + 122, fontRenderer, saveData.isHealthOnSide(), world));
-    	this.healthNameButton = (booleanButton)this.addButton(new booleanButton(26, i + 43 + 80, j + 135, fontRenderer, saveData.isHealthUnderName(), world));
+    	this.healthTabButton = (booleanButton)this.addButton(new booleanButton(24, i + 43 + 80, j + 109, fontRenderer, saveData.isHealthInTab()));
+    	this.healthSideButton = (booleanButton)this.addButton(new booleanButton(25, i + 43 + 80, j + 122, fontRenderer, saveData.isHealthOnSide()));
+    	this.healthNameButton = (booleanButton)this.addButton(new booleanButton(26, i + 43 + 80, j + 135, fontRenderer, saveData.isHealthUnderName()));
     	
     	this.resetBorderSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(27, i + 43 + 68, j + 36, fontRenderer));
     	this.resetBorderCenterXButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(28, i + 43 + 92, j + 60, fontRenderer));
@@ -158,19 +282,34 @@ public class GuiUHCBook extends GuiScreen{
     	this.centerCurrentXButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(30, i + 43 + 76, j + 60, fontRenderer));
     	this.centerCurrentZButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(31, i + 43 + 76, j + 74, fontRenderer));
     	
-    	this.shrinkButton = (booleanButton)this.addButton(new booleanButton(32, i + 43 + 70, j + 90, fontRenderer, saveData.isShrinkEnabled(), world));  
+    	this.shrinkButton = (booleanButton)this.addButton(new booleanButton(32, i + 43 + 70, j + 90, fontRenderer, saveData.isShrinkEnabled()));  
     	this.resetShrinkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(33, i + 43 + 92, j + 104, fontRenderer));
     	this.resetShrinkSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(34, i + 43 + 92, j + 116, fontRenderer));
     	this.resetShrinkOverTimeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(35, i + 43 + 92, j + 128, fontRenderer));   	
     	this.ShrinkModeButton = (TextButton)this.addButton(new TextButton(36, i + 43 + 31, j + 140, saveData.getShrinkMode(), mc));
     	
-    	this.timeLockButton = (booleanButton)this.addButton(new booleanButton(37, i + 43 + 56, j + 24, fontRenderer, saveData.isTimeLock(), world));  
+    	this.timeLockButton = (booleanButton)this.addButton(new booleanButton(37, i + 43 + 60, j + 25, fontRenderer, saveData.isTimeLock()));  
     	this.timeModeButton = (TextButton)this.addButton(new TextButton(38, i + 43 + 32, j + 52, saveData.getTimeMode(), mc));  
     	this.resetTimeLockTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(39, i + 43 + 80, j + 38, fontRenderer));
     	this.resetMinuteMarkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(40, i + 43 + 80, j + 77, fontRenderer));
-    	this.minuteMarkButton = (booleanButton)this.addButton(new booleanButton(41, i + 43 + 56, j + 64, fontRenderer, saveData.isMinuteMark(), world));  
+    	this.minuteMarkButton = (booleanButton)this.addButton(new booleanButton(41, i + 43 + 60, j + 64, fontRenderer, saveData.isMinuteMark()));  
     	
-    	this.netherButton = (booleanButton)this.addButton(new booleanButton(42, i + 43 + 80, j + 94, fontRenderer, saveData.isNetherEnabled(), world));  
+    	this.netherButton = (booleanButton)this.addButton(new booleanButton(42, i + 43 + 80, j + 94, fontRenderer, saveData.isNetherEnabled()));  
+    	this.regenPotionsButton = (booleanButton)this.addButton(new booleanButton(43, i + 43 + 80, j + 23, fontRenderer, saveData.isNetherEnabled()));  
+    	this.level2PotionsButton = (booleanButton)this.addButton(new booleanButton(44, i + 43 + 80, j + 35, fontRenderer, saveData.isNetherEnabled()));  
+    	this.notchApplesButton = (booleanButton)this.addButton(new booleanButton(45, i + 43 + 80, j + 48, fontRenderer, saveData.isNetherEnabled()));  
+
+    	this.nameButton = (booleanButton)this.addButton(new booleanButton(46, i + 43 + 60, j + 91, fontRenderer, saveData.isTimedNames()));  
+    	this.resetNameTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(47, i + 43 + 80, j + 103, fontRenderer));
+    	this.glowButton = (booleanButton)this.addButton(new booleanButton(48, i + 43 + 60, j + 119, fontRenderer, saveData.isTimedGlow()));  
+    	this.resetGlowTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(49, i + 43 + 80, j + 131, fontRenderer));
+    	this.autoCookButton = (booleanButton)this.addButton(new booleanButton(50, i + 43 + 80, j + 63, fontRenderer, saveData.isAutoCook()));  
+    	this.itemConvertButton = (booleanButton)this.addButton(new booleanButton(51, i + 43 + 80, j + 77, fontRenderer, saveData.isItemConversion()));  
+    	
+    	this.weatherButton = (booleanButton)this.addButton(new booleanButton(52, i + 43 + 80, j + 23, fontRenderer, saveData.isWeatherEnabled()));  
+    	this.mobGriefingButton = (booleanButton)this.addButton(new booleanButton(53, i + 43 + 80, j + 35, fontRenderer, saveData.isMobGriefing()));  
+    	
+    	this.UHCStartButton = (GuiUHCBook.StartButton)this.addButton(new GuiUHCBook.StartButton(54, i + 43 + 7, j + 132, fontRenderer));  
 
     	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 80, j + 89, 20, 8);
     	setupField(randSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getRandomTeamSize()));
@@ -205,6 +344,12 @@ public class GuiUHCBook extends GuiScreen{
 		minMarkTimerField = new GuiTextField(10, fontRenderer, i + 43 + 38, j + 80, 32, 8);
 		setupField(minMarkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getMinuteMarkTime()));
 		
+		nameTimerField = new GuiTextField(11, fontRenderer, i + 43 + 38, j + 106, 32, 8);
+		setupField(nameTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getNameTimer()));
+		
+		glowTimerField = new GuiTextField(12, fontRenderer, i + 43 + 38, j + 133, 32, 8);
+		setupField(glowTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getGlowTime()));
+		
         this.updateButtons();
 	}
 	
@@ -216,6 +361,7 @@ public class GuiUHCBook extends GuiScreen{
 		field.setText(text);
 		field.setEnableBackgroundDrawing(false);
 		field.setTextColor(color);
+		textBoxList.add(field);
 	}
 	
 	@Override
@@ -252,6 +398,10 @@ public class GuiUHCBook extends GuiScreen{
 				timeLockTimerField.updateCursorCounter();
 			if(minMarkTimerField != null)
 				minMarkTimerField.updateCursorCounter();
+			if(nameTimerField != null)
+				nameTimerField.updateCursorCounter();
+			if(glowTimerField != null)
+				glowTimerField.updateCursorCounter();
 		}
 		super.updateScreen();
 	}
@@ -296,10 +446,6 @@ public class GuiUHCBook extends GuiScreen{
     	
     	this.collisionButton.visible = this.currPage == 0;
     	this.damageButton.visible = this.currPage == 0;
-    	
-    	this.healthTabButton.visible = this.currPage == 2;
-    	this.healthSideButton.visible = this.currPage == 2;
-    	this.healthNameButton.visible = this.currPage == 2;
     	    	
     	this.randSizeField.setVisible(this.currPage == 0);
     	this.maxTeamSizeField.setVisible(this.currPage == 0);
@@ -339,9 +485,34 @@ public class GuiUHCBook extends GuiScreen{
     	this.timeLockTimerField.setEnabled(this.currPage == 2);
     	this.minMarkTimerField.setVisible(this.currPage == 2);
     	this.minMarkTimerField.setEnabled(this.currPage == 2);
+    	this.nameTimerField.setVisible(this.currPage == 2);
+    	this.nameTimerField.setEnabled(this.currPage == 2);
+    	this.glowTimerField.setVisible(this.currPage == 2);
+    	this.glowTimerField.setEnabled(this.currPage == 2);
+    	
     	this.minuteMarkButton.visible = this.currPage == 2;
     	this.resetMinuteMarkTimerButton.visible = this.currPage == 2;
-    	this.netherButton.visible = this.currPage == 2;
+    	this.nameButton.visible = this.currPage == 2;
+    	this.resetNameTimerButton.visible = this.currPage == 2;
+    	this.glowButton.visible = this.currPage == 2;
+    	this.resetGlowTimerButton.visible = this.currPage == 2;
+    	
+    	this.netherButton.visible = this.currPage == 3;
+    	
+    	this.healthTabButton.visible = this.currPage == 3;
+    	this.healthSideButton.visible = this.currPage == 3;
+    	this.healthNameButton.visible = this.currPage == 3;
+    	
+    	this.regenPotionsButton.visible = this.currPage == 3;
+    	this.level2PotionsButton.visible = this.currPage == 3;
+    	this.notchApplesButton.visible = this.currPage == 3;
+    	this.autoCookButton.visible = this.currPage == 3;
+    	this.itemConvertButton.visible = this.currPage == 3;
+    	
+    	this.weatherButton.visible = this.currPage == 4;
+    	this.mobGriefingButton.visible = this.currPage == 4;
+    	
+    	this.UHCStartButton.visible = this.currPage == 4;
     }
     
     public void drawField(GuiTextField field)
@@ -358,6 +529,8 @@ public class GuiUHCBook extends GuiScreen{
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
+    	//System.out.println(friendlyFire);
+
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(BOOK_TEXTURE);
         int i = (this.width - 192) / 2;
@@ -369,10 +542,35 @@ public class GuiUHCBook extends GuiScreen{
         int j1 = this.fontRenderer.getStringWidth(s4);
         this.fontRenderer.drawString(s4, i - j1 + 192 - 44, 18, 0);
         
+        List<String> ShrinkModeShrink = new ArrayList<>();
+		ShrinkModeShrink.add(I18n.format("book.uhc.explain.shrinkmodeshrink"));
+		ShrinkModeShrink.add(I18n.format("book.uhc.explain.shrinkmodeshrink2"));
+		List<String> ShrinkModeArena = new ArrayList<>();
+		ShrinkModeArena.add(I18n.format("book.uhc.explain.shrinkmodearena"));
+		ShrinkModeArena.add(I18n.format("book.uhc.explain.shrinkmodearena2"));
+		List<String> ShrinkModeControl = new ArrayList<>();
+		ShrinkModeControl.add(I18n.format("book.uhc.explain.shrinkmodecontrol"));
+		ShrinkModeControl.add(I18n.format("book.uhc.explain.shrinkmodecontrol2"));
+		
 		String minuteMessageString = I18n.format("book.uhc.option.minutes");
 		String locationString = I18n.format("book.uhc.option.location");
 		String resetString = I18n.format("book.uhc.option.reset");
-
+    	String TimeLockString = I18n.format("book.uhc.option.timelock");
+		String minMarkString = I18n.format("book.uhc.option.minmark");
+		String timedNameString = I18n.format("book.uhc.option.timedname");
+		String timedGlowString = I18n.format("book.uhc.option.timedglow");
+		String timeModeDayText = I18n.format("book.uhc.option.timemodeday"); 
+		String timeModeNightText = I18n.format("book.uhc.option.timemodenight");
+		String netherTravelString = I18n.format("book.uhc.option.nether");
+    	String regenPotionsString = I18n.format("book.uhc.option.regenpotion");
+		String level2PotionsString = I18n.format("book.uhc.option.level2potion");
+		String notchApplesString = I18n.format("book.uhc.option.notchapples");
+		String autoCookString = I18n.format("book.uhc.option.autocook");
+		String itemConvertString = I18n.format("book.uhc.option.convertion");
+		
+		String weatherString = I18n.format("book.uhc.option.weather");
+		String mobGriefingString = I18n.format("book.uhc.option.mobgriefing");
+		
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	    if(this.currPage == 0)
 	    {
@@ -387,7 +585,7 @@ public class GuiUHCBook extends GuiScreen{
 	        this.fontRenderer.drawString(maxTeamSizeString, i + 43, j + 101, 0xFF555555);
 	        drawField(maxTeamSizeField);
 
-			boolean flag = mouseX >= maxTeamSizeField.x && mouseY >= maxTeamSizeField.y && mouseX < maxTeamSizeField.x + maxTeamSizeField.width && mouseY < maxTeamSizeField.y + maxTeamSizeField.height;
+			boolean flag = hoverBoolean(mouseX, mouseY, maxTeamSizeField.x, maxTeamSizeField.y, maxTeamSizeField.width, maxTeamSizeField.height);
 			String infinityString = I18n.format("book.uhc.option.infinite");
 			
 			if(isColorNotHovered() && !flag)
@@ -446,44 +644,17 @@ public class GuiUHCBook extends GuiScreen{
 	        String ShrinkModeString = I18n.format("book.uhc.option.shrinkmode");
 	        this.fontRenderer.drawString(ShrinkModeString, i + 44, j + 140, 0xFF555555);
 	        drawField(shrinkOvertimeField);
-	        
-			boolean flag = mouseX >= shrinkTimerField.x && mouseY >= shrinkTimerField.y && mouseX < shrinkTimerField.x + shrinkTimerField.width && mouseY < shrinkTimerField.y + shrinkTimerField.height;
-			boolean flag1 = mouseX >= shrinkOvertimeField.x && mouseY >= shrinkOvertimeField.y && mouseX < shrinkOvertimeField.x + shrinkOvertimeField.width && mouseY < shrinkOvertimeField.y + shrinkOvertimeField.height;
+
+			boolean flag = hoverBoolean(mouseX, mouseY, shrinkTimerField.x, shrinkTimerField.y, shrinkTimerField.width, shrinkTimerField.height);
+			boolean flag1 = hoverBoolean(mouseX, mouseY, shrinkOvertimeField.x, shrinkOvertimeField.y, shrinkOvertimeField.width, shrinkOvertimeField.height);
 			if((flag && shrinkTimerField.isFocused() == false) || (flag1 && shrinkOvertimeField.isFocused() == false))
 			{
 		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
-			}
-			
-			String ShrinkModeShrink = I18n.format("book.uhc.option.shrinkmodeshrink");
-			String ShrinkModeShrink2 = I18n.format("book.uhc.option.shrinkmodeshrink2");
-			String ShrinkModeArena = I18n.format("book.uhc.option.shrinkmodearena");
-			String ShrinkModeArena2 = I18n.format("book.uhc.option.shrinkmodearena2");
-			String ShrinkModeControl = I18n.format("book.uhc.option.shrinkmodecontrol");
-			String ShrinkModeControl2 = I18n.format("book.uhc.option.shrinkmodecontrol2");
-			if(ShrinkModeButton.isMouseOver() == true)
-			{
-				String ShrinkMode = saveData.getShrinkMode();
-				if(ShrinkMode.equals("Shrink"))
-				{
-					this.drawCenteredString(fontRenderer, ShrinkModeShrink, mouseX, mouseY + 5, 0xFFFFAA00);
-					this.drawCenteredString(fontRenderer, ShrinkModeShrink2, mouseX, mouseY + 15, 0xFFFFAA00);
-				}
-				if(ShrinkMode.equals("Arena"))
-				{
-					this.drawCenteredString(fontRenderer, ShrinkModeArena, mouseX, mouseY + 5, 0xFFFFAA00);
-					this.drawCenteredString(fontRenderer, ShrinkModeArena2, mouseX, mouseY + 15, 0xFFFFAA00);
-				}
-				if(ShrinkMode.equals("Control"))
-				{
-					this.drawCenteredString(fontRenderer, ShrinkModeControl, mouseX, mouseY + 5, 0xFFFFAA00);
-					this.drawCenteredString(fontRenderer, ShrinkModeControl2, mouseX, mouseY + 15, 0xFFFFAA00);
-				}
 			}
 	    }
 	    
 	    if(this.currPage == 2)
 	    {
-	    	String TimeLockString = I18n.format("book.uhc.option.timelock");
 	    	this.fontRenderer.drawString(TimeLockString, i + 38, j + 28, 0xFF555555);
 	    	drawField(timeLockTimerField);
 	    	
@@ -492,37 +663,45 @@ public class GuiUHCBook extends GuiScreen{
 	    	
 	    	String TimeLockModeString = I18n.format("book.uhc.option.timelockmode");
 	    	this.fontRenderer.drawString(TimeLockModeString, i + 44, j + 53, 0xFF555555);
-			
-			String timeModeDayText = I18n.format("book.uhc.option.timemodeday"); 
-			int dayInt = fontRenderer.getStringWidth(timeModeDayText);
-			String timeModeNightText = I18n.format("book.uhc.option.timemodenight"); 
-			int nightInt = fontRenderer.getStringWidth(timeModeNightText);
 
-			if(timeModeButton.isMouseOver() == true)
-			{
-				String TimeMode = saveData.getTimeMode();
-				if(TimeMode.equals("Day"))
-			        this.drawCenteredString(fontRenderer, timeModeDayText, mouseX, mouseY + 5, 0xFFFFAA00);
-				if(TimeMode.equals("Night"))
-			        this.drawCenteredString(fontRenderer, timeModeNightText, mouseX, mouseY + 5, 0xFFFFAA00);
-			}
-			
-			String minMarkString = I18n.format("book.uhc.option.minmark");
 	    	this.fontRenderer.drawString(minMarkString, i + 38, j + 68, 0xFF555555);
 
 			String minMarkTimerString = I18n.format("book.uhc.option.minmarktime");
 	    	this.fontRenderer.drawString(minMarkTimerString, i + 44, j + 80, 0xFF555555);
 			drawField(minMarkTimerField);
 			
-			boolean flag = mouseX >= timeLockTimerField.x && mouseY >= timeLockTimerField.y && mouseX < timeLockTimerField.x + timeLockTimerField.width && mouseY < timeLockTimerField.y + timeLockTimerField.height;
-			boolean flag1 = mouseX >= minMarkTimerField.x && mouseY >= minMarkTimerField.y && mouseX < minMarkTimerField.x + minMarkTimerField.width && mouseY < minMarkTimerField.y + minMarkTimerField.height;
+	    	this.fontRenderer.drawString(timedNameString, i + 38, j + 94, 0xFF555555);
+	    	
+	    	String timedNameTimerString = I18n.format("book.uhc.option.timednametime");
+	    	this.fontRenderer.drawString(timedNameTimerString, i + 44, j + 106, 0xFF555555);
+			drawField(nameTimerField);
+			
+	    	this.fontRenderer.drawString(timedGlowString, i + 38, j + 122, 0xFF555555);
+	    	
+	    	String timedGlowStringTimerString = I18n.format("book.uhc.option.timedglowtime");
+	    	this.fontRenderer.drawString(timedGlowStringTimerString, i + 44, j + 134, 0xFF555555);
+			drawField(glowTimerField);
+			
+			boolean flag = hoverBoolean(mouseX, mouseY, timeLockTimerField.x, timeLockTimerField.y, timeLockTimerField.width, timeLockTimerField.height);
+			boolean flag1 = hoverBoolean(mouseX, mouseY, minMarkTimerField.x, minMarkTimerField.y, minMarkTimerField.width, minMarkTimerField.height);
 			if((flag && timeLockTimerField.isFocused() == false) || (flag1 && minMarkTimerField.isFocused() == false))
 			{
 		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 			}
-			
-			
-			String netherTravelString = I18n.format("book.uhc.option.nether");
+	    }
+	    
+	    if(this.currPage == 3)
+	    {
+	        this.fontRenderer.drawString(regenPotionsString, i+38, j+28, 0xFF555555);
+
+	        this.fontRenderer.drawString(level2PotionsString, i+38, j+40, 0xFF555555);
+
+	        this.fontRenderer.drawString(notchApplesString, i+38, j+52, 0xFF555555);
+	        
+	        this.fontRenderer.drawString(autoCookString, i+38, j+68, 0xFF555555);
+	        
+	        this.fontRenderer.drawString(itemConvertString, i+38, j+80, 0xFF555555);
+	        
 	        this.fontRenderer.drawString(netherTravelString, i + 38, j + 98, 0xFF555555);
 
 			String healthInTabString = I18n.format("book.uhc.option.healthtab");
@@ -532,8 +711,15 @@ public class GuiUHCBook extends GuiScreen{
 	        this.fontRenderer.drawString(healthOnSideString, i + 38, j + 126, 0xFF555555);
 
 			String healthUnderNameString = I18n.format("book.uhc.option.healthname");
-	        this.fontRenderer.drawString(healthUnderNameString, i + 38, j + 138, 0xFF555555);
+	        this.fontRenderer.drawString(healthUnderNameString, i + 38, j + 138, 0xFF555555);  
 	    }
+	    
+	    if(this.currPage == 4)
+	    {
+	    	this.fontRenderer.drawString(weatherString, i+38, j+28, 0xFF555555);
+	    	
+	    	this.fontRenderer.drawString(mobGriefingString, i+38, j+40, 0xFF555555);
+		}
 	    
 	    for(GuiButton button : buttonList)
 		{
@@ -552,8 +738,201 @@ public class GuiUHCBook extends GuiScreen{
 				}
 			}
 		}
+	    
+		if(ShrinkModeButton.visible == true && ShrinkModeButton.isMouseOver() == true)
+		{
+			String ShrinkMode = saveData.getShrinkMode();
+			if(ShrinkMode.equals("Shrink"))
+			{
+				this.drawInfoTooltip(ShrinkModeShrink, mouseX, mouseY);
+			}
+			if(ShrinkMode.equals("Arena"))
+			{
+				this.drawInfoTooltip(ShrinkModeArena, mouseX, mouseY);
+			}
+			if(ShrinkMode.equals("Control"))
+			{
+				this.drawInfoTooltip(ShrinkModeControl, mouseX, mouseY);
+			}
+		}
+	    
+	    if(timeModeButton.visible == true && timeModeButton.isMouseOver() == true)
+		{
+			String TimeMode = saveData.getTimeMode();
+			if(TimeMode.equals("Day"))
+		        this.drawInfoTooltip(timeModeDayText, mouseX, mouseY);
+			if(TimeMode.equals("Night"))
+		        this.drawInfoTooltip(timeModeNightText, mouseX, mouseY);
+		}
+
+	    if(this.currPage == 2 && hoverBoolean(mouseX, mouseY, i+38, j+28, fontRenderer.getStringWidth(TimeLockString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(I18n.format("book.uhc.explain.timelock"), mouseX, mouseY);
+	    }
+	    
+        List<String> MinuteMarkExplain = new ArrayList<>();
+        MinuteMarkExplain.add(I18n.format("book.uhc.explain.minmark"));
+        MinuteMarkExplain.add(I18n.format("book.uhc.explain.minmark2"));
+        List<String> timedNameExplain = new ArrayList<>();
+        timedNameExplain.add(I18n.format("book.uhc.explain.timename"));
+        timedNameExplain.add(I18n.format("book.uhc.explain.timename2"));
+        List<String> timedGlowExplain = new ArrayList<>();
+        timedGlowExplain.add(I18n.format("book.uhc.explain.timeglow"));
+        timedGlowExplain.add(I18n.format("book.uhc.explain.timeglow2"));
+        
+	    if(this.currPage == 2 && hoverBoolean(mouseX, mouseY, i+38, j+68, fontRenderer.getStringWidth(minMarkString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(MinuteMarkExplain, mouseX, mouseY);
+	    }
+	    if(this.currPage == 2 && hoverBoolean(mouseX, mouseY, i+38, j+94, fontRenderer.getStringWidth(timedNameString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(timedNameExplain, mouseX, mouseY);
+	    }
+	    if(this.currPage == 2 && hoverBoolean(mouseX, mouseY, i+38, j+122, fontRenderer.getStringWidth(timedGlowString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(timedGlowExplain, mouseX, mouseY);
+	    }
+	    
+        List<String> regenPotionExplain = new ArrayList<>();
+        regenPotionExplain.add(I18n.format("book.uhc.explain.regenpotion"));
+        regenPotionExplain.add(I18n.format("book.uhc.explain.regenpotion2"));
+        List<String> level2PotionExplain = new ArrayList<>();
+        level2PotionExplain.add(I18n.format("book.uhc.explain.level2potion"));
+        level2PotionExplain.add(I18n.format("book.uhc.explain.level2potion2"));
+        List<String> notchApplesExplain = new ArrayList<>();
+        notchApplesExplain.add(I18n.format("book.uhc.explain.notchapple"));
+        notchApplesExplain.add(I18n.format("book.uhc.explain.notchapple2"));
+        
+	    if(this.currPage == 3 && hoverBoolean(mouseX, mouseY, i+38, j+28, fontRenderer.getStringWidth(regenPotionsString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(regenPotionExplain, mouseX, mouseY);
+	    }
+	    if(this.currPage == 3 && hoverBoolean(mouseX, mouseY, i+38, j+40, fontRenderer.getStringWidth(level2PotionsString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(level2PotionExplain, mouseX, mouseY);
+	    }
+	    if(this.currPage == 3 && hoverBoolean(mouseX, mouseY, i+38, j+52, fontRenderer.getStringWidth(notchApplesString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(notchApplesExplain, mouseX, mouseY);
+	    }
+	    
+        List<String> autoSmeltExplain = new ArrayList<>();
+        autoSmeltExplain.add(I18n.format("book.uhc.explain.autocook"));
+        autoSmeltExplain.add(I18n.format("book.uhc.explain.autocook2"));
+        autoSmeltExplain.add(I18n.format("book.uhc.explain.autocook3"));
+        autoSmeltExplain.add(I18n.format("book.uhc.explain.autocook4"));
+        List<String> itemConvertExplain = new ArrayList<>();
+        itemConvertExplain.add(I18n.format("book.uhc.explain.itemconvert"));
+        itemConvertExplain.add(I18n.format("book.uhc.explain.itemconvert2"));
+        itemConvertExplain.add(I18n.format("book.uhc.explain.itemconvert3"));
+        itemConvertExplain.add(I18n.format("book.uhc.explain.itemconvert4"));
+        itemConvertExplain.add(I18n.format("book.uhc.explain.itemconvert5"));
+	    if(this.currPage == 3 && hoverBoolean(mouseX, mouseY, i+38, j+68, fontRenderer.getStringWidth(autoCookString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(autoSmeltExplain, mouseX, mouseY);
+	    }
+	    if(this.currPage == 3 && hoverBoolean(mouseX, mouseY, i+38, j+80, fontRenderer.getStringWidth(itemConvertString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(itemConvertExplain, mouseX, mouseY);
+	    }
+	    
+        String netherTravelExplain = I18n.format("book.uhc.explain.nether");
+	    if(this.currPage == 3 && hoverBoolean(mouseX, mouseY, i+35, j+98, fontRenderer.getStringWidth(netherTravelString), fontRenderer.FONT_HEIGHT))
+        {
+			this.drawInfoTooltip(netherTravelExplain, mouseX, mouseY);
+        }
+	    
+	    String weatherExplain = I18n.format("book.uhc.explain.weather");
+	    if(this.currPage == 4 && hoverBoolean(mouseX, mouseY, i+38, j+28, fontRenderer.getStringWidth(weatherString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(weatherExplain, mouseX, mouseY);
+	    }
+	    String mobGriefingExplain = I18n.format("book.uhc.explain.mobgriefing");
+	    if(this.currPage == 4 && hoverBoolean(mouseX, mouseY, i+38, j+40, fontRenderer.getStringWidth(mobGriefingString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(mobGriefingExplain, mouseX, mouseY);
+	    }
     }
     
+    public void drawInfoTooltip(String text, int x, int y)
+    {
+        this.drawInfoTooltip(Arrays.asList(text), x, y + fontRenderer.FONT_HEIGHT);
+    }
+    
+    public void drawInfoTooltip(List<String> textLines, int x, int y)
+    {
+    	drawInfoTooltip(textLines, x, y, fontRenderer);
+    }
+    
+    protected void drawInfoTooltip(List<String> textLines, int x, int y, FontRenderer font)
+    {
+        if (!textLines.isEmpty())
+        {
+            GlStateManager.disableRescaleNormal();
+            RenderHelper.disableStandardItemLighting();
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+            int i = 0;
+
+            for (String s : textLines)
+            {
+                int j = this.fontRenderer.getStringWidth(s);
+
+                if (j > i)
+                    i = j;
+            }
+
+            int l1 = x + 12;
+            int i2 = y - 12;
+            int k = 8;
+
+            if (textLines.size() > 1)
+            {
+                k += 2 + (textLines.size() - 1) * 10;
+            }
+
+            if (l1 + i > this.width)
+                l1 -= 28 + i;
+
+            if (i2 + k + 6 > this.height)
+                i2 = this.height - k - 6;
+
+            this.zLevel = 300.0F;
+            this.itemRender.zLevel = 300.0F;
+            this.drawRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, 0xFFf9eed1);
+            this.drawRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, 0xFF1c0f00);
+            this.drawRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, 0xFF1c0f00);
+            this.drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, 0xFF75321e, 0xFF5b2312);
+            this.drawRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, 0xFF1c0f00);
+            this.drawRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, 0xFF1c0f00);
+            this.drawRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, 0xFF4c1a0b);
+            this.drawRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, 0xFF4c1a0b);
+            this.drawRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 0xFF4c1a0b);
+            this.drawRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 0xFF4c1a0b);
+            
+            for (int k1 = 0; k1 < textLines.size(); ++k1)
+            {
+                String s1 = textLines.get(k1);
+                this.fontRenderer.drawStringWithShadow(s1, (float)l1, (float)i2, -1);
+
+                if (k1 == 0)
+                    i2 += 2;
+
+                i2 += 10;
+            }
+            this.zLevel = 0.0F;
+            this.itemRender.zLevel = 0.0F;
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepth();
+            RenderHelper.enableStandardItemLighting();
+            GlStateManager.enableRescaleNormal();
+        }
+    }
+    
+    public boolean hoverBoolean(int mouseX, int mouseY, int x, int y, int widthIn, int heigthIn) {
+    	return mouseX >= x && mouseY >= y && mouseX < x + widthIn && mouseY < y + heigthIn;
+    }
+
     @Override
     protected void actionPerformed(GuiButton button) throws IOException
     {
@@ -579,275 +958,393 @@ public class GuiUHCBook extends GuiScreen{
             }
             else if (button.id == 3)
             {
-				AddToTeam(TextFormatting.DARK_RED.getFriendlyName(), TextFormatting.DARK_RED, I18n.format("color.darkred.name"));
+            	sendTeamPacket(TextFormatting.DARK_RED.getFriendlyName(), I18n.format("color.darkred.name"), TextFormatting.DARK_RED.getColorIndex());
             }
             else if (button.id == 4)
             {
-				AddToTeam(TextFormatting.GOLD.getFriendlyName(), TextFormatting.GOLD, I18n.format("color.gold.name"));
+            	sendTeamPacket(TextFormatting.GOLD.getFriendlyName(), I18n.format("color.gold.name"), TextFormatting.GOLD.getColorIndex());
             }
             else if (button.id == 5)
             {
-				AddToTeam(TextFormatting.DARK_GREEN.getFriendlyName(), TextFormatting.DARK_GREEN, I18n.format("color.darkgreen.name"));
+            	sendTeamPacket(TextFormatting.DARK_GREEN.getFriendlyName(), I18n.format("color.darkgreen.name"), TextFormatting.DARK_GREEN.getColorIndex());
             }
             else if (button.id == 6)
             {
-				AddToTeam(TextFormatting.DARK_AQUA.getFriendlyName(), TextFormatting.DARK_AQUA, I18n.format("color.darkaqua.name"));
+				sendTeamPacket(TextFormatting.DARK_AQUA.getFriendlyName(), I18n.format("color.darkaqua.name"), TextFormatting.DARK_AQUA.getColorIndex());
             }
             else if (button.id == 7)
             {
-				AddToTeam(TextFormatting.DARK_BLUE.getFriendlyName(), TextFormatting.DARK_BLUE, I18n.format("color.darkblue.name"));
+				sendTeamPacket(TextFormatting.DARK_BLUE.getFriendlyName(), I18n.format("color.darkblue.name"), TextFormatting.DARK_BLUE.getColorIndex());
             }
             else if (button.id == 8)
             {
-				AddToTeam(TextFormatting.DARK_PURPLE.getFriendlyName(), TextFormatting.DARK_PURPLE, I18n.format("color.darkpurple.name"));
+				sendTeamPacket(TextFormatting.DARK_PURPLE.getFriendlyName(), I18n.format("color.darkpurple.name"), TextFormatting.DARK_PURPLE.getColorIndex());
             }
             else if (button.id == 9)
             {
-				AddToTeam(TextFormatting.DARK_GRAY.getFriendlyName(), TextFormatting.DARK_GRAY, I18n.format("color.darkgray.name"));
+				sendTeamPacket(TextFormatting.DARK_GRAY.getFriendlyName(), I18n.format("color.darkgray.name"), TextFormatting.DARK_GRAY.getColorIndex());
             }
             else if (button.id == 10)
             {
-				AddToTeam(TextFormatting.RED.getFriendlyName(), TextFormatting.RED, I18n.format("color.red.name"));
+				sendTeamPacket(TextFormatting.RED.getFriendlyName(), I18n.format("color.red.name"), TextFormatting.RED.getColorIndex());
             }
             else if (button.id == 11)
             {
-				AddToTeam(TextFormatting.YELLOW.getFriendlyName(), TextFormatting.YELLOW, I18n.format("color.yellow.name"));
+				sendTeamPacket(TextFormatting.YELLOW.getFriendlyName(), I18n.format("color.yellow.name"), TextFormatting.YELLOW.getColorIndex());
             }
             else if (button.id == 12)
             {
-				AddToTeam(TextFormatting.GREEN.getFriendlyName(), TextFormatting.GREEN, I18n.format("color.green.name"));
+				sendTeamPacket(TextFormatting.GREEN.getFriendlyName(), I18n.format("color.green.name"), TextFormatting.GREEN.getColorIndex());
             }
             else if (button.id == 13)
             {
-				AddToTeam(TextFormatting.AQUA.getFriendlyName(), TextFormatting.AQUA, I18n.format("color.aqua.name"));
+				sendTeamPacket(TextFormatting.AQUA.getFriendlyName(), I18n.format("color.aqua.name"), TextFormatting.AQUA.getColorIndex());
             }
             else if (button.id == 14)
             {
-				AddToTeam(TextFormatting.BLUE.getFriendlyName(), TextFormatting.BLUE, I18n.format("color.blue.name"));
+				sendTeamPacket(TextFormatting.BLUE.getFriendlyName(), I18n.format("color.blue.name"), TextFormatting.BLUE.getColorIndex());
             }
             else if (button.id == 15)
             {
-				AddToTeam(TextFormatting.LIGHT_PURPLE.getFriendlyName(), TextFormatting.LIGHT_PURPLE, I18n.format("color.lightpurple.name"));
+				sendTeamPacket(TextFormatting.LIGHT_PURPLE.getFriendlyName(), I18n.format("color.lightpurple.name"), TextFormatting.LIGHT_PURPLE.getColorIndex());
             }
             else if (button.id == 16)
             {
-				AddToTeam(TextFormatting.GRAY.getFriendlyName(), TextFormatting.GRAY, I18n.format("color.gray.name"));
+				sendTeamPacket(TextFormatting.GRAY.getFriendlyName(), I18n.format("color.gray.name"), TextFormatting.GRAY.getColorIndex());
             }
             else if (button.id == 17)
             {
-				AddToTeam("spectator", TextFormatting.BLACK, I18n.format("color.black.name"));
+				sendTeamPacket("spectator", I18n.format("color.black.name"), TextFormatting.BLACK.getColorIndex());
             }
             else if (button.id == 18)
             {
-            	AddToTeam("solo", TextFormatting.WHITE, I18n.format("color.white.name"));
+				sendTeamPacket("solo", I18n.format("color.white.name"), TextFormatting.WHITE.getColorIndex());
             }
-            else if (button.id == 19 && playerData.getBoolean("canEditUHC") == true)
+            else if (button.id == 19)
             {
             	randomTeam();
             }
             
-            else if(button.id == 20 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 20)
             {
-            	saveData.setRandomTeamSize(6);
-            	saveData.markDirty();
-            	randSizeField.setText(String.valueOf(saveData.getRandomTeamSize()));
+            	randomTeamSize = 6;
+            	randSizeField.setText(String.valueOf(randomTeamSize));
+            	sendPage1Packet();
             }
-            else if(button.id == 21 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 21)
             {
-            	saveData.setMaxTeamSize(-1);
-            	saveData.markDirty();
-            	maxTeamSizeField.setText(String.valueOf(saveData.getMaxTeamSize()));
+            	maxTeamSize = -1;
+            	maxTeamSizeField.setText(String.valueOf(maxTeamSize));
+            	sendPage1Packet();
             }
-            else if(button.id == 22 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 22)
             {
             	boolean flag = saveData.isTeamCollision();
             	collisionButton.setBoolean(!flag);
-            	saveData.setTeamCollision(!flag);
-            	saveData.markDirty();
+            	teamCollision = !flag;
+            	sendPage1Packet();
             }
-            else if(button.id == 23 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 23)
             {
             	boolean flag = saveData.isFriendlyFire();
             	damageButton.setBoolean(!flag);
-            	saveData.setFriendlyFire(!flag);
-            	saveData.markDirty();
+            	friendlyFire = !flag;
+            	sendPage1Packet();
             }
-            else if(button.id == 24 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 24)
             {
             	if(saveData.isHealthInTab() == false)
             	{
             		healthTabButton.setBoolean(true);
             		healthSideButton.setBoolean(false);
             		healthNameButton.setBoolean(false);
-            		saveData.setHealthInTab(true);
-            		saveData.setHealthOnSide(false);
-            		saveData.setHealthUnderName(false);
-            		saveData.markDirty();
+            		healthInTab = true;
+            		healthOnSide = false;
+            		healthUnderName = false;
+            		sendPage4Packet();
             	}
             }
-            else if(button.id == 25 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 25)
             {
             	if(saveData.isHealthOnSide() == false)
             	{
             		healthTabButton.setBoolean(false);
             		healthSideButton.setBoolean(true);
             		healthNameButton.setBoolean(false);
-	        		saveData.setHealthInTab(false);
-	        		saveData.setHealthOnSide(true);
-	        		saveData.setHealthUnderName(false);
-	        		saveData.markDirty();
+            		healthInTab = false;
+            		healthOnSide = true;
+            		healthUnderName = false;
+            		sendPage4Packet();
             	}
             }
-            else if(button.id == 26 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 26)
             {
             	if(saveData.isHealthUnderName() == false)
             	{
             		healthTabButton.setBoolean(false);
             		healthSideButton.setBoolean(false);
             		healthNameButton.setBoolean(true);
-	        		saveData.setHealthInTab(false);
-	        		saveData.setHealthOnSide(false);
-	        		saveData.setHealthUnderName(true);
-	        		saveData.markDirty();
+            		healthInTab = false;
+            		healthOnSide = false;
+            		healthUnderName = true;
+            		sendPage4Packet();
             	}
-        		
             }
             
-            else if(button.id == 27 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 27)
             {
-            	saveData.setBorderSize(2048);
-            	saveData.markDirty();
-            	borderSizeField.setText(String.valueOf(saveData.getBorderSize()));
+            	borderSize = 2048;
+            	borderSizeField.setText(String.valueOf(borderSize));
+            	sendPage2Packet();
             }
-            else if(button.id == 28 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 28)
             {
-            	double originalX = saveData.getOriginalBorderCenterX();
-            	saveData.setBorderCenterX(originalX);
-            	saveData.markDirty();
-            	borderCenterXField.setText(String.valueOf(saveData.getBorderCenterX()));
+            	borderCenterX = originalBorderCenterX;
+            	borderCenterXField.setText(String.valueOf(borderCenterX));
+            	sendPage2Packet();
             }
-            else if(button.id == 29 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 29)
             {
-            	double originalZ = saveData.getOriginalBorderCenterZ();
-            	saveData.setBorderCenterZ(originalZ);
-            	saveData.markDirty();
-            	borderCenterZField.setText(String.valueOf(saveData.getBorderCenterZ()));
+            	borderCenterZ = originalBorderCenterZ;
+            	borderCenterZField.setText(String.valueOf(borderCenterZ));
+            	sendPage2Packet();
             }
             
-            else if(button.id == 30 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 30)
             {
             	double playerX = editingPlayer.posX;
-            	saveData.setBorderCenterX(playerX);
-            	saveData.markDirty();
-            	borderCenterXField.setText(String.valueOf(saveData.getBorderCenterX()));
+            	borderCenterX = playerX;
+            	borderCenterXField.setText(String.valueOf(borderCenterX));
+            	sendPage2Packet();
             }
-            else if(button.id == 31 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 31)
             {
             	double playerZ = editingPlayer.posZ;
-            	saveData.setBorderCenterZ(playerZ);
-            	saveData.markDirty();
-            	borderCenterZField.setText(String.valueOf(saveData.getBorderCenterZ()));
+            	borderCenterZ = playerZ;
+            	borderCenterZField.setText(String.valueOf(borderCenterZ));
+            	sendPage2Packet();
             }
-            else if(button.id == 32 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 32)
             {
             	boolean flag = saveData.isShrinkEnabled();
             	shrinkButton.setBoolean(!flag);
-            	saveData.setShrinkEnabled(!flag);
-            	saveData.markDirty();
+            	shrinkEnabled = !flag;
+            	sendPage2Packet();
             }
             
-            else if(button.id == 33 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 33)
             {
-            	saveData.setShrinkTimer(60);
-            	saveData.markDirty();
-            	shrinkTimerField.setText(String.valueOf(saveData.getShrinkTimer()));
+            	shrinkTimer = 60;
+            	shrinkTimerField.setText(String.valueOf(shrinkTimer));
+            	sendPage2Packet();
             }
-            else if(button.id == 34 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 34)
             {
-            	saveData.setShrinkSize(256);
-            	saveData.markDirty();
-            	shrinkSizeField.setText(String.valueOf(saveData.getShrinkSize()));
+            	shrinkSize = 256;
+            	shrinkSizeField.setText(String.valueOf(shrinkSize));
+            	sendPage2Packet();
             }
-            else if(button.id == 35 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 35)
             {
-            	saveData.setShrinkOvertime(60);
-            	saveData.markDirty();
-            	shrinkOvertimeField.setText(String.valueOf(saveData.getShrinkOvertime()));
+            	shrinkOvertime = 60;
+            	shrinkOvertimeField.setText(String.valueOf(shrinkOvertime));
+            	sendPage2Packet();
             }
-            else if(button.id == 36 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 36)
             {
-            	String mode = saveData.getShrinkMode();
+            	String mode = shrinkMode;
             	if(mode.equals("Shrink"))
             	{
-            		saveData.setShrinkMode("Arena");
-            		saveData.markDirty();
-            		ShrinkModeButton.setText(saveData.getShrinkMode());
+            		shrinkMode = "Arena";
+            		ShrinkModeButton.setText(shrinkMode);
+            		sendPage2Packet();
             	}
             	if(mode.equals("Arena"))
             	{
-            		saveData.setShrinkMode("Control");
-            		saveData.markDirty();
-            		ShrinkModeButton.setText(saveData.getShrinkMode());
+            		shrinkMode = "Control";
+            		ShrinkModeButton.setText(shrinkMode);
+            		sendPage2Packet();
             	}
             	if(mode.equals("Control"))
             	{
-            		saveData.setShrinkMode("Shrink");
-            		saveData.markDirty();
-            		ShrinkModeButton.setText(saveData.getShrinkMode());
+            		shrinkMode = "Shrink";
+            		ShrinkModeButton.setText(shrinkMode);
+            		sendPage2Packet();
             	}
             }
-            else if(button.id == 37 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 37)
             {
             	boolean flag = saveData.isTimeLock();
             	timeLockButton.setBoolean(!flag);
-            	saveData.setTimeLock(!flag);
-            	saveData.markDirty();
+            	timeLock = !flag;
+            	sendPage3Packet();
             }
-            else if(button.id == 38 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 38)
             {
-            	String mode = saveData.getTimeMode();
+            	String mode = timeMode;
             	if(mode.equals("Day"))
             	{
-            		saveData.setTimeMode("Night");
-            		saveData.markDirty();
-            		timeModeButton.setText(saveData.getTimeMode());
+            		timeMode = "Night";
+            		timeModeButton.setText(timeMode);
+            		sendPage3Packet();
             	}
             	if(mode.equals("Night"))
             	{
-            		saveData.setTimeMode("Day");
-            		saveData.markDirty();
-            		timeModeButton.setText(saveData.getTimeMode());
+            		timeMode = "Day";
+            		timeModeButton.setText(timeMode);
+            		sendPage3Packet();
             	}
             }
-            else if(button.id == 39 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 39)
             {
-            	saveData.setTimeLockTimer(60);
-            	saveData.markDirty();
-            	timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
+            	timeLockTimer = 60;
+            	timeLockTimerField.setText(String.valueOf(timeLockTimer));
+            	sendPage3Packet();
             }
-            else if(button.id == 40 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 40)
             {
-            	saveData.setMinuteMarkTime(30);
-            	saveData.markDirty();
-            	minMarkTimerField.setText(String.valueOf(saveData.getMinuteMarkTime()));
+            	minuteMarkTime = 30;
+            	minMarkTimerField.setText(String.valueOf(minuteMarkTime));
+            	sendPage3Packet();
             }
-            else if(button.id == 41 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 41)
             {
             	boolean flag = saveData.isMinuteMark();
             	minuteMarkButton.setBoolean(!flag);
-            	saveData.setMinuteMark(!flag);
-            	saveData.markDirty();
+            	minuteMark = !flag;
+            	sendPage3Packet();
             }
-            else if(button.id == 42 && playerData.getBoolean("canEditUHC") == true)
+            else if(button.id == 42)
             {
             	boolean flag = saveData.isNetherEnabled();
             	netherButton.setBoolean(!flag);
-            	saveData.setNetherEnabled(!flag);
-            	saveData.markDirty();
+            	netherEnabled = !flag;
+            	sendPage4Packet();
             }
-            
+            else if(button.id == 43)
+            {
+            	boolean flag = saveData.isRegenPotions();
+            	regenPotionsButton.setBoolean(!flag);
+            	regenPotions = !flag;
+            	sendPage4Packet();
+            }
+            else if(button.id == 44)
+            {
+            	boolean flag = saveData.isLevel2Potions();
+            	level2PotionsButton.setBoolean(!flag);
+            	level2Potions = !flag;
+            	sendPage4Packet();
+            }
+            else if(button.id == 45)
+            {
+            	boolean flag = saveData.isNotchApples();
+            	notchApplesButton.setBoolean(!flag);
+            	notchApples = !flag;
+            	sendPage4Packet();
+            }
+            else if(button.id == 46)
+            {
+            	boolean flag = saveData.isTimedNames();
+            	nameButton.setBoolean(!flag);
+            	timedNames = !flag;
+            	sendPage3Packet();
+            }
+            else if(button.id == 47)
+            {
+            	nameTimer = 30;
+            	nameTimerField.setText(String.valueOf(nameTimer));
+            	sendPage3Packet();
+            }
+            else if(button.id == 48)
+            {
+            	boolean flag = saveData.isTimedGlow();
+            	glowButton.setBoolean(!flag);
+            	timedGlow = !flag;
+            	sendPage3Packet();
+            }
+            else if(button.id == 49)
+            {
+            	glowTime = 30;
+            	glowTimerField.setText(String.valueOf(glowTime));
+            	sendPage3Packet();
+            }
+            else if(button.id == 50)
+            {
+            	boolean flag = saveData.isAutoCook();
+            	autoCookButton.setBoolean(!flag);
+            	autoCook = !flag;
+            	sendPage4Packet();
+            }
+            else if(button.id == 51)
+            {
+            	boolean flag = saveData.isItemConversion();
+            	itemConvertButton.setBoolean(!flag);
+            	itemConversion = !flag;
+            	sendPage4Packet();
+            }
+            else if(button.id == 52)
+            {
+            	boolean flag = saveData.isWeatherEnabled();
+            	weatherButton.setBoolean(!flag);
+            	weatherEnabled = !flag;
+            	sendPacketToServer();
+            }
+            else if(button.id == 53)
+            {
+            	boolean flag = saveData.isMobGriefing();
+            	mobGriefingButton.setBoolean(!flag);
+            	mobGriefing = !flag;
+            	sendPacketToServer();
+            }
+            else if(button.id == 54)
+            {
+            	startPacket();
+            	this.mc.displayGuiScreen((GuiScreen)null);
+            }
+            else if (playerData.getBoolean("canEditUHC") == false)
+            {
+            	editingPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to edit the UHC book."));
+            }
             this.updateButtons();
         }
+    }
+    
+    public void sendTeamPacket(String team, String teamFormat, int indexColor) {
+    	ModPackethandler.INSTANCE.sendToServer(new UHCPacketTeam(editingPlayer.getName(), team, teamFormat, indexColor));
+    }
+    
+    public void sendPage1Packet()
+    {
+    	ModPackethandler.INSTANCE.sendToServer(new UHCPage1Packet(randomTeamSize, maxTeamSize, teamCollision, friendlyFire, difficulty));
+    }
+    
+    public void sendPage2Packet()
+    {
+    	ModPackethandler.INSTANCE.sendToServer(new UHCPage2Packet(borderSize, borderCenterX, borderCenterZ, shrinkEnabled, shrinkTimer, shrinkSize, shrinkOvertime, shrinkMode));
+    }
+    
+    public void sendPage3Packet()
+    {
+    	ModPackethandler.INSTANCE.sendToServer(new UHCPage3Packet(timeLock, timeLockTimer, timeMode, minuteMark, minuteMarkTime, timedNames, nameTimer, timedGlow, glowTime));
+    }
+    
+    public void sendPage4Packet()
+    {
+    	ModPackethandler.INSTANCE.sendToServer(new UHCPage4Packet(regenPotions, level2Potions, notchApples, autoCook, itemConversion, netherEnabled, healthInTab, healthOnSide, healthUnderName));
+    }
+    
+    public void startPacket()
+    {
+    	ModPackethandler.INSTANCE.sendToServer(new UHCStartPacket());
+    }
+    
+    public void sendPacketToServer() {
+    	ModPackethandler.INSTANCE.sendToServer(new UHCPacketMessage(uhcStarting, friendlyFire, teamCollision, healthInTab, 
+        		healthOnSide, healthUnderName, doDaylightCycle, autoCook, itemConversion, applyCustomHealth, maxHealth, 
+        		randomTeamSize, maxTeamSize, difficulty, borderSize, borderCenterX, borderCenterZ, originalBorderCenterX, 
+        		originalBorderCenterZ, shrinkEnabled, shrinkTimer, shrinkSize, shrinkOvertime, shrinkMode, timeLock, 
+        		timeLockTimer, timeMode, minuteMark, minuteMarkTime, timedNames, nameTimer, timedGlow, glowTime, 
+        		netherEnabled, regenPotions, level2Potions, notchApples, weatherEnabled, mobGriefing));
     }
 
     @Override
@@ -864,13 +1361,12 @@ public class GuiUHCBook extends GuiScreen{
         {
         	if(this.currPage == 0)
         	{
-        		if(randSizeField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+        		if(randSizeField.mouseClicked(mouseX, mouseY, mouseButton))
             		randSizeField.setText("");
-            	if(maxTeamSizeField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            	if(maxTeamSizeField.mouseClicked(mouseX, mouseY, mouseButton))
             		maxTeamSizeField.setText("");
-            	if(difficultyField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            	if(difficultyField.mouseClicked(mouseX, mouseY, mouseButton))
             		difficultyField.setText("");
-            	
             	
             	if(randSizeField.isFocused() == false)
             		randSizeField.setText(String.valueOf(saveData.getRandomTeamSize()));
@@ -882,17 +1378,17 @@ public class GuiUHCBook extends GuiScreen{
         	
         	if(this.currPage == 1)
         	{
-        		if(borderSizeField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+        		if(borderSizeField.mouseClicked(mouseX, mouseY, mouseButton))
             		borderSizeField.setText("");
-            	if(borderCenterXField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            	if(borderCenterXField.mouseClicked(mouseX, mouseY, mouseButton))
             		borderCenterXField.setText("");
-            	if(borderCenterZField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            	if(borderCenterZField.mouseClicked(mouseX, mouseY, mouseButton))
             		borderCenterZField.setText("");
-            	if(shrinkTimerField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            	if(shrinkTimerField.mouseClicked(mouseX, mouseY, mouseButton))
             		shrinkTimerField.setText("");
-            	if(shrinkSizeField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            	if(shrinkSizeField.mouseClicked(mouseX, mouseY, mouseButton))
             		shrinkSizeField.setText("");
-            	if(shrinkOvertimeField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+            	if(shrinkOvertimeField.mouseClicked(mouseX, mouseY, mouseButton))
             		shrinkOvertimeField.setText("");
             	
             	if(borderSizeField.isFocused() == false)
@@ -911,15 +1407,23 @@ public class GuiUHCBook extends GuiScreen{
         	
         	if(this.currPage == 2)
         	{
-        		if(timeLockTimerField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+        		if(timeLockTimerField.mouseClicked(mouseX, mouseY, mouseButton))
         			timeLockTimerField.setText("");
-        		if(minMarkTimerField.mouseClicked(mouseX, mouseY, mouseButton) && playerData.getBoolean("canEditUHC") == true)
+        		if(minMarkTimerField.mouseClicked(mouseX, mouseY, mouseButton))
         			minMarkTimerField.setText("");
+        		if(nameTimerField.mouseClicked(mouseX, mouseY, mouseButton))
+        			nameTimerField.setText("");
+        		if(glowTimerField.mouseClicked(mouseX, mouseY, mouseButton))
+        			glowTimerField.setText("");
         		
         		if(timeLockTimerField.isFocused() == false)
         			timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
         		if(minMarkTimerField.isFocused() == false)
         			minMarkTimerField.setText(String.valueOf(saveData.getMinuteMarkTime()));
+        		if(nameTimerField.isFocused() == false)
+        			nameTimerField.setText(String.valueOf(saveData.getNameTimer()));
+        		if(glowTimerField.isFocused() == false)
+        			glowTimerField.setText(String.valueOf(saveData.getGlowTime()));
         	}
         }
         
@@ -952,11 +1456,11 @@ public class GuiUHCBook extends GuiScreen{
     				String randText = randSizeField.getText();
     				
     				if(randText.isEmpty())
-    					randSizeField.setText(String.valueOf(saveData.getRandomTeamSize()));
+    					randSizeField.setText(String.valueOf(randomTeamSize));
     				else
     				{
-    					saveData.setRandomTeamSize(Integer.parseInt(randText));
-    					saveData.markDirty();
+    					randomTeamSize = Integer.parseInt(randText);
+    					sendPage1Packet();
     				}
     				
     				randSizeField.setFocused(false);
@@ -967,11 +1471,11 @@ public class GuiUHCBook extends GuiScreen{
     				String teamSize = maxTeamSizeField.getText();
     				
     				if(teamSize.isEmpty())
-    					maxTeamSizeField.setText(String.valueOf(saveData.getMaxTeamSize()));
+    					maxTeamSizeField.setText(String.valueOf(maxTeamSize));
     				else
     				{
-    					saveData.setMaxTeamSize(Integer.parseInt(teamSize));
-    					saveData.markDirty();
+    					maxTeamSize = Integer.parseInt(teamSize);
+    					sendPage1Packet();
     				}
     				
     				maxTeamSizeField.setFocused(false);
@@ -982,11 +1486,11 @@ public class GuiUHCBook extends GuiScreen{
     				String difficultyText = difficultyField.getText();
     				
     				if(difficultyText.isEmpty() || Integer.parseInt(difficultyText) > 3)
-    					difficultyField.setText(String.valueOf(saveData.getDifficulty()));
+    					difficultyField.setText(String.valueOf(difficulty));
     				else
     				{
-    					saveData.setDifficulty(Integer.parseInt(difficultyText));
-    					saveData.markDirty();
+    					difficulty = Integer.parseInt(difficultyText);
+    					sendPage1Packet();
     				}
     				
     				difficultyField.setFocused(false);
@@ -1028,14 +1532,14 @@ public class GuiUHCBook extends GuiScreen{
     			/* Border Size Field */
     			if(borderSizeField.isFocused())
     			{
-    				String borderSize = borderSizeField.getText();
+    				String borderSizeText = borderSizeField.getText();
     				
-    				if(borderSize.isEmpty())
-    					borderSizeField.setText(String.valueOf(saveData.getBorderSize()));
+    				if(borderSizeText.isEmpty())
+    					borderSizeField.setText(String.valueOf(borderSize));
     				else
     				{
-    					saveData.setBorderSize(Integer.parseInt(borderSize));
-    					saveData.markDirty();
+    					borderSize = Integer.parseInt(borderSizeText);
+    					sendPage2Packet();
     				}
     				
     				borderSizeField.setFocused(false);
@@ -1046,11 +1550,11 @@ public class GuiUHCBook extends GuiScreen{
     				String borderX = borderCenterXField.getText();
     				
     				if(borderX.isEmpty())
-    					borderCenterXField.setText(String.valueOf(saveData.getBorderCenterX()));
+    					borderCenterXField.setText(String.valueOf(borderCenterX));
     				else
     				{
-    					saveData.setBorderCenterX(Integer.parseInt(borderX));
-    					saveData.markDirty();
+    					borderCenterX = Integer.parseInt(borderX);
+    					sendPage2Packet();
     				}
     			
     				borderCenterXField.setFocused(false);
@@ -1061,11 +1565,11 @@ public class GuiUHCBook extends GuiScreen{
     				String borderZ = borderCenterZField.getText();
     				
     				if(borderZ.isEmpty())
-    					borderCenterZField.setText(String.valueOf(saveData.getBorderCenterZ()));
+    					borderCenterZField.setText(String.valueOf(borderCenterZ));
     				else
     				{
-    					saveData.setBorderCenterZ(Integer.parseInt(borderZ));
-    					saveData.markDirty();
+    					borderCenterZ = Integer.parseInt(borderZ);
+    					sendPage2Packet();
     				}
     			
     				borderCenterZField.setFocused(false);
@@ -1073,14 +1577,14 @@ public class GuiUHCBook extends GuiScreen{
     			/* Shrink Timer Field */
     			if(shrinkTimerField.isFocused())
     			{
-    				String shrinkTimer = shrinkTimerField.getText();
+    				String shrinkTimerText = shrinkTimerField.getText();
     				
-    				if(shrinkTimer.isEmpty())
-    					shrinkTimerField.setText(String.valueOf(saveData.getShrinkTimer()));
+    				if(shrinkTimerText.isEmpty())
+    					shrinkTimerField.setText(String.valueOf(shrinkTimer));
     				else
     				{
-    					saveData.setShrinkTimer(Integer.parseInt(shrinkTimer));
-    					saveData.markDirty();
+    					shrinkTimer = Integer.parseInt(shrinkTimerText);
+    					sendPage2Packet();
     				}
     				
     				shrinkTimerField.setFocused(false);
@@ -1088,14 +1592,14 @@ public class GuiUHCBook extends GuiScreen{
     			/* Shrink Size Field */
     			if(shrinkSizeField.isFocused())
     			{
-    				String shrinkSize = shrinkSizeField.getText();
+    				String shrinkSizeText = shrinkSizeField.getText();
     				
-    				if(shrinkSize.isEmpty())
-    					shrinkSizeField.setText(String.valueOf(saveData.getShrinkSize()));
+    				if(shrinkSizeText.isEmpty())
+    					shrinkSizeField.setText(String.valueOf(shrinkSize));
     				else
     				{
-    					saveData.setShrinkSize(Integer.parseInt(shrinkSize));
-    					saveData.markDirty();
+    					shrinkSize = Integer.parseInt(shrinkSizeText);
+    					sendPage2Packet();
     				}
     				
     				shrinkSizeField.setFocused(false);
@@ -1103,14 +1607,14 @@ public class GuiUHCBook extends GuiScreen{
     			/* Shrink Over Time Field */
     			if(shrinkOvertimeField.isFocused())
     			{
-    				String ShrinkOverTime = shrinkOvertimeField.getText();
+    				String ShrinkOverTimeText = shrinkOvertimeField.getText();
     				
-    				if(ShrinkOverTime.isEmpty())
-    					shrinkOvertimeField.setText(String.valueOf(saveData.getShrinkOvertime()));
+    				if(ShrinkOverTimeText.isEmpty())
+    					shrinkOvertimeField.setText(String.valueOf(shrinkOvertime));
     				else
     				{
-    					saveData.setShrinkOvertime(Integer.parseInt(ShrinkOverTime));
-    					saveData.markDirty();
+    					shrinkOvertime = Integer.parseInt(ShrinkOverTimeText);
+    					sendPage2Packet();
     				}
     				
     				shrinkOvertimeField.setFocused(false);
@@ -1127,20 +1631,28 @@ public class GuiUHCBook extends GuiScreen{
     		{
     			minMarkTimerField.textboxKeyTyped(typedChar, keyCode);
     		}
+    		if(nameTimerField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			nameTimerField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		if(glowTimerField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			glowTimerField.textboxKeyTyped(typedChar, keyCode);
+    		}
     		
     		if (keyCode == Keyboard.KEY_RETURN)
     		{
     			/* Shrink Timer Field */
     			if(timeLockTimerField.isFocused())
     			{
-    				String timeLockTimer = timeLockTimerField.getText();
+    				String timeLockTimerText = timeLockTimerField.getText();
     				
-    				if(timeLockTimer.isEmpty())
-    					timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
+    				if(timeLockTimerText.isEmpty())
+    					timeLockTimerField.setText(String.valueOf(timeLockTimer));
     				else
     				{
-    					saveData.setTimeLockTimer(Integer.parseInt(timeLockTimer));
-    					saveData.markDirty();
+    					timeLockTimer = Integer.parseInt(timeLockTimerText);
+    					sendPage3Packet();
     				}
     				
     				timeLockTimerField.setFocused(false);
@@ -1148,17 +1660,47 @@ public class GuiUHCBook extends GuiScreen{
     			/* Minute Mark Timer Field */
     			if(minMarkTimerField.isFocused())
     			{
-    				String minuteMarkTimer = minMarkTimerField.getText();
+    				String minuteMarkTimerText = minMarkTimerField.getText();
     				
-    				if(minuteMarkTimer.isEmpty())
-    					minMarkTimerField.setText(String.valueOf(saveData.getMinuteMarkTime()));
+    				if(minuteMarkTimerText.isEmpty())
+    					minMarkTimerField.setText(String.valueOf(minuteMarkTime));
     				else
     				{
-    					saveData.setMinuteMarkTime(Integer.parseInt(minuteMarkTimer));
-    					saveData.markDirty();
+    					minuteMarkTime = Integer.parseInt(minuteMarkTimerText);
+    					sendPage3Packet();
     				}
     				
     				minMarkTimerField.setFocused(false);
+    			}
+    			/* Name Timer Field */
+    			if(nameTimerField.isFocused())
+    			{
+    				String nameTimerText = nameTimerField.getText();
+    				
+    				if(nameTimerText.isEmpty())
+    					nameTimerField.setText(String.valueOf(nameTimer));
+    				else
+    				{
+    					nameTimer = Integer.parseInt(nameTimerText);
+    					sendPage3Packet();
+    				}
+    				
+    				nameTimerField.setFocused(false);
+    			}
+    			/* Glow Timer Field */
+    			if(glowTimerField.isFocused())
+    			{
+    				String glowTimer = glowTimerField.getText();
+    				
+    				if(glowTimer.isEmpty())
+    					glowTimerField.setText(String.valueOf(glowTime));
+    				else
+    				{
+    					glowTime = Integer.parseInt(glowTimer);
+    					sendPage3Packet();
+    				}
+    				
+    				glowTimerField.setFocused(false);
     			}
     		}
     	}
@@ -1167,24 +1709,6 @@ public class GuiUHCBook extends GuiScreen{
     public boolean charNumeric(char typedChar)
     {
     	return (typedChar >= '0' && typedChar <= '9');
-    }
-    
-    public void AddToTeam(String teamString, TextFormatting format, String name)
-    {
-    	ScorePlayerTeam team = scoreboard.getPlayersTeam(editingPlayer.getName());
-    	if(team != scoreboard.getTeam(teamString))
-    	{
-    		for(String players : editingPlayer.world.getMinecraftServer().getOnlinePlayerNames())
-    		{
-    			EntityPlayer onlinePlayer = world.getPlayerEntityByName(editingPlayer.getName());
-    			
-    			if(format != format.WHITE)
-    				onlinePlayer.sendMessage(new TextComponentTranslation("book.uhc.team.selected", new Object[] {editingPlayer.getName(), format + name}));
-            	else
-            		onlinePlayer.sendMessage(new TextComponentTranslation("book.uhc.team.solo", new Object[] {editingPlayer.getName(), format + name}));
-    		}
-        	scoreboard.addPlayerToTeam(editingPlayer.getName(), teamString);
-    	}
     }
     
     public void randomTeam() {
@@ -1255,7 +1779,7 @@ public class GuiUHCBook extends GuiScreen{
     			break;
     	}
 
-    	AddToTeam(format.getFriendlyName(), format, name);
+    	sendTeamPacket(format.getFriendlyName(), name, format.getColorIndex());
     }
     
     public boolean isColorNotHovered()
@@ -1356,6 +1880,35 @@ public class GuiUHCBook extends GuiScreen{
 					textureX += 15;
 				
 				drawTexturedModalRect(x, y,  textureX, textureY, 15, 13);
+			}
+		}
+	}
+	@SideOnly(Side.CLIENT)
+	static class StartButton extends GuiButton
+	{	
+		private final FontRenderer render;
+		
+		public StartButton(int buttonId, int x, int y, FontRenderer renderIn)
+		{
+			super(buttonId, x, y, 85, 22, "");
+			this.render = renderIn;
+		}
+		
+		/**
+		 * Draws this button to the screen.
+		 */
+		public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks)
+		{
+			if (this.visible)
+			{
+				this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				mc.getTextureManager().bindTexture(BOOK_TEXTURE);
+				int textureX = 30;
+				int textureY = 232;
+				if (this.hovered)
+					textureX += 85;
+				drawTexturedModalRect(x, y,  textureX, textureY, 85, 22);
 			}
 		}
 	}

@@ -7,7 +7,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -17,14 +16,12 @@ public class booleanButton extends GuiButton
 	public static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/book.png");
 
 	private final FontRenderer render;
-	private final World world;
-	private Boolean booleanValue;
+	protected Boolean booleanValue;
 	
-	public booleanButton(int buttonId, int x, int y, FontRenderer renderIn, Boolean booleanIn, World worldIn)
+	public booleanButton(int buttonId, int x, int y, FontRenderer renderIn, Boolean booleanIn)
 	{
 		super(buttonId, x, y, 15, 13, "");
 		this.render = renderIn;
-		this.world = worldIn;
 		this.booleanValue = booleanIn;
 	}
 	
@@ -48,7 +45,7 @@ public class booleanButton extends GuiButton
 				textureY += 14;
 			
 			if (booleanValue)
-				textureX += 15;
+				textureX += 16;
 	        
 			drawTexturedModalRect(x, y,  textureX, textureY, 15, 13);
 		}

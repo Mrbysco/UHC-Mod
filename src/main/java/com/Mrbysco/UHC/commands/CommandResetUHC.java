@@ -1,6 +1,8 @@
 package com.Mrbysco.UHC.commands;
 
+import com.Mrbysco.UHC.UltraHardCoremod;
 import com.Mrbysco.UHC.init.UHCSaveData;
+import com.Mrbysco.UHC.init.UHCTimerData;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -40,16 +42,19 @@ public class CommandResetUHC extends CommandBase
 		}
 		final NBTTagCompound entityData = player.getEntityData();
 
-        return server.isSinglePlayer() || super.checkPermission(server, sender) || (player != null && entityData.hasKey("canModify"));
+        return server.isSinglePlayer() || super.checkPermission(server, sender) || (player != null && entityData.getBoolean("canEditUHC") == true);
     }
 	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         World world = (World)(sender instanceof EntityPlayer ? ((EntityPlayer)sender).world : server.getWorld(0));
 		UHCSaveData saveData = UHCSaveData.getForWorld(world);
-		
+		UHCTimerData timerData = UHCTimerData.getForWorld(world);
+		timerData.resetAll();
+		timerData.markDirty();
 		saveData.resetAll();
 		saveData.markDirty();
+		UltraHardCoremod.instance.resetTimer();
         sender.sendMessage(new TextComponentTranslation("commands.uhc.reset.success"));
     }
 

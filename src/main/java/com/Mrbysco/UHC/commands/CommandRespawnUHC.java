@@ -53,7 +53,7 @@ public class CommandRespawnUHC extends CommandBase
 		}
 		final NBTTagCompound entityData = player.getEntityData();
 
-        return server.isSinglePlayer() || super.checkPermission(server, sender) || (player != null && entityData.hasKey("canModify"));
+        return server.isSinglePlayer() || super.checkPermission(server, sender) || (player != null && entityData.getBoolean("canEditUHC") == true);
     }
 	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException

@@ -15,7 +15,7 @@ public class ConversionList {
 	public static ItemConversionInfo conversion_info;
 	
 	public static void initializeConversion() {
-		addConversion(Items.GOLDEN_APPLE, 1, new ItemStack(Blocks.GOLD_BLOCK, 8), new ItemStack(Items.APPLE, 1));
+		
 	}
 	
 	public static void addConversion(Item itemIn, int meta, ItemStack result)

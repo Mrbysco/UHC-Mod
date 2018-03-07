@@ -19,7 +19,7 @@ public class GuiHandler implements IGuiHandler {
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if(ID == GUI_UHC_BOOK)
 		{
-			return new GuiUHCBook(player, UHCSaveData.getForWorld(world));
+			return new GuiUHCBook(player);
 		}
 
 		return null;

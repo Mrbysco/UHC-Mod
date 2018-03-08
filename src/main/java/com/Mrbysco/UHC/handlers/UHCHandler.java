@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -39,7 +40,7 @@ public class UHCHandler {
 			editStack.setTagInfo("lore", new NBTTagString("You have the power to edit the main UHC settings"));
 
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			System.out.println(saveData.getRandomTeamSize());
+			//System.out.println(saveData.getRandomTeamSize());
 			List<Entity> entityList = world.loadedEntityList;
 			
 			for(Entity entity : entityList)
@@ -195,6 +196,33 @@ public class UHCHandler {
 					event.setCanceled(true);
 				}
 			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void testTest(PlayerInteractEvent event)
+	{
+		EntityPlayer player = (EntityPlayer) event.getEntityPlayer();
+		ItemStack stack = player.getHeldItem(event.getHand());
+		World world = player.world;
+		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		if(saveData.isUhcOnGoing() == false && !world.isRemote)
+		{
+			if (stack.getItem() == Items.STICK)
+			{
+				if(player.isSneaking())
+				{
+					stack.setStackDisplayName("60");
+					saveData.setShrinkTimer(60);
+					saveData.markDirty();
+				}
+				else
+				{
+					stack.setStackDisplayName("30");
+					saveData.setShrinkTimer(30);
+					saveData.markDirty();
+				}	
+	}
 		}
 	}
 }

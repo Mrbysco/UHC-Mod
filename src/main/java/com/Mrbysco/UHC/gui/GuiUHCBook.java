@@ -124,6 +124,10 @@ public class GuiUHCBook extends GuiScreen{
     /** UHC save data */
     private UHCSaveData saveData;
 	
+    public void setSaveData(UHCSaveData saveData) {
+		this.saveData = saveData;
+	}
+    
 	private boolean uhcStarting;
 	private boolean uhcOnGoing;
 	

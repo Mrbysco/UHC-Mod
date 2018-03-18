@@ -62,6 +62,11 @@ public class UHCSaveData extends WorldSavedData{
 	private boolean weatherEnabled;
 	private boolean mobGriefing;
 	
+	private boolean randomSpawns;
+	private int spreadDistance;
+	private int spreadMaxRange;
+	private boolean spreadRespectTeam;
+
 	public UHCSaveData(String name) {
 		super(name);
 		
@@ -112,6 +117,11 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.weatherEnabled = true;
 		this.mobGriefing = true;
+		
+		this.randomSpawns = true;
+		this.spreadDistance = 100;
+		this.spreadMaxRange = 2048;
+		this.spreadRespectTeam = true;
 	}
 
 	public UHCSaveData() {
@@ -164,6 +174,11 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.weatherEnabled = true;
 		this.mobGriefing = true;
+		
+		this.randomSpawns = true;
+		this.spreadDistance = 100;
+		this.spreadMaxRange = 2048;
+		this.spreadRespectTeam = true;
 	}
 	
 	public void resetAll() {
@@ -212,6 +227,11 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.weatherEnabled = true;
 		this.mobGriefing = true;
+		
+		this.randomSpawns = true;
+		this.spreadDistance = 100;
+		this.spreadMaxRange = 2048;
+		this.spreadRespectTeam = true;
 	}
 	
 	public boolean isUhcStarting() {
@@ -534,6 +554,38 @@ public class UHCSaveData extends WorldSavedData{
 		this.mobGriefing = mobGriefing;
 	}
 	
+	public boolean isRandomSpawns() {
+		return randomSpawns;
+	}
+	
+	public void setRandomSpawns(boolean randomSpawns) {
+		this.randomSpawns = randomSpawns;
+	}
+	
+	public int getSpreadDistance() {
+		return spreadDistance;
+	}
+	
+	public void setSpreadDistance(int spreadDistance) {
+		this.spreadDistance = spreadDistance;
+	}
+	
+	public int getSpreadMaxRange() {
+		return spreadMaxRange;
+	}
+	
+	public void setSpreadMaxRange(int spreadMaxRange) {
+		this.spreadMaxRange = spreadMaxRange;
+	}
+	
+	public boolean isSpreadRespectTeam() {
+		return spreadRespectTeam;
+	}
+	
+	public void setSpreadRespectTeam(boolean spreadRespectTeam) {
+		this.spreadRespectTeam = spreadRespectTeam;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcStarting = nbt.getBoolean("uhcStarting");
@@ -579,6 +631,11 @@ public class UHCSaveData extends WorldSavedData{
 		netherEnabled = nbt.getBoolean("netherEnabled");
 		weatherEnabled = nbt.getBoolean("weatherEnabled");
 		mobGriefing = nbt.getBoolean("mobGriefing");
+		
+		randomSpawns = nbt.getBoolean("randomSpawns");
+		spreadDistance = nbt.getInteger("spreadDistance");
+		spreadMaxRange = nbt.getInteger("spreadMaxRange");
+		spreadRespectTeam = nbt.getBoolean("spreadRespectTeam");
 	}
 	
 	@Override
@@ -626,6 +683,11 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setBoolean("netherEnabled", netherEnabled);
 		compound.setBoolean("weatherEnabled", weatherEnabled);
 		compound.setBoolean("mobGriefing", mobGriefing);
+		
+		compound.setBoolean("randomSpawns", randomSpawns);
+		compound.setInteger("spreadDistance", spreadDistance);
+		compound.setInteger("spreadMaxRange", spreadMaxRange);
+		compound.setBoolean("spreadRespectTeam", spreadRespectTeam);
 		return compound;
 	}
 	

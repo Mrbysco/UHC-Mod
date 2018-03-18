@@ -12,16 +12,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class UHCPage4PacketHandler implements IMessageHandler<UHCPage4Packet, IMessage>
+public class UHCPage5PacketHandler implements IMessageHandler<UHCPage5Packet, IMessage>
 {
 	@Override
-	public IMessage onMessage(UHCPage4Packet message, MessageContext ctx) {
+	public IMessage onMessage(UHCPage5Packet message, MessageContext ctx) {
 		
         FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
 		return null;
 	}
 	
-	private void handle(UHCPage4Packet message, MessageContext ctx) {
+	private void handle(UHCPage5Packet message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
 		World world = serverPlayer.getServerWorld();
 		UHCSaveData saveData = UHCSaveData.getForWorld(world);
@@ -29,15 +29,15 @@ public class UHCPage4PacketHandler implements IMessageHandler<UHCPage4Packet, IM
 		
 		if(playerData.getBoolean("canEditUHC") == true)
 		{
-			saveData.setRegenPotions(message.regenPotions);
-			saveData.setLevel2Potions(message.level2Potions);
-			saveData.setNotchApples(message.notchApples);
-			saveData.setAutoCook(message.autoCook);
-			saveData.setItemConversion(message.itemConversion);
-			saveData.setNetherEnabled(message.netherTravel);
-			saveData.setHealthInTab(message.healthTab);
-			saveData.setHealthOnSide(message.healthSide);
-			saveData.setHealthUnderName(message.healthName);
+			saveData.setWeatherEnabled(message.weatherCycle);
+			saveData.setMobGriefing(message.mobGriefing);
+			saveData.setApplyCustomHealth(message.customHealth);
+			saveData.setMaxHealth(message.maxHealth);
+			
+			saveData.setRandomSpawns(message.randomSpawns);
+			saveData.setSpreadDistance(message.spreadDistance);
+			saveData.setSpreadMaxRange(message.spreadMaxRange);
+			saveData.setSpreadRespectTeam(message.spreadRespectTeam);
 			saveData.markDirty();
 			
 			ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));

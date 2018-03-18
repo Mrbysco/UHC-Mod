@@ -10,9 +10,11 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
@@ -40,7 +42,6 @@ public class UHCHandler {
 			editStack.setTagInfo("lore", new NBTTagString("You have the power to edit the main UHC settings"));
 
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			//System.out.println(saveData.getRandomTeamSize());
 			List<Entity> entityList = world.loadedEntityList;
 			
 			for(Entity entity : entityList)
@@ -52,7 +53,6 @@ public class UHCHandler {
 
 					if (entityData.getBoolean("canEditUHC") == true && saveData.isUhcOnGoing() == false)
 					{
-						//System.out.println(entityData.toString());
 						if (player.inventory.getStackInSlot(39) == editStack)
 						{
 							return;
@@ -70,6 +70,15 @@ public class UHCHandler {
 					if (!player.inventory.hasItemStack(bookStack) && (saveData.isUhcOnGoing() == false))
 					{
 						player.inventory.addItemStackToInventory(bookStack);
+					}
+					
+					if(saveData.isUhcOnGoing() == false)
+					{
+						if(player.getActivePotionEffect(MobEffects.SATURATION) == null)
+							player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 32767 * 20, 10, true, false));
+
+						if(player.getActivePotionEffect(MobEffects.RESISTANCE) == null)
+							player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 32767 * 20, 10, true, false));
 					}
 				}
 				
@@ -121,9 +130,9 @@ public class UHCHandler {
 	
 	@SubscribeEvent
 	public void onPlayerGivePermission(LivingHurtEvent event) {
-		if (event.getEntity() instanceof EntityPlayer) {
+		if (event.getEntityLiving() instanceof EntityPlayer) {
 			Entity source = event.getSource().getTrueSource();
-			EntityPlayer player = (EntityPlayer) event.getEntity();
+			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
 			World world = player.world;
 			NBTTagCompound entityData = player.getEntityData();
 			
@@ -134,7 +143,7 @@ public class UHCHandler {
 					if (sourcePlayer.canUseCommand(2, "")) {
 						if(!player.canUseCommand(2, ""))
 						{
-							if(entityData.hasKey("canEditUHC"))
+							if(entityData.getBoolean("canEditUHC"))
 								entityData.setBoolean("canEditUHC", false);
 							else
 								entityData.setBoolean("canEditUHC", true);
@@ -212,17 +221,23 @@ public class UHCHandler {
 			{
 				if(player.isSneaking())
 				{
-					stack.setStackDisplayName("60");
-					saveData.setShrinkTimer(60);
+					stack.setStackDisplayName("3");
+					saveData.setDifficulty(3);
 					saveData.markDirty();
 				}
 				else
 				{
-					stack.setStackDisplayName("30");
-					saveData.setShrinkTimer(30);
+					stack.setStackDisplayName("1");
+					saveData.setDifficulty(1);
 					saveData.markDirty();
 				}	
-	}
+			}
+			
+			NBTTagCompound playerData = player.getEntityData();
+			if (stack.getItem() == Items.CARROT_ON_A_STICK)
+			{
+				//
+			}
 		}
 	}
 }

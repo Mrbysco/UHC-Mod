@@ -1,9 +1,12 @@
 package com.Mrbysco.UHC.packets;
 
+import com.Mrbysco.UHC.init.UHCSaveData;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,14 +21,26 @@ public class UHCPacketTeamHandler implements IMessageHandler<UHCPacketTeam, IMes
 	}
 	
 	private void handle(UHCPacketTeam message, MessageContext ctx) {
-		System.out.println("hey");
-
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
+		UHCSaveData saveData = UHCSaveData.getForWorld(serverPlayer.getServerWorld());
+
 		Scoreboard scoreboard = serverPlayer.getServerWorld().getScoreboard();
 		if(message.team.equals("solo"))
 			scoreboard.removePlayerFromTeams(message.playerName);
 		else
-			scoreboard.addPlayerToTeam(message.playerName, message.team);
+		{
+			int maxTeamSize = saveData.getMaxTeamSize();
+			
+			if(maxTeamSize == -1)
+				scoreboard.addPlayerToTeam(message.playerName, message.team);
+			else
+			{
+				if(scoreboard.getTeam(message.team).getMembershipCollection().size() < maxTeamSize)
+					scoreboard.addPlayerToTeam(message.playerName, message.team);
+				else
+					serverPlayer.sendMessage(new TextComponentTranslation("book.uhc.team.maxed", new Object[] {message.team}));
+			}
+		}
 		
 		
 		for(EntityPlayerMP players : serverPlayer.getServer().getPlayerList().getPlayers())

@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,8 +37,10 @@ public class itemUHCBook extends Item{
 	}
 	
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {			
-		playerIn.openGui(UltraHardCoremod.instance, GuiHandler.GUI_UHC_BOOK, worldIn, 0, 0, 0);
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {	
+		BlockPos pos = playerIn.getPosition();
+		
+		playerIn.openGui(UltraHardCoremod.instance, GuiHandler.GUI_UHC_BOOK, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}

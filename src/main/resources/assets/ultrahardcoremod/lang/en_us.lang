@@ -16,9 +16,11 @@ commands.uhc.respawn.failure=Could not respawn %s because %s is not online.
 book.uhc.team.select=Select team
 book.uhc.team.hover=Join Team %s.
 book.uhc.team.selected=%s has joined team %s
+book.uhc.team.randomized=%s has been put in team %s randomly.
 book.uhc.team.solo=%s is now playing %s
 book.uhc.team.randomize=Randomize Players
 book.uhc.team.randomizer=Randomize
+book.uhc.team.maxed=Can not join team %s, team has max amount of players.
 
 book.uhc.option.reset=Reset Value
 book.uhc.option.location=Current Location
@@ -33,7 +35,7 @@ book.uhc.option.difficulty=Difficulty:
 
 book.uhc.option.healthtab=Health In Tab:
 book.uhc.option.healthside=Health On Side:
-book.uhc.option.healthname=Health On Name:
+book.uhc.option.healthname=Health Under Name:
 
 book.uhc.option.bordersize=Worldborder Size:
 book.uhc.option.bordercenter=Worldborder Center
@@ -68,6 +70,12 @@ book.uhc.option.convertion=Item Conversion:
 
 book.uhc.option.weather=Weather Cycle:
 book.uhc.option.mobgriefing=Mob Griefing:
+book.uhc.option.customhealth=Custom Health:
+book.uhc.option.maxhealth=Max Health:
+book.uhc.option.randomspawns=Random Spawns:
+book.uhc.option.spreaddistance=Distance:
+book.uhc.option.spreadrange=Max Range:
+book.uhc.option.spreadteams=Respect Teams:
 
 book.uhc.explain.shrinkmodeshrink=Shrink the border
 book.uhc.explain.shrinkmodeshrink2=over the amount of minutes.
@@ -105,6 +113,14 @@ book.uhc.explain.itemconvert5=Given items will convert to given materials.
 
 book.uhc.explain.weather=When disabled doWeatherCycle will be disabled.
 book.uhc.explain.mobgriefing=When disabled mobGriefing will be disabled.
+
+book.uhc.explain.customhealth=When enabled custom max health can be set here.
+book.uhc.explain.healthExplain=1 per half heart.
+book.uhc.explain.randomspawns=When enabled uses spreadplayer command.
+book.uhc.explain.randomspawns2=When disabled it uses the spawns from config.
+book.uhc.explain.spreaddistance=Amount of blocks between teams.
+book.uhc.explain.spreadrange=The range in which it teleports players.
+book.uhc.explain.spreadteams=When enabled it teleports teams together.
 
 # Team Names
 color.darkred.name=Dark Red

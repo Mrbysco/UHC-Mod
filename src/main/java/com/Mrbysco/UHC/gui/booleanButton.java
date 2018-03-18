@@ -29,6 +29,10 @@ public class booleanButton extends GuiButton
 		this.booleanValue = value;
 	}
 	
+	public Boolean getBoolean() {
+		return this.booleanValue;
+	}
+	
 	/**
 	 * Draws this button to the screen.
 	 */

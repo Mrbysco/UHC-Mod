@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.Mrbysco.UHC.init.UHCSaveData;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -15,8 +16,11 @@ import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -139,68 +143,83 @@ public class CommandRespawnUHC extends CommandBase
 
         if (!set.isEmpty())
         {
-        		sender.setCommandStat(CommandResultStats.Type.AFFECTED_ENTITIES, set.size());
-                notifyCommandListener(sender, this, "commands.uhc.respawn.success", new Object[] {set.size(), s, joinNiceString(set.toArray(new String[set.size()]))});
+    		sender.setCommandStat(CommandResultStats.Type.AFFECTED_ENTITIES, set.size());
+            notifyCommandListener(sender, this, "commands.uhc.respawn.success", new Object[] {set.size(), s, joinNiceString(set.toArray(new String[set.size()]))});
 
-                String playerName = removeBrackets(set.toString());
-                System.out.println(set);
-                EntityPlayer player = server.getWorld(0).getPlayerEntityByName(getEntityName(server, sender, playerName));
-    			final NBTTagCompound entityData = player.getEntityData();
+            String playerName = removeBrackets(set.toString());
+            System.out.println(set);
+            EntityPlayer player = server.getWorld(0).getPlayerEntityByName(getEntityName(server, sender, playerName));
+			final NBTTagCompound entityData = player.getEntityData();
 
-                World world = server.getWorld(0);
-                ScorePlayerTeam team = scoreboard.getTeam(s);
-                if(team == null)
-                {
-                	return;
-                }
-                Collection<String> collection = team.getMembershipCollection();
-                sender.setCommandStat(CommandResultStats.Type.QUERY_RESULT, collection.size());
-                if (collection.isEmpty())
-                {
-                    throw new CommandException("commands.scoreboard.teams.list.player.empty", new Object[] {team.getName()});
-                }
-                
-                String memberName = Iterables.get(collection, 0);
-                EntityPlayer teamMember = server.getWorld(0).getPlayerEntityByName(getEntityName(server, sender, memberName));
-                if(teamMember != null)
-                {
-                    BlockPos pos = teamMember.getPosition();
-                	int teamDimension = teamMember.dimension;
-                	if(player.dimension != teamDimension)
-        			{
-        				player.changeDimension(teamDimension);
-        			}
-                    player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
-                    player.setGameType(GameType.SURVIVAL);
-                }
-                else
-                {
-                	int posX,posY,posZ;
-                	BlockPos pos1 = player.getBedLocation();
-            		int dimInt = entityData.getInteger("deathDim");
+            World world = server.getWorld(0);
+            UHCSaveData uhcData = UHCSaveData.getForWorld(world);
+            
+            ScorePlayerTeam team = scoreboard.getTeam(s);
+            if(team == null)
+            {
+            	return;
+            }
+            Collection<String> collection = team.getMembershipCollection();
+            sender.setCommandStat(CommandResultStats.Type.QUERY_RESULT, collection.size());
+            if (collection.isEmpty())
+            {
+                throw new CommandException("commands.scoreboard.teams.list.player.empty", new Object[] {team.getName()});
+            }
+            
+            String memberName = Iterables.get(collection, 0);
+            EntityPlayer teamMember = server.getWorld(0).getPlayerEntityByName(getEntityName(server, sender, memberName));
+            if(teamMember != null)
+            {
+                BlockPos pos = teamMember.getPosition();
+            	int teamDimension = teamMember.dimension;
+            	if(player.dimension != teamDimension)
+    			{
+    				player.changeDimension(teamDimension);
+    			}
+                player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
+                player.setGameType(GameType.SURVIVAL);
+            }
+            else
+            {
+            	int posX,posY,posZ;
+            	BlockPos pos1 = player.getBedLocation();
+        		int dimInt = entityData.getInteger("deathDim");
 
-                	if(pos1 != null)
-                	{
-                		posX = pos1.getX();
-                		posY = pos1.getY();
-                		posZ = pos1.getZ();
-                	}
-                	else
-                	{
-                		posX = entityData.getInteger("deathX");
-                		posY = entityData.getInteger("deathY");
-                		posZ = entityData.getInteger("deathZ");
-                		posZ = entityData.getInteger("deathZ");
-                	}
-        			entityData.setBoolean("revival", true);
-        			if(player.dimension != dimInt)
-        			{
-        				player.changeDimension(dimInt);
-        			}
-                    player.setPositionAndUpdate(posX, posY, posZ);
-                	player.setGameType(GameType.SURVIVAL);
-                }
-
+            	if(pos1 != null)
+            	{
+            		posX = pos1.getX();
+            		posY = pos1.getY();
+            		posZ = pos1.getZ();
+            	}
+            	else
+            	{
+            		posX = entityData.getInteger("deathX");
+            		posY = entityData.getInteger("deathY");
+            		posZ = entityData.getInteger("deathZ");
+            		posZ = entityData.getInteger("deathZ");
+            	}
+    			if(player.dimension != dimInt)
+    			{
+    				player.changeDimension(dimInt);
+    			}
+                player.setPositionAndUpdate(posX, posY, posZ);
+            	player.setGameType(GameType.SURVIVAL);
+            }
+            
+            double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
+			boolean flag = uhcData.isApplyCustomHealth();
+			double maxHealth = (double) uhcData.getMaxHealth();
+            
+			
+			if(playerHealth != maxHealth && flag)
+			{
+				player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
+				
+				int instantHealth = uhcData.getMaxHealth() / 4;
+				player.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 1, instantHealth, true, false));
+				
+	            entityData.setBoolean("modifiedMaxHealth", true);
+			}
         }
 
         if (!set1.isEmpty())

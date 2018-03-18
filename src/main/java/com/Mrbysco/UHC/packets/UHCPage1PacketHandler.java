@@ -4,6 +4,8 @@ import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -32,6 +34,12 @@ public class UHCPage1PacketHandler implements IMessageHandler<UHCPage1Packet, IM
 			saveData.setFriendlyFire(message.teamDamage);
 			saveData.setDifficulty(message.difficulty);
 			saveData.markDirty();
+			
+			ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
+		}
+		else
+		{
+			serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to edit the UHC book."));
 		}
 	}
 }

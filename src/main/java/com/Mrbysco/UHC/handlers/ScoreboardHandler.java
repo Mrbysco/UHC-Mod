@@ -141,10 +141,6 @@ public class ScoreboardHandler {
 				else
 					return;
 			}
-			else
-			{
-				player.setGlowing(false);
-			}
 			
 			if(scoreboard.getPlayersTeam(player.getName()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing())
 			{

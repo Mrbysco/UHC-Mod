@@ -3,6 +3,8 @@ package com.Mrbysco.UHC.commands;
 import com.Mrbysco.UHC.UltraHardCoremod;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
+import com.Mrbysco.UHC.packets.ModPackethandler;
+import com.Mrbysco.UHC.packets.UHCPacketMessage;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -54,6 +56,7 @@ public class CommandResetUHC extends CommandBase
 		timerData.markDirty();
 		saveData.resetAll();
 		saveData.markDirty();
+		ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
 		UltraHardCoremod.instance.resetTimer();
         sender.sendMessage(new TextComponentTranslation("commands.uhc.reset.success"));
     }

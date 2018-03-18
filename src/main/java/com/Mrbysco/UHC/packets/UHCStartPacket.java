@@ -5,6 +5,7 @@ import java.util.List;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.utils.SpreadPosition;
 import com.Mrbysco.UHC.utils.SpreadUtil;
+import com.Mrbysco.UHC.utils.TeamUtil;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.command.CommandException;
@@ -13,6 +14,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.storage.WorldInfo;
@@ -54,6 +58,14 @@ public class UHCStartPacket implements IMessage{
 			
 			if(playerData.getBoolean("canEditUHC") == true)
 			{
+				List<EntityPlayerMP> soloPlayers = server.getPlayerList().getPlayers();
+				for (EntityPlayer player : soloPlayers)
+				{
+					if(player.getTeam() == null)
+					{
+						soloPlayers.remove(player);
+					}
+				}
 				
 				for (EntityPlayer player : playerList)
 				{
@@ -65,6 +77,8 @@ public class UHCStartPacket implements IMessage{
 				
 				double centerX = saveData.getBorderCenterX();
 				double centerZ = saveData.getBorderCenterZ();
+				double spreadDistance = saveData.getSpreadDistance();
+				double spreadMaxRange = saveData.getSpreadMaxRange();
 				int BorderSize = saveData.getBorderSize();
 				
 				//if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
@@ -74,19 +88,40 @@ public class UHCStartPacket implements IMessage{
 				world.setWorldTime(0);
 				info.setRaining(false);
 				
-				try {
-					SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), 20, 100, world, true);
-				} catch (CommandException e) {
-					e.printStackTrace();
+				if(saveData.isRandomSpawns())
+				{
+					try {
+						SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
+					} catch (CommandException e) {
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					for(EntityPlayer player : playerList)
+					{
+						if(player.getTeam() != null)
+						{
+							BlockPos position = TeamUtil.getPosForTeam(player.getTeam().getColor());
+							player.setPosition(position.getX(), position.getY(), position.getZ());
+						}
+						else
+						{
+							try {
+								SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, false);
+							} catch (CommandException e) {
+								e.printStackTrace();
+							}
+						}
+					}
 				}
 				
-				for(String players : server.getOnlinePlayerNames())
-				{
-					EntityPlayer onlinePlayer = world.getPlayerEntityByName(players);
-					
-				}
 				saveData.setUhcStarting(true);
 				saveData.markDirty();
+			}
+			else
+			{
+				serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to start the UHC."));
 			}
 		}
 	}

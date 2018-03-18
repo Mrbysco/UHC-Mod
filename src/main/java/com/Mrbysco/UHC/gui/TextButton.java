@@ -25,6 +25,10 @@ public class TextButton extends GuiButton
 		this.width = mc.fontRenderer.getStringWidth(text);
 	}
 	
+	public String getText() {
+		return this.displayString;
+	}
+	
 	public void shadowEnabled(boolean shadow){
 		this.shadow = shadow;
 	}

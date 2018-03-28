@@ -1,25 +1,23 @@
 package com.Mrbysco.UHC.handlers;
 
+import com.Mrbysco.UHC.UltraHardCoremod;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.world.World;
+import net.minecraft.world.border.IBorderListener;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class BorderHandler {
 	@SubscribeEvent
-	public void borderHandling(TickEvent.PlayerTickEvent event)
+	public void borderHandling(TickEvent.WorldTickEvent event)
 	{
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
-			EntityPlayer player = event.player;
-			World world = player.world;
-			NBTTagCompound entityData = player.getEntityData();
+			World world = event.world;
 			Scoreboard scoreboard = world.getScoreboard();
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 			UHCTimerData timerData = UHCTimerData.getForWorld(world);
@@ -29,18 +27,27 @@ public class BorderHandler {
 			{
 				if(saveData.isShrinkEnabled())
 				{
+					int shrinkTimer = timerData.getShrinkTimeUntil();
+					boolean shrinkFlag = shrinkTimer == UltraHardCoremod.tickTime(saveData.getShrinkTimer());
+					boolean shrinkApplied = saveData.isShrinkApplied();
 					String shrinkMode = saveData.getShrinkMode();
+					
+					int oldSize = saveData.getBorderSize();
+					int newSize = saveData.getShrinkSize();
+					int shrinkTimeSec = saveData.getShrinkTimer()*60;
 					//shrink time * 60 as worldborder checks in seconds
 		    		
-					if(shrinkMode.equals("Shrink"))
+					if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
+					{
+						border.setTransition(oldSize, newSize, shrinkTimeSec);
+						saveData.setShrinkApplied(true);
+						saveData.markDirty();
+					}
+					if(shrinkMode.equals("Arena") && shrinkFlag )
 					{
 						
 					}
-					if(shrinkMode.equals("Arena"))
-					{
-
-					}
-					if(shrinkMode.equals("Control"))
+					if(shrinkMode.equals("Control") && shrinkFlag)
 					{
 
 					}
@@ -52,11 +59,13 @@ public class BorderHandler {
 				{
 					double originalX = border.getCenterX();
 					saveData.setOriginalBorderCenterX(originalX);
+					saveData.markDirty();
 				}
 				if(saveData.getOriginalBorderCenterZ() == -1)
 				{
 					double originalZ = border.getCenterX();
 					saveData.setOriginalBorderCenterZ(originalZ);
+					saveData.markDirty();
 				}
 				
 				if(saveData.getBorderCenterX() == -1)
@@ -65,11 +74,13 @@ public class BorderHandler {
 					{
 						double originalX = saveData.getOriginalBorderCenterX();
 						saveData.setBorderCenterX(originalX);
+						saveData.markDirty();
 					}
 					else
 					{
 						double originalZ = border.getCenterX();
 						saveData.setBorderCenterZ(originalZ);
+						saveData.markDirty();
 					}
 				}
 				if(saveData.getBorderCenterZ() == -1)
@@ -78,11 +89,13 @@ public class BorderHandler {
 					{
 						double originalZ = saveData.getOriginalBorderCenterZ();
 						saveData.setBorderCenterZ(originalZ);
+						saveData.markDirty();
 					}
 					else
 					{
 						double originalZ = border.getCenterX();
 						saveData.setBorderCenterZ(originalZ);
+						saveData.markDirty();
 					}
 				}
 			}

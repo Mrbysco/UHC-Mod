@@ -36,6 +36,7 @@ public class UHCPage2PacketHandler implements IMessageHandler<UHCPage2Packet, IM
 			saveData.setShrinkTimer(message.timeUntil);
 			saveData.setShrinkSize(message.size);
 			saveData.setShrinkOvertime(message.over);
+			saveData.setShrinkMode(message.Shrinkmode);
 			saveData.markDirty();
 			
 			ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));

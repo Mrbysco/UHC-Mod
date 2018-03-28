@@ -18,6 +18,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -30,7 +31,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 public class UHCHandler {
 	
 	@SubscribeEvent
-	public void UHCBookEvent(TickEvent.WorldTickEvent event) {
+	public void UhcEvents(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
@@ -50,29 +51,28 @@ public class UHCHandler {
 				{
 					EntityPlayer player = (EntityPlayer) entity;
 					NBTTagCompound entityData = player.getEntityData();
-
-					if (entityData.getBoolean("canEditUHC") == true && saveData.isUhcOnGoing() == false)
+					boolean UHCFlag = saveData.isUhcOnGoing();
+					
+					if (entityData.getBoolean("canEditUHC") == true && !UHCFlag)
 					{
 						if (player.inventory.getStackInSlot(39) == editStack)
-						{
 							return;
-						}
+						
 						if (player.inventory.getStackInSlot(39).isEmpty())
-						{
 							player.inventory.setInventorySlotContents(39, editStack);
-						}
 					}
 					if (entityData.getBoolean("canEditUHC") == false)
 					{
-						player.inventory.removeStackFromSlot(39);
+						if(player.inventory.getStackInSlot(39) == editStack)
+							player.inventory.removeStackFromSlot(39);
 					}
 					
-					if (!player.inventory.hasItemStack(bookStack) && (saveData.isUhcOnGoing() == false))
+					if (!player.inventory.hasItemStack(bookStack) && !UHCFlag)
 					{
 						player.inventory.addItemStackToInventory(bookStack);
 					}
 					
-					if(saveData.isUhcOnGoing() == false)
+					if(!UHCFlag)
 					{
 						if(player.getActivePotionEffect(MobEffects.SATURATION) == null)
 							player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 32767 * 20, 10, true, false));
@@ -84,11 +84,9 @@ public class UHCHandler {
 				
 				if (entity instanceof EntityItem) {
 					EntityItem itemEntity = (EntityItem) entity;
-					ItemStack stack = itemEntity.getItem();
-					if(stack.getItem() == ModItems.uhc_book)
-					{
+					
+					if(itemEntity.getItem().getItem() == ModItems.uhc_book)
 						world.removeEntity(itemEntity);
-					}
 				}
 			}
 		}
@@ -123,9 +121,7 @@ public class UHCHandler {
 		UHCSaveData saveData = UHCSaveData.getForWorld(player.world);
 
 		if (saveData.isUhcOnGoing() && !player.world.isRemote)
-		{
 			player.setGameType(GameType.SPECTATOR);
-		}
 	}
 	
 	@SubscribeEvent
@@ -167,10 +163,8 @@ public class UHCHandler {
 			
 			if(!newPlayer.world.isRemote)
 			{
-				if(saveData.isUhcOnGoing()) 
-				{
+				if(saveData.isUhcOnGoing())
 					newPlayer.setGameType(GameType.SPECTATOR);
-				}
 				
 				if(originalData.hasKey("canEditUHC"))
 				{
@@ -201,9 +195,25 @@ public class UHCHandler {
 			if(saveData.isUhcOnGoing() && saveData.isNetherEnabled() == false && !world.isRemote)
 			{
 				if(event.getDimension() == -1)
-				{
 					event.setCanceled(true);
-				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void SyncPlayerWithData(EntityJoinWorldEvent event)
+	{
+		if(event.getEntity() instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer)event.getEntity();
+			World world = event.getWorld();
+			World playerWorld = player.world;
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			
+			if(saveData.isUhcOnGoing() && !world.isRemote)
+			{
+				//if(UHCSaveData.getForWorld(playerWorld) != saveData)
+					//ModPackethandler.INSTANCE.sendTo(new UHCPacketMessage(saveData), (EntityPlayerMP) player);
 			}
 		}
 	}
@@ -236,7 +246,7 @@ public class UHCHandler {
 			NBTTagCompound playerData = player.getEntityData();
 			if (stack.getItem() == Items.CARROT_ON_A_STICK)
 			{
-				//
+				System.out.println(saveData.getShrinkMode());
 			}
 		}
 	}

@@ -42,6 +42,7 @@ public class UHCSaveData extends WorldSavedData{
 	private int shrinkSize;
 	private int shrinkOvertime;
 	private String shrinkMode;
+	private boolean shrinkApplied;
 
 	private boolean timeLock;
 	private int timeLockTimer;
@@ -98,6 +99,7 @@ public class UHCSaveData extends WorldSavedData{
 		this.shrinkSize = 256;
 		this.shrinkOvertime = 60;
 		this.shrinkMode = "Shrink";
+		this.shrinkApplied = false;
 		
 		this.timeLock = false;
 		this.timeLockTimer = 60;
@@ -155,6 +157,7 @@ public class UHCSaveData extends WorldSavedData{
 		this.shrinkSize = 256;
 		this.shrinkOvertime = 60;
 		this.shrinkMode = "Shrink";
+		this.shrinkApplied = false;
 		
 		this.timeLock = false;
 		this.timeLockTimer = 60;
@@ -208,6 +211,7 @@ public class UHCSaveData extends WorldSavedData{
 		this.shrinkSize = 256;
 		this.shrinkOvertime = 60;
 		this.shrinkMode = "Shrink";
+		this.shrinkApplied = false;
 		
 		this.timeLock = false;
 		this.timeLockTimer = 60;
@@ -434,6 +438,14 @@ public class UHCSaveData extends WorldSavedData{
 		this.shrinkMode = shrinkMode;
 	}
 	
+	public boolean isShrinkApplied() {
+		return shrinkApplied;
+	}
+	
+	public void setShrinkApplied(boolean shrinkApplied) {
+		this.shrinkApplied = shrinkApplied;
+	}
+	
 	public boolean isTimeLock() {
 		return timeLock;
 	}
@@ -616,6 +628,7 @@ public class UHCSaveData extends WorldSavedData{
 		shrinkSize = nbt.getInteger("shrinkSize");
 		shrinkOvertime = nbt.getInteger("shrinkOvertime");
 		shrinkMode = nbt.getString("shrinkMode");
+		shrinkApplied = nbt.getBoolean("shrinkApplied");
 		
 		timeLock = nbt.getBoolean("timeLock");
 		timeLockTimer = nbt.getInteger("timeLockTimer");
@@ -668,6 +681,7 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setInteger("shrinkSize", shrinkSize);
 		compound.setInteger("shrinkOvertime", shrinkOvertime);
 		compound.setString("shrinkMode", shrinkMode);
+		compound.setBoolean("shrinkApplied", shrinkApplied);
 
 		compound.setBoolean("timeMode", timeLock);
 		compound.setInteger("timeLockTimer", timeLockTimer);

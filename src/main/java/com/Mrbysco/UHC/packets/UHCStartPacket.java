@@ -1,6 +1,6 @@
 package com.Mrbysco.UHC.packets;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.utils.SpreadPosition;
@@ -51,28 +51,21 @@ public class UHCStartPacket implements IMessage{
 			World world = serverPlayer.getServerWorld();
 			WorldBorder border = world.getWorldBorder();
 			MinecraftServer server = world.getMinecraftServer();
-			List<EntityPlayerMP> playerList = server.getPlayerList().getPlayers();
+			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			Scoreboard scoreboard = world.getScoreboard();
 			WorldInfo info = world.getWorldInfo();
 			NBTTagCompound playerData = serverPlayer.getEntityData();
 			
 			if(playerData.getBoolean("canEditUHC") == true)
 			{
-				List<EntityPlayerMP> soloPlayers = server.getPlayerList().getPlayers();
-				for (EntityPlayer player : soloPlayers)
-				{
-					if(player.getTeam() == null)
-					{
-						soloPlayers.remove(player);
-					}
-				}
-				
+				ArrayList<EntityPlayerMP>soloPlayers = (ArrayList<EntityPlayerMP>) playerList.clone();
 				for (EntityPlayer player : playerList)
 				{
+					if(player.getTeam() == null)
+						soloPlayers.remove(player);
+					
 					if(player.getTeam() == scoreboard.getTeam("spectator"))
-					{
 						playerList.remove(player);
-					}
 				}
 				
 				double centerX = saveData.getBorderCenterX();
@@ -102,8 +95,11 @@ public class UHCStartPacket implements IMessage{
 					{
 						if(player.getTeam() != null)
 						{
-							BlockPos position = TeamUtil.getPosForTeam(player.getTeam().getColor());
-							player.setPosition(position.getX(), position.getY(), position.getZ());
+							BlockPos pos = TeamUtil.getPosForTeam(player.getTeam().getColor());
+							System.out.println(pos.toString());
+							
+							server.getCommandManager().executeCommand(server , "/tp " + player.getName() + " " + pos.getX() + " " + pos.getY() + " " + pos.getZ() );
+							//player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
 						}
 						else
 						{
@@ -116,8 +112,8 @@ public class UHCStartPacket implements IMessage{
 					}
 				}
 				
-				saveData.setUhcStarting(true);
-				saveData.markDirty();
+				//saveData.setUhcStarting(true);
+				//saveData.markDirty();
 			}
 			else
 			{

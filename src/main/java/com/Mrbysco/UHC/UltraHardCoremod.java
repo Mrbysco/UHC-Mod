@@ -219,7 +219,7 @@ public class UltraHardCoremod {
 		}
 	}
 	
-	public int tickTime(int oldTime)
+	public static int tickTime(int oldTime)
 	{
 		return oldTime * 1200;
 	}

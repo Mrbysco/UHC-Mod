@@ -279,20 +279,20 @@ public class GuiUHCBook extends GuiScreen{
     	
     	this.UHCStartButton = (GuiUHCBook.StartButton)this.addButton(new GuiUHCBook.StartButton(54, i + 43 + 7, j + 132, fontRenderer));  
 
-    	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 80, j + 89, 20, 8);
+    	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 75, j + 89, 20, 8);
     	setupField(randSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getRandomTeamSize()));
 
-		maxTeamSizeField = new GuiTextField(1, fontRenderer, i + 43 + 80, j + 101, 20, 8);
+		maxTeamSizeField = new GuiTextField(1, fontRenderer, i + 43 + 75, j + 101, 20, 8);
 		setupField(maxTeamSizeField, 2, 0xFFFFAA00, String.valueOf(saveData.getMaxTeamSize()));
 
-		borderSizeField = new GuiTextField(2, fontRenderer, i + 43 + 40, j + 40, 32, 8);
+		borderSizeField = new GuiTextField(2, fontRenderer, i + 43 + 36, j + 40, 32, 8);
 		setupField(borderSizeField, 4, 0xFFFFAA00, String.valueOf(saveData.getBorderSize()));
 		
-		borderCenterXField = new GuiTextField(3, fontRenderer, i + 55, j + 64, 52, 8);
-		setupField(borderCenterXField, 5, 0xFFFFAA00, String.valueOf(saveData.getBorderCenterX()));
+		borderCenterXField = new GuiTextField(3, fontRenderer, i + 55, j + 64, 42, 8);
+		setupField(borderCenterXField, 6, 0xFFFFAA00, String.valueOf(saveData.getBorderCenterX()));
 		
-		borderCenterZField = new GuiTextField(4, fontRenderer, i + 55, j + 76, 79, 8);
-		setupField(borderCenterZField, 5, 0xFFFFAA00, String.valueOf(saveData.getBorderCenterZ()));
+		borderCenterZField = new GuiTextField(4, fontRenderer, i + 55, j + 76, 42, 8);
+		setupField(borderCenterZField, 6, 0xFFFFAA00, String.valueOf(saveData.getBorderCenterZ()));
 		
 		difficultyField = new GuiTextField(5, fontRenderer, i + 43 + 52, j + 144, 14, 8);
 		setupField(difficultyField, 1, 0xFFFFAA00, String.valueOf(saveData.getDifficulty()));
@@ -1362,18 +1362,17 @@ public class GuiUHCBook extends GuiScreen{
             }
             else if(button.id == 36)
             {
-            	String mode = shrinkMode;
-            	if(mode.equals("Shrink"))
+            	if(saveData.getShrinkMode().equals("Shrink"))
             	{
             		shrinkMode = "Arena";
             		sendPage2Packet();
             	}
-            	if(mode.equals("Arena"))
+            	if(saveData.getShrinkMode().equals("Arena"))
             	{
             		shrinkMode = "Control";
             		sendPage2Packet();
             	}
-            	if(mode.equals("Control"))
+            	if(saveData.getShrinkMode().equals("Control"))
             	{
             		shrinkMode = "Shrink";
             		sendPage2Packet();
@@ -1387,13 +1386,12 @@ public class GuiUHCBook extends GuiScreen{
             }
             else if(button.id == 38)
             {
-            	String mode = timeMode;
-            	if(mode.equals("Day"))
+            	if(saveData.getTimeMode().equals("Day"))
             	{
             		timeMode = "Night";
             		sendPage3Packet();
             	}
-            	if(mode.equals("Night"))
+            	if(saveData.getTimeMode().equals("Night"))
             	{
             		timeMode = "Day";
             		sendPage3Packet();

@@ -4,10 +4,13 @@ import java.util.List;
 
 import com.Mrbysco.UHC.init.ModItems;
 import com.Mrbysco.UHC.init.UHCSaveData;
+import com.Mrbysco.UHC.packets.ModPackethandler;
+import com.Mrbysco.UHC.packets.UHCPacketMessage;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -203,18 +206,13 @@ public class UHCHandler {
 	@SubscribeEvent
 	public void SyncPlayerWithData(EntityJoinWorldEvent event)
 	{
-		if(event.getEntity() instanceof EntityPlayer)
+		if(event.getEntity() instanceof EntityPlayer && !event.getWorld().isRemote)
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			World world = event.getWorld();
-			World playerWorld = player.world;
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			
-			if(saveData.isUhcOnGoing() && !world.isRemote)
-			{
-				//if(UHCSaveData.getForWorld(playerWorld) != saveData)
-					//ModPackethandler.INSTANCE.sendTo(new UHCPacketMessage(saveData), (EntityPlayerMP) player);
-			}
+
+			ModPackethandler.INSTANCE.sendTo(new UHCPacketMessage(saveData), (EntityPlayerMP) player);
 		}
 	}
 	

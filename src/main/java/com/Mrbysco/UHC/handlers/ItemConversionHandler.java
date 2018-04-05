@@ -25,27 +25,24 @@ public class ItemConversionHandler {
 
 			if (saveData.isNotchApples())
 			{
-				if (!world.isRemote)
-				{
-					for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
-			        {
-						ItemStack findStack = player.inventory.getStackInSlot(i);
-			            Item item = findStack.getItem();
-			            int meta = findStack.getMetadata();
-			            if(!findStack.isEmpty() && item == Items.GOLDEN_APPLE && meta == 1)
-			            {
-			            	ItemStack itemstack = player.inventory.getStackInSlot(i);
-			                ItemStack stack = itemstack.copy();
-			                int count = stack.getCount();
-			                
-			                ItemStack gold_block = new ItemStack(Blocks.GOLD_BLOCK, 8);
-			                ItemStack apple = new ItemStack(Items.APPLE, 1);
-			                
-			                giveResult(player, copyStack(gold_block), count);
-							giveResult(player, copyStack(apple), count);
-			            }
+				for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
+		        {
+					ItemStack findStack = player.inventory.getStackInSlot(i);
+		            Item item = findStack.getItem();
+		            int meta = findStack.getMetadata();
+		            if(!findStack.isEmpty() && item == Items.GOLDEN_APPLE && meta == 1)
+		            {
+		            	ItemStack itemstack = player.inventory.getStackInSlot(i);
+		                ItemStack stack = itemstack.copy();
+		                int count = stack.getCount();
+		                
+		                ItemStack gold_block = new ItemStack(Blocks.GOLD_BLOCK, 8);
+		                ItemStack apple = new ItemStack(Items.APPLE, 1);
+		                
+		                giveResult(player, copyStack(gold_block), count);
+						giveResult(player, copyStack(apple), count);
+		            }
 			            
-			        }
 				}
 			}
 			
@@ -53,32 +50,29 @@ public class ItemConversionHandler {
 			{
 				for (ItemConversionInfo info : ConversionList.conversionList)
 				{
-					if (!world.isRemote)
-					{
-						for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
-				        {
-				            ItemStack findStack = player.inventory.getStackInSlot(i);
-				            Item item = findStack.getItem();
-				            int meta = findStack.getMetadata();
-				            
-				            if(!findStack.isEmpty() && item == info.getInput() && meta == info.getInputMeta()) {
-				                ItemStack itemstack = player.inventory.getStackInSlot(i);
-				                ItemStack stack = itemstack.copy();
-				                int count = stack.getCount();
-				                
-								giveResult(player, copyStack(info.getResult()), count);
-								giveResult(player, copyStack(info.getResult2()), count);
-								giveResult(player, copyStack(info.getResult3()), count);
-								giveResult(player, copyStack(info.getResult4()), count);
-								giveResult(player, copyStack(info.getResult5()), count);
-								giveResult(player, copyStack(info.getResult6()), count);
-								giveResult(player, copyStack(info.getResult7()), count);
-								giveResult(player, copyStack(info.getResult8()), count);
-								giveResult(player, copyStack(info.getResult9()), count);
-								player.inventory.removeStackFromSlot(i);
-				            }
-				        }
-					}
+					for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
+			        {
+			            ItemStack findStack = player.inventory.getStackInSlot(i);
+			            Item item = findStack.getItem();
+			            int meta = findStack.getMetadata();
+			            
+			            if(!findStack.isEmpty() && item == info.getInput() && meta == info.getInputMeta()) {
+			                ItemStack itemstack = player.inventory.getStackInSlot(i);
+			                ItemStack stack = itemstack.copy();
+			                int count = stack.getCount();
+			                
+							giveResult(player, copyStack(info.getResult()), count);
+							giveResult(player, copyStack(info.getResult2()), count);
+							giveResult(player, copyStack(info.getResult3()), count);
+							giveResult(player, copyStack(info.getResult4()), count);
+							giveResult(player, copyStack(info.getResult5()), count);
+							giveResult(player, copyStack(info.getResult6()), count);
+							giveResult(player, copyStack(info.getResult7()), count);
+							giveResult(player, copyStack(info.getResult8()), count);
+							giveResult(player, copyStack(info.getResult9()), count);
+							player.inventory.removeStackFromSlot(i);
+			            }
+			        }
 				}
 			}
 		}

@@ -2,7 +2,6 @@ package com.Mrbysco.UHC.config;
 
 import com.Mrbysco.UHC.Reference;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -15,6 +14,9 @@ public class UltraHardCoremodConfigGen {
 
 	@Config.Comment({"Team Spawns"})
 	public static teamSpawns teamSpawns = new teamSpawns();
+	
+	@Config.Comment({"Mod Compat"})
+	public static modCompat modCompat = new modCompat();
 	
 	public static class teamSpawns{
 		@Config.Comment("Team 1 Spawn")
@@ -60,6 +62,16 @@ public class UltraHardCoremodConfigGen {
 		public String spawnTeam14 = "0,0,0";
 	}
 
+	public static class modCompat{
+		@Config.Comment("Twilight Forest Support")
+		public final TwilightForest twilightforest = new TwilightForest();
+
+		public static class TwilightForest{
+			@Config.Comment("The amount of minutes it takes before the boss can be respawned [default: 20]")
+			public int twilightRespawnTime = 20;
+		}
+	}
+	
 	@Mod.EventBusSubscriber(modid = Reference.MOD_ID)
 	private static class EventHandler {
 

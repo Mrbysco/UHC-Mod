@@ -29,7 +29,6 @@ public class PlayerHealthHandler {
 			{
 				if(playerHealth != maxHealth)
 				{
-					System.out.println("hi");
 					this.setHealth(player, saveData.getMaxHealth());
 		            entityData.setBoolean("modifiedMaxHealth", true);
 				}

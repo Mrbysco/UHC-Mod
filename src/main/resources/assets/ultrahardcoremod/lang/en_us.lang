@@ -22,6 +22,8 @@ book.uhc.team.randomize=Randomize Players
 book.uhc.team.randomizer=Randomize
 book.uhc.team.maxed=Can not join team %s, team has max amount of players.
 
+book.uhc.shrink.control=%s is at the control point. Shrinking the border by 1 block every second.
+
 book.uhc.option.reset=Reset Value
 book.uhc.option.location=Current Location
 book.uhc.option.randsize=Random Teams:
@@ -142,3 +144,7 @@ color.gray.name=Gray
 color.black.name=Spectator
 color.white.name=Solo
 color.random.name=Randomize
+
+#Messages
+
+message.minutemark.time=%d Minutes has passed | Minute Mark 

@@ -1,4 +1,4 @@
-package com.Mrbysco.UHC.compat.ct;
+package com.Mrbysco.UHC.compat.ct.actions;
 
 import com.Mrbysco.UHC.lists.CookList;
 
@@ -15,7 +15,7 @@ public class ActionAutoCook implements IAction {
 
 	public ActionAutoCook(IItemStack stack1, IItemStack stack2, boolean removal, float experience) {
 		this.rawProduct = stack1;
-		this.cookedProduct = stack1;
+		this.cookedProduct = stack2;
 		this.removal = removal;
 		this.experience = experience;
 	}

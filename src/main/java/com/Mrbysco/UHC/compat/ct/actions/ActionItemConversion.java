@@ -1,4 +1,4 @@
-package com.Mrbysco.UHC.compat.ct;
+package com.Mrbysco.UHC.compat.ct.actions;
 
 import com.Mrbysco.UHC.lists.ConversionList;
 

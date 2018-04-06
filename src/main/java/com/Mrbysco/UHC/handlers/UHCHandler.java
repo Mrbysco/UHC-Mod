@@ -1,9 +1,11 @@
 package com.Mrbysco.UHC.handlers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.Mrbysco.UHC.init.ModItems;
 import com.Mrbysco.UHC.init.UHCSaveData;
+import com.Mrbysco.UHC.init.UHCTimerData;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.packets.UHCPacketMessage;
 
@@ -18,7 +20,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -32,6 +38,101 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class UHCHandler {
+	
+	public int uhcStartTimer;
+
+	@SubscribeEvent
+	public void UHCStartEvent(TickEvent.WorldTickEvent event) {
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		{
+			World world = event.world;
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCTimerData timerData = UHCTimerData.getForWorld(world);
+			MinecraftServer server = world.getMinecraftServer();
+			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+			
+			if(!playerList.isEmpty())
+			{	
+				if(saveData.isUhcStarting())
+				{
+					if(timerData.getShrinkTimeUntil() != this.uhcStartTimer)
+					{
+						this.uhcStartTimer = timerData.getShrinkTimeUntil();
+					}
+					
+					if(timerData.getUhcStartTimer() == 20 || timerData.getUhcStartTimer() == 40 || timerData.getUhcStartTimer() == 60 || 
+						timerData.getUhcStartTimer() == 80 || timerData.getUhcStartTimer() == 100 || timerData.getUhcStartTimer() == 120)
+					{
+						if(timerData.getUhcStartTimer() == 20)
+						{
+							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.1"));
+						}
+						else if(timerData.getUhcStartTimer() == 40)
+						{
+							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.2"));
+						}
+						else if(timerData.getUhcStartTimer() == 60)
+						{
+							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.3"));
+						}
+						else if(timerData.getUhcStartTimer() == 80)
+						{
+							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.4"));
+						}
+						else if(timerData.getUhcStartTimer() == 100)
+						{
+							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.5"));
+						}
+						else if(timerData.getUhcStartTimer() == 120)
+						{
+							for(EntityPlayerMP player : playerList)
+							{
+								for(PotionEffect effect : player.getActivePotionEffects())
+								{
+									player.removePotionEffect(effect.getPotion());
+								}
+							}
+							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.6"));
+
+							saveData.setUhcStarting(false);
+							saveData.setUhcOnGoing(true);
+							saveData.markDirty();
+							this.uhcStartTimer = 0;
+						}
+					}
+					else
+					{
+						for(EntityPlayerMP player : playerList)
+						{
+							if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
+								player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
+						}
+						
+						++this.uhcStartTimer;
+						timerData.setUhcStartTimer(this.uhcStartTimer);
+						timerData.markDirty();
+					}
+
+				}
+				else
+				{
+					if(timerData.getUhcStartTimer() != 0)
+					{
+						timerData.setUhcStartTimer(0);
+						timerData.markDirty();
+					}
+				}
+			}
+		}
+	}
+	
+	public static void sendMessage(ArrayList<EntityPlayerMP> list, ITextComponent text)
+	{
+		for (EntityPlayerMP player : list)
+		{
+			player.sendMessage(text);
+		}
+	}
 	
 	@SubscribeEvent
 	public void UhcEvents(TickEvent.WorldTickEvent event) {

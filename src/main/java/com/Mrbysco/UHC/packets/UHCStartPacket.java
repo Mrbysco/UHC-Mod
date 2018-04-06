@@ -74,10 +74,10 @@ public class UHCStartPacket implements IMessage{
 				double spreadMaxRange = saveData.getSpreadMaxRange();
 				int BorderSize = saveData.getBorderSize();
 				
-				//if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
-				//	border.setCenter(centerX, centerZ);
+				if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
+					border.setCenter(centerX, centerZ);
 				
-				//border.setSize(BorderSize);
+				border.setSize(BorderSize);
 				world.setWorldTime(0);
 				info.setRaining(false);
 				
@@ -99,7 +99,6 @@ public class UHCStartPacket implements IMessage{
 							System.out.println(pos.toString());
 							
 							server.getCommandManager().executeCommand(server , "/tp " + player.getName() + " " + pos.getX() + " " + pos.getY() + " " + pos.getZ() );
-							//player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
 						}
 						else
 						{
@@ -112,8 +111,8 @@ public class UHCStartPacket implements IMessage{
 					}
 				}
 				
-				//saveData.setUhcStarting(true);
-				//saveData.markDirty();
+				saveData.setUhcStarting(true);
+				saveData.markDirty();
 			}
 			else
 			{

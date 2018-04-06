@@ -18,10 +18,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class ModCompatHandler {
+	
+	@Optional.Method(modid = "twilightforest")
 	@SubscribeEvent
 	public void TwilightHandler(TickEvent.WorldTickEvent event)
 	{
@@ -62,16 +65,13 @@ public class ModCompatHandler {
 									info.teamsReached.add(team);
 
 									world.setBlockState(pos, state);
-									++info.timer;
+									info.timer = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 20);
 								}
 							}
 						}
 					}
-				
-					if(info.timer != 0)
-						++info.timer;
-					if(info.timer <= (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 20))
-						info.timer = 0;
+					if(info.timer > 0)
+					       info.timer--;
 				}
 			}
 

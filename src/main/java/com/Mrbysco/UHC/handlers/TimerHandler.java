@@ -28,7 +28,7 @@ public class TimerHandler {
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			
-			if(!playerList.isEmpty())
+			if(!playerList.isEmpty() && saveData.isUhcOnGoing())
 			{				
 				if(saveData.isShrinkEnabled())
 				{
@@ -40,11 +40,6 @@ public class TimerHandler {
 					if(timerData.getShrinkTimeUntil() >= tickTime(saveData.getShrinkTimer()))
 					{
 						this.shrinkTimeUntil = tickTime(saveData.getShrinkTimer());
-						if(timerData.getShrinkTimeUntil() != tickTime(saveData.getShrinkTimer()))
-						{
-							timerData.setShrinkTimeUntil(tickTime(saveData.getShrinkTimer()));
-							timerData.markDirty();
-						}
 					}
 					else
 					{
@@ -66,11 +61,6 @@ public class TimerHandler {
 					if(timerData.getTimeLockTimer() >= tickTime(saveData.getTimeLockTimer()))
 					{
 						this.timeLockTimer = tickTime(saveData.getTimeLockTimer());
-						if(timerData.getTimeLockTimer() != tickTime(saveData.getTimeLockTimer()))
-						{
-							timerData.setTimeLockTimer(tickTime(saveData.getTimeLockTimer()));
-							timerData.markDirty();
-						}
 					}
 					else
 					{
@@ -92,11 +82,6 @@ public class TimerHandler {
 					if(timerData.getMinuteMarkTimer() >= tickTime(saveData.getMinuteMarkTime()))
 					{
 						this.minuteMarkTimer = tickTime(saveData.getMinuteMarkTime());
-						if(timerData.getMinuteMarkTimer() != tickTime(saveData.getMinuteMarkTime()))
-						{
-							timerData.setMinuteMarkTimer(tickTime(saveData.getMinuteMarkTime()));
-							timerData.markDirty();
-						}
 					}
 					else
 					{
@@ -118,11 +103,6 @@ public class TimerHandler {
 					if(timerData.getNameTimer() >= tickTime(saveData.getNameTimer()))
 					{
 						this.nameTimer = tickTime(saveData.getNameTimer());
-						if(timerData.getNameTimer() != tickTime(saveData.getNameTimer()))
-						{
-							timerData.setNameTimer(tickTime(saveData.getNameTimer()));
-							timerData.markDirty();
-						}
 					}
 					else
 					{
@@ -144,11 +124,6 @@ public class TimerHandler {
 					if(timerData.getGlowTimer() >= tickTime(saveData.getGlowTime()))
 					{
 						this.glowTimer = tickTime(saveData.getGlowTime());
-						if(timerData.getGlowTimer() != tickTime(saveData.getGlowTime()))
-						{
-							timerData.setGlowTimer(tickTime(saveData.getGlowTime()));
-							timerData.markDirty();
-						}
 					}
 					else
 					{

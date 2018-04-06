@@ -17,7 +17,7 @@ public class UHCTimerData extends WorldSavedData{
 	private int nameTimer;
 	private int glowTimer;
 	private boolean controlled;
-	private boolean reset;
+	private int uhcStartTimer;
 	
 	public UHCTimerData(String name) {
 		super(name);
@@ -28,6 +28,7 @@ public class UHCTimerData extends WorldSavedData{
 		this.nameTimer = 0;
 		this.glowTimer = 0;
 		this.controlled = false;
+		this.uhcStartTimer = 0;
 	}
 
 	public UHCTimerData() {
@@ -39,6 +40,7 @@ public class UHCTimerData extends WorldSavedData{
 		this.nameTimer = 0;
 		this.glowTimer = 0;
 		this.controlled = false;
+		this.uhcStartTimer = 0;
 	}
 	
 	public void resetAll() {
@@ -48,6 +50,7 @@ public class UHCTimerData extends WorldSavedData{
 		this.nameTimer = 0;
 		this.glowTimer = 0;
 		this.controlled = false;
+		this.uhcStartTimer = 0;
 	}
 	
 	public int getShrinkTimeUntil() {
@@ -98,12 +101,12 @@ public class UHCTimerData extends WorldSavedData{
 		this.controlled = controlled;
 	}
 	
-	public void setReset(boolean reset) {
-		this.reset = reset;
+	public int getUhcStartTimer() {
+		return uhcStartTimer;
 	}
 	
-	public boolean isReset() {
-		return reset;
+	public void setUhcStartTimer(int uhcStartTimer) {
+		this.uhcStartTimer = uhcStartTimer;
 	}
 
 	@Override
@@ -114,7 +117,7 @@ public class UHCTimerData extends WorldSavedData{
 		nameTimer = nbt.getInteger("nameTimer");
 		glowTimer = nbt.getInteger("glowTimer");
 		controlled = nbt.getBoolean("pointControlled");
-		reset = nbt.getBoolean("reset");
+		uhcStartTimer = nbt.getInteger("uhcStartTimer");
 	}
 	
 	@Override
@@ -125,7 +128,7 @@ public class UHCTimerData extends WorldSavedData{
 		compound.setInteger("nameTimer", nameTimer);
 		compound.setInteger("glowTimer", glowTimer);
 		compound.setBoolean("pointControlled", controlled);
-		compound.setBoolean("reset", reset);
+		compound.setInteger("uhcStartTimer", uhcStartTimer);
 		return compound;
 	}
 	

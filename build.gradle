@@ -22,7 +22,7 @@ repositories {
 	}
 }
 
-version = "1.0"
+version = "0.1"
 group = "com.Mrbysco.UHC" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Ultra Hard Coremod"
 
@@ -32,7 +32,7 @@ compileJava {
 }
 
 minecraft {
-    version = "1.12.2-14.23.2.2611"
+    version = "1.12.2-14.23.2.2654"
     runDir = "run"
     mappings = "snapshot_20171003"
 }

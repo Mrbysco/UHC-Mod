@@ -49,13 +49,16 @@ public class CommandResetUHC extends CommandBase
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         World world = (World)(sender instanceof EntityPlayer ? ((EntityPlayer)sender).world : server.getWorld(0));
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
-		UHCTimerData timerData = UHCTimerData.getForWorld(world);
-		timerData.resetAll();
-		timerData.markDirty();
-		saveData.resetAll();
-		saveData.markDirty();
-		ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
-        sender.sendMessage(new TextComponentTranslation("commands.uhc.reset.success"));
+        if(!world.isRemote)
+        {
+        	UHCSaveData saveData = UHCSaveData.getForWorld(world);
+    		UHCTimerData timerData = UHCTimerData.getForWorld(world);
+    		timerData.resetAll();
+    		timerData.markDirty();
+    		saveData.resetAll();
+    		saveData.markDirty();
+    		ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
+            sender.sendMessage(new TextComponentTranslation("commands.uhc.reset.success"));
+        }
     }
 }

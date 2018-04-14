@@ -8,6 +8,7 @@ import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.packets.UHCPacketMessage;
+import com.Mrbysco.UHC.utils.UHCTeleporter;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -21,17 +22,19 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -195,7 +198,77 @@ public class UHCHandler {
 			}
 		}
 	}
+	
+	@SubscribeEvent
+	public void spawnRoomEvent(TickEvent.WorldTickEvent event){
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		{
+			World world = event.world;
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 
+			if(saveData.isSpawnRoom() && !saveData.isUhcOnGoing()) {
+				double centerX1 = saveData.getBorderCenterX() -7;
+				double centerX2 = saveData.getBorderCenterX() +7;
+				double centerZ1 = saveData.getBorderCenterZ() -7;
+				double centerZ2 = saveData.getBorderCenterZ() +7;
+				
+				AxisAlignedBB hitbox = new AxisAlignedBB(centerX1 - 0.5f, 248 - 0.5f, centerZ1 - 0.5f, centerX2 + 0.5f, 260 + 0.5f, centerZ2 + 0.5f);
+				ArrayList<EntityPlayer> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayer.class, hitbox));
+
+				MinecraftServer server = world.getMinecraftServer();
+				ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+				
+				for(EntityPlayerMP player : playerList)
+				{
+					if(!collidingList.contains(player) && !player.isCreative() && !player.isSpectator())
+					{
+						if(player.dimension == saveData.getSpawnRoomDimension())
+						{
+				            ((EntityPlayerMP)player).connection.setPlayerLocation(saveData.getBorderCenterX(), 252, saveData.getBorderCenterZ(), player.rotationYaw, player.rotationPitch);
+						}
+						else if(player.dimension != saveData.getSpawnRoomDimension())
+						{
+							player.changeDimension(saveData.getSpawnRoomDimension(), new UHCTeleporter(player.getPosition()));
+						}
+					}
+				}
+				
+				for(double i = centerX1; i <= centerX2; i++)
+				{
+					double d0 = world.rand.nextGaussian() * 0.02D;
+		            double d1 = world.rand.nextGaussian() * 0.02D;
+		            double d2 = world.rand.nextGaussian() * 0.02D;
+					for(double j = centerZ1; j <= centerZ2; j++)
+					{
+						if (world.rand.nextInt(10000) <= 1)
+							((WorldServer) world).spawnParticle(EnumParticleTypes.CRIT, i, 250 + 1.0D, j, 3, d0, d1, d2, 0.0D);
+						
+						if(j == centerZ1 || j == centerZ2)
+						{
+							for(double k = 250; k <= 253; k++)
+							{
+								if (world.rand.nextInt(1000) <= 3)
+									((WorldServer) world).spawnParticle(EnumParticleTypes.TOTEM, i, k + 1.0D, j, 3, d0, d1, d2, 0.0D);
+							}
+						}
+					}
+					
+					if(i == centerX1 || i == centerX2)
+					{
+						for(double j = centerZ1; j <= centerZ2; j++)
+						{
+							for(double k = 250; k <= 253; k++)
+							{
+								if (world.rand.nextInt(1000) <= 3)
+									((WorldServer) world).spawnParticle(EnumParticleTypes.TOTEM, i, k + 1.0D, j, 3, d0, d1, d2, 0.0D);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	@SubscribeEvent
     public void playerEditUHCEvent(PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
@@ -203,7 +276,8 @@ public class UHCHandler {
 			EntityPlayer player = event.player;
 			NBTTagCompound entityData = player.getEntityData();
 			World world = player.world;
-			
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+
 			if(!world.isRemote)
 			{
 				if (!entityData.hasKey("canEditUHC"))
@@ -216,16 +290,46 @@ public class UHCHandler {
 				}
 			}
 		}
-	}
+	}	
 	
 	@SubscribeEvent
 	public void onNewPlayerJoin(PlayerLoggedInEvent event)
 	{
 		EntityPlayer player = event.player;
+		WorldServer worldServer = (WorldServer)player.world;
 		UHCSaveData saveData = UHCSaveData.getForWorld(player.world);
 
-		if (saveData.isUhcOnGoing() && !player.world.isRemote)
-			player.setGameType(GameType.SPECTATOR);
+		if(!player.world.isRemote)
+		{
+			EntityPlayerMP playerMP = (EntityPlayerMP) player;
+
+			if (saveData.isUhcOnGoing() && player.getTeam() == null)
+			{
+				playerMP.setGameType(GameType.SPECTATOR);
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void DimensionChangeEvent(EntityTravelToDimensionEvent event)
+	{
+		if(event.getEntity() instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer)event.getEntity();
+			World world = player.world;
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			if(!world.isRemote)
+			{
+				if(saveData.isUhcOnGoing())
+				{
+					if(!saveData.isNetherEnabled())
+					{
+						if(event.getDimension() == -1)
+							event.setCanceled(true);
+					}
+				}
+			}
+		}
 	}
 	
 	@SubscribeEvent
@@ -256,51 +360,33 @@ public class UHCHandler {
 	
 	@SubscribeEvent
 	public void onPlayerPermissionClone(PlayerEvent.Clone event) {
-		if (event.getEntity() instanceof EntityPlayer) {
-			EntityPlayer originalPlayer = event.getOriginal();
-			EntityPlayer newPlayer = event.getEntityPlayer();
+		EntityPlayer originalPlayer = event.getOriginal();
+		EntityPlayer newPlayer = event.getEntityPlayer();
 
-			UHCSaveData saveData = UHCSaveData.getForWorld(newPlayer.world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(newPlayer.world);
 
-			NBTTagCompound originalData = originalPlayer.getEntityData();
-			NBTTagCompound newData = newPlayer.getEntityData();
-			
-			if(!newPlayer.world.isRemote)
-			{
-				if(saveData.isUhcOnGoing())
-					newPlayer.setGameType(GameType.SPECTATOR);
-				
-				if(originalData.hasKey("canEditUHC"))
-				{
-					if(originalData.getBoolean("canEditUHC"))
-						newData.setBoolean("canEditUHC", true);
-					else
-						newData.setBoolean("canEditUHC", false);
-				}
-				
-				BlockPos deathPos = originalPlayer.getPosition();
-				newData.setInteger("deathX", deathPos.getX());
-				newData.setInteger("deathY", deathPos.getY());
-				newData.setInteger("deathZ", deathPos.getZ());
-				newData.setInteger("deathDim", originalPlayer.dimension);
-				newPlayer.setSpawnPoint(deathPos, true);
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void DimensionChangeEvent(EntityTravelToDimensionEvent event)
-	{
-		if(event.getEntity() instanceof EntityPlayer)
+		NBTTagCompound originalData = originalPlayer.getEntityData();
+		NBTTagCompound newData = newPlayer.getEntityData();
+		
+		if(!newPlayer.world.isRemote)
 		{
-			EntityPlayer player = (EntityPlayer)event.getEntity();
-			World world = player.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			if(saveData.isUhcOnGoing() && saveData.isNetherEnabled() == false && !world.isRemote)
+			if(saveData.isUhcOnGoing())
+				newPlayer.setGameType(GameType.SPECTATOR);
+			
+			if(originalData.hasKey("canEditUHC"))
 			{
-				if(event.getDimension() == -1)
-					event.setCanceled(true);
+				if(originalData.getBoolean("canEditUHC"))
+					newData.setBoolean("canEditUHC", true);
+				else
+					newData.setBoolean("canEditUHC", false);
 			}
+			
+			BlockPos deathPos = originalPlayer.getPosition();
+			newData.setInteger("deathX", deathPos.getX());
+			newData.setInteger("deathY", deathPos.getY());
+			newData.setInteger("deathZ", deathPos.getZ());
+			newData.setInteger("deathDim", originalPlayer.dimension);
+			newPlayer.setSpawnPoint(deathPos, true);
 		}
 	}
 	
@@ -314,39 +400,6 @@ public class UHCHandler {
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 
 			ModPackethandler.INSTANCE.sendTo(new UHCPacketMessage(saveData), (EntityPlayerMP) player);
-		}
-	}
-	
-	@SubscribeEvent
-	public void testTest(PlayerInteractEvent event)
-	{
-		EntityPlayer player = (EntityPlayer) event.getEntityPlayer();
-		ItemStack stack = player.getHeldItem(event.getHand());
-		World world = player.world;
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
-		if(saveData.isUhcOnGoing() == false && !world.isRemote)
-		{
-			if (stack.getItem() == Items.STICK)
-			{
-				if(player.isSneaking())
-				{
-					stack.setStackDisplayName("3");
-					saveData.setDifficulty(3);
-					saveData.markDirty();
-				}
-				else
-				{
-					stack.setStackDisplayName("1");
-					saveData.setDifficulty(1);
-					saveData.markDirty();
-				}	
-			}
-			
-			NBTTagCompound playerData = player.getEntityData();
-			if (stack.getItem() == Items.CARROT_ON_A_STICK)
-			{
-				System.out.println(saveData.getShrinkMode());
-			}
 		}
 	}
 }

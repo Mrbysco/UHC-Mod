@@ -98,7 +98,7 @@ public class UHCStartPacket implements IMessage{
 							BlockPos pos = TeamUtil.getPosForTeam(player.getTeam().getColor());
 							System.out.println(pos.toString());
 							
-							server.getCommandManager().executeCommand(server , "/tp " + player.getName() + " " + pos.getX() + " " + pos.getY() + " " + pos.getZ() );
+				            ((EntityPlayerMP)player).connection.setPlayerLocation(pos.getX(), pos.getY(), pos.getZ(), player.rotationYaw, player.rotationPitch);
 						}
 						else
 						{
@@ -110,6 +110,8 @@ public class UHCStartPacket implements IMessage{
 						}
 					}
 				}
+				
+				server.getCommandManager().executeCommand(server , "/uhc spawnroom remove");
 				
 				saveData.setUhcStarting(true);
 				saveData.markDirty();

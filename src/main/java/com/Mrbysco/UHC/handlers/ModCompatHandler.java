@@ -56,16 +56,19 @@ public class ModCompatHandler {
 						{
 							Team team = player.getTeam();
 							
-							if(info.teamsReached.contains(team))
-								return;
-							else
+							if(team != null)
 							{
-								if(info.timer != 0)
+								if(info.teamsReached.contains(team))
+									return;
+								else
 								{
-									info.teamsReached.add(team);
+									if(info.timer != 0)
+									{
+										info.teamsReached.add(team);
 
-									world.setBlockState(pos, state);
-									info.timer = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 20);
+										world.setBlockState(pos, state);
+										info.timer = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 20);
+									}
 								}
 							}
 						}

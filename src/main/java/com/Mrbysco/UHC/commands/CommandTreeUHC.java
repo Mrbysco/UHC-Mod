@@ -13,6 +13,8 @@ public class CommandTreeUHC extends CommandTreeBase
     {
         super.addSubcommand(new CommandResetUHC());
         super.addSubcommand(new CommandRespawnUHC());
+        super.addSubcommand(new CommandSpawnroom());
+        //super.addSubcommand(new CommandDimension());
     }
 
 

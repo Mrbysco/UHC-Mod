@@ -68,6 +68,10 @@ public class UHCSaveData extends WorldSavedData{
 	private int spreadMaxRange;
 	private boolean spreadRespectTeam;
 
+	private boolean spawnRoom;
+	private int spawnRoomDimension;
+	//private int UHCDimension;
+
 	public UHCSaveData(String name) {
 		super(name);
 		
@@ -124,6 +128,10 @@ public class UHCSaveData extends WorldSavedData{
 		this.spreadDistance = 100;
 		this.spreadMaxRange = 2048;
 		this.spreadRespectTeam = true;
+		
+		///this.UHCDimension = 0;
+		this.spawnRoom = false;
+		this.spawnRoomDimension = 0;
 	}
 
 	public UHCSaveData() {
@@ -182,6 +190,10 @@ public class UHCSaveData extends WorldSavedData{
 		this.spreadDistance = 100;
 		this.spreadMaxRange = 2048;
 		this.spreadRespectTeam = true;
+		
+		///this.UHCDimension = 0;
+		this.spawnRoom = false;
+		this.spawnRoomDimension = 0;
 	}
 	
 	public void resetAll() {
@@ -236,6 +248,8 @@ public class UHCSaveData extends WorldSavedData{
 		this.spreadDistance = 100;
 		this.spreadMaxRange = 2048;
 		this.spreadRespectTeam = true;
+		
+		///this.UHCDimension = 0;
 	}
 	
 	public boolean isUhcStarting() {
@@ -598,6 +612,22 @@ public class UHCSaveData extends WorldSavedData{
 		this.spreadRespectTeam = spreadRespectTeam;
 	}
 	
+	public boolean isSpawnRoom() {
+		return spawnRoom;
+	}
+	
+	public void setSpawnRoom(boolean spawnRoom) {
+		this.spawnRoom = spawnRoom;
+	}
+	
+	public int getSpawnRoomDimension() {
+		return spawnRoomDimension;
+	}
+	
+	public void setSpawnRoomDimension(int spawnRoomDimension) {
+		this.spawnRoomDimension = spawnRoomDimension;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcStarting = nbt.getBoolean("uhcStarting");
@@ -649,6 +679,11 @@ public class UHCSaveData extends WorldSavedData{
 		spreadDistance = nbt.getInteger("spreadDistance");
 		spreadMaxRange = nbt.getInteger("spreadMaxRange");
 		spreadRespectTeam = nbt.getBoolean("spreadRespectTeam");
+
+		spawnRoom = nbt.getBoolean("spawnRoom");
+		spawnRoomDimension = nbt.getInteger("spawnRoomDimension");
+		
+		//UHCDimension = nbt.getInteger("UHCDimension");
 	}
 	
 	@Override
@@ -702,6 +737,11 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setInteger("spreadDistance", spreadDistance);
 		compound.setInteger("spreadMaxRange", spreadMaxRange);
 		compound.setBoolean("spreadRespectTeam", spreadRespectTeam);
+		
+		compound.setBoolean("spawnRoom", spawnRoom);
+		compound.setInteger("spawnRoomDimension", spawnRoomDimension);
+
+		//compound.setInteger("UHCDimension", UHCDimension);
 		return compound;
 	}
 	

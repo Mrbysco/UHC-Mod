@@ -11,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -111,10 +112,30 @@ public class UHCStartPacket implements IMessage{
 					}
 				}
 				
-				server.getCommandManager().executeCommand(server , "/uhc spawnroom remove");
+				if(saveData.isSpawnRoom())
+				{
+					double centerX1 = centerX -7;
+					double centerX2 = centerX +7;
+					double centerZ1 = centerZ -7;
+					double centerZ2 = centerZ +7;
+					
+					for(double i = centerX1; i <= centerX2; i++)
+					{
+						for(double j = centerZ1; j <= centerZ2; j++)
+						{
+							for(double k = 250; k <= 253; k++)
+							{
+								world.setBlockState(new BlockPos(i, k, j), Blocks.AIR.getDefaultState());
+							}
+						}
+					}
+					saveData.setSpawnRoom(false);
+					saveData.setSpawnRoomDimension(0);
+					saveData.markDirty();
+				}
 				
-				saveData.setUhcStarting(true);
-				saveData.markDirty();
+				//saveData.setUhcStarting(true);
+				//saveData.markDirty();
 			}
 			else
 			{

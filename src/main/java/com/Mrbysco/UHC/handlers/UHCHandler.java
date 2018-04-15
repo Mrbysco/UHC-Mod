@@ -240,8 +240,8 @@ public class UHCHandler {
 		            double d2 = world.rand.nextGaussian() * 0.02D;
 					for(double j = centerZ1; j <= centerZ2; j++)
 					{
-						if (world.rand.nextInt(10000) <= 1)
-							((WorldServer) world).spawnParticle(EnumParticleTypes.CRIT, i, 250 + 1.0D, j, 3, d0, d1, d2, 0.0D);
+						if (world.rand.nextInt(10000) <= 4)
+							((WorldServer) world).spawnParticle(EnumParticleTypes.CRIT, i, 250 - 0.5, j, 3, d0, d1, d2, 0.0D);
 						
 						if(j == centerZ1 || j == centerZ2)
 						{

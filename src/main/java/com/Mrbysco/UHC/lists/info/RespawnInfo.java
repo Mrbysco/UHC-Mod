@@ -16,6 +16,7 @@ public class RespawnInfo {
 		this.pos = pos;
 		this.state = state;
 		this.timer = 0;
+		this.teamsReached = new ArrayList<>();
 	}
 	
 	public BlockPos getPos() {

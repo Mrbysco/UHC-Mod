@@ -40,6 +40,7 @@ public class ModCompatHandler {
     		WorldBorder border = world.getWorldBorder();
 			GameRules rules = world.getGameRules();
 			
+			//if(saveData.isUhcOnGoing())
 			if(!RespawnList.respawnList.isEmpty())
 			{
 				for (RespawnInfo info : RespawnList.respawnList)
@@ -49,25 +50,28 @@ public class ModCompatHandler {
 					AxisAlignedBB hitbox = new AxisAlignedBB(pos.getX() - 0.5f, 0 - 0.5f, pos.getZ() - 0.5f, pos.getX() + 0.5f, 256 + 0.5f, pos.getZ() + 0.5f)
 							.expand(-50, -50, -50).expand(50, 50, 50);
 					ArrayList<EntityPlayerMP> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayerMP.class, hitbox));
-
+					int respawnTime = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 1200);
+					
 					if(!collidingList.isEmpty())
 					{
 						for (EntityPlayerMP player : collidingList)
 						{
 							Team team = player.getTeam();
 							
-							if(team != null)
+							if(team != null && !player.isSpectator())
 							{
+								System.out.print(info.timer);
+
 								if(info.teamsReached.contains(team))
 									return;
 								else
 								{
-									if(info.timer != 0)
+									if(info.timer == 0)
 									{
 										info.teamsReached.add(team);
 
 										world.setBlockState(pos, state);
-										info.timer = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 20);
+										info.timer = respawnTime;
 									}
 								}
 							}

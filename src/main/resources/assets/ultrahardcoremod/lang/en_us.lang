@@ -165,9 +165,9 @@ color.random.name=Randomize
 #Messages
 message.minutemark.time=%d Minutes has passed | Minute Mark 
 
-uhc.start.1=UHC Starting in 5
-uhc.start.2=4
+uhc.start.5=UHC Starting in 5
+uhc.start.4=4
 uhc.start.3=3
-uhc.start.4=2
-uhc.start.5=1
-uhc.start.6=GO!
+uhc.start.2=2
+uhc.start.1=1
+uhc.start.0=GO!

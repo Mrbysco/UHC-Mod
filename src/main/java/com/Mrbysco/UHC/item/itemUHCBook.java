@@ -33,7 +33,7 @@ public class itemUHCBook extends Item{
 	@Override
     @SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-        tooltip.add(TextFormatting.GRAY + "by Mrbysco");
+        tooltip.add(TextFormatting.GRAY + "Ultra Hard Coremod");
 	}
 	
 	@Override

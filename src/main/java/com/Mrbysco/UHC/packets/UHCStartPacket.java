@@ -18,6 +18,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.storage.WorldInfo;
@@ -75,10 +76,6 @@ public class UHCStartPacket implements IMessage{
 				double spreadMaxRange = saveData.getSpreadMaxRange();
 				int BorderSize = saveData.getBorderSize();
 				
-				if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
-					border.setCenter(centerX, centerZ);
-				
-				border.setSize(BorderSize);
 				world.setWorldTime(0);
 				info.setRaining(false);
 				
@@ -112,6 +109,12 @@ public class UHCStartPacket implements IMessage{
 					}
 				}
 				
+				for(EntityPlayer player : playerList)
+				{
+					if(player.isCreative())
+						player.setGameType(GameType.SURVIVAL);
+				}
+				
 				if(saveData.isSpawnRoom())
 				{
 					double centerX1 = centerX -7;
@@ -134,8 +137,13 @@ public class UHCStartPacket implements IMessage{
 					saveData.markDirty();
 				}
 				
-				//saveData.setUhcStarting(true);
-				//saveData.markDirty();
+				if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
+					border.setCenter(centerX, centerZ);
+				
+				border.setSize(BorderSize);
+				
+				saveData.setUhcStarting(true);
+				saveData.markDirty();
 			}
 			else
 			{

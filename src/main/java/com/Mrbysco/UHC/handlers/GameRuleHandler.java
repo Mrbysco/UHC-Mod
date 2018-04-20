@@ -22,6 +22,10 @@ public class GameRuleHandler {
 			GameRules rules = wServer.getGameRules();
 			WorldInfo wInfo = event.world.getWorldInfo();
 			
+			if(rules.getBoolean("naturalRegeneration") == true)
+				rules.setOrCreateGameRule("naturalRegeneration", String.valueOf(false));
+
+			
 			if(saveData.isMobGriefing())
 			{
 				if(rules.getBoolean("mobGriefing") == false)

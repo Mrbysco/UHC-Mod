@@ -27,6 +27,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
@@ -54,53 +55,78 @@ public class UHCHandler {
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			
+			if (saveData.isUhcOnGoing() == false)
+			{
+				for(EntityPlayer player : playerList)
+				{
+					if(player.isGlowing() == false)
+						player.setGlowing(true);
+					else
+						return;
+				}
+			}
+			
 			if(!playerList.isEmpty())
 			{	
 				if(saveData.isUhcStarting())
 				{
-					if(timerData.getShrinkTimeUntil() != this.uhcStartTimer)
+					if(timerData.getUhcStartTimer() != this.uhcStartTimer)
 					{
-						this.uhcStartTimer = timerData.getShrinkTimeUntil();
+						this.uhcStartTimer = timerData.getUhcStartTimer();
 					}
 					
-					if(timerData.getUhcStartTimer() == 20 || timerData.getUhcStartTimer() == 40 || timerData.getUhcStartTimer() == 60 || 
-						timerData.getUhcStartTimer() == 80 || timerData.getUhcStartTimer() == 100 || timerData.getUhcStartTimer() == 120)
+					if(timerData.getUhcStartTimer() == 40 || timerData.getUhcStartTimer() == 60 || timerData.getUhcStartTimer() == 80 || 
+						timerData.getUhcStartTimer() == 100 || timerData.getUhcStartTimer() == 120 || timerData.getUhcStartTimer() == 140)
 					{
 						if(timerData.getUhcStartTimer() == 20)
 						{
-							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.1"));
+							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.5"));
+							++this.uhcStartTimer;
+							timerData.setUhcStartTimer(this.uhcStartTimer);
+							timerData.markDirty();
 						}
 						else if(timerData.getUhcStartTimer() == 40)
 						{
-							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.2"));
+							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.4"));
+							++this.uhcStartTimer;
+							timerData.setUhcStartTimer(this.uhcStartTimer);
+							timerData.markDirty();
 						}
 						else if(timerData.getUhcStartTimer() == 60)
 						{
-							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.3"));
+							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.3"));
+							++this.uhcStartTimer;
+							timerData.setUhcStartTimer(this.uhcStartTimer);
+							timerData.markDirty();
 						}
 						else if(timerData.getUhcStartTimer() == 80)
 						{
-							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.4"));
+							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.2"));
+							++this.uhcStartTimer;
+							timerData.setUhcStartTimer(this.uhcStartTimer);
+							timerData.markDirty();
 						}
 						else if(timerData.getUhcStartTimer() == 100)
 						{
-							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.5"));
+							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.1"));
+							++this.uhcStartTimer;
+							timerData.setUhcStartTimer(this.uhcStartTimer);
+							timerData.markDirty();
 						}
-						else if(timerData.getUhcStartTimer() == 120)
+						else if(timerData.getUhcStartTimer() == 140)
 						{
 							for(EntityPlayerMP player : playerList)
 							{
-								for(PotionEffect effect : player.getActivePotionEffects())
-								{
-									player.removePotionEffect(effect.getPotion());
-								}
+								player.clearActivePotions();
 							}
-							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.6"));
+							
+							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.0"));
+							this.uhcStartTimer = 0;
 
 							saveData.setUhcStarting(false);
+							timerData.setUhcStartTimer(this.uhcStartTimer);
 							saveData.setUhcOnGoing(true);
 							saveData.markDirty();
-							this.uhcStartTimer = 0;
 						}
 					}
 					else

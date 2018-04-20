@@ -81,7 +81,6 @@ public class ModCompatHandler {
 					       info.timer--;
 				}
 			}
-
 		}
 	}
 	

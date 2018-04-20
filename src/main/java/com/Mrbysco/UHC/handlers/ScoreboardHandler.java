@@ -1,17 +1,17 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
 import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.scoreboard.IScoreCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team.CollisionRule;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
@@ -20,15 +20,15 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class ScoreboardHandler {
 	@SubscribeEvent
-	public void ScoreboardStuff(TickEvent.PlayerTickEvent event) {
+	public void ScoreboardStuff(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
-			EntityPlayer player = event.player;
-			World world = player.world;
-			NBTTagCompound entityData = player.getEntityData();
+			World world = event.world;
 			Scoreboard scoreboard = world.getScoreboard();
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-
+			MinecraftServer server = world.getMinecraftServer();
+			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+			
 			for (TextFormatting color : TextFormatting.values())
 			{
 				boolean flag = !color.equals(TextFormatting.OBFUSCATED) && !color.equals(TextFormatting.BOLD) && 
@@ -133,21 +133,24 @@ public class ScoreboardHandler {
 					}
 				}
 			}
-
-			if (saveData.isUhcOnGoing() == false)
-			{
-				if(player.isGlowing() == false)
-					player.setGlowing(true);
-				else
-					return;
-			}
 			
-			if(scoreboard.getPlayersTeam(player.getName()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing())
+			for(EntityPlayer player : playerList)
 			{
-				if(player.isCreative())
-					return;
-				else
-					player.setGameType(GameType.SPECTATOR);
+				if (saveData.isUhcOnGoing() == false)
+				{
+					if(player.isGlowing() == false)
+						player.setGlowing(true);
+					else
+						return;
+				}
+				
+				if(scoreboard.getPlayersTeam(player.getName()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing())
+				{
+					if(player.isCreative())
+						return;
+					else
+						player.setGameType(GameType.SPECTATOR);
+				}
 			}
 		}
 	}

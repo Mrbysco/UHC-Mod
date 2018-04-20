@@ -718,7 +718,7 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setString("shrinkMode", shrinkMode);
 		compound.setBoolean("shrinkApplied", shrinkApplied);
 
-		compound.setBoolean("timeMode", timeLock);
+		compound.setBoolean("timeLock", timeLock);
 		compound.setInteger("timeLockTimer", timeLockTimer);
 		compound.setString("timeMode", timeMode);
 		

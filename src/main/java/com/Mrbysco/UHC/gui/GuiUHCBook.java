@@ -504,12 +504,15 @@ public class GuiUHCBook extends GuiScreen{
 		}
 		
 		if(this.currPage == 2)
-		{
+		{			
 			if(timeLockButton.getBoolean() != saveData.isTimeLock())
 				timeLockButton.setBoolean(saveData.isTimeLock());
 				
 			if(timeLockTimerField.getText() != String.valueOf(saveData.getTimeLockTimer()) && timeLockTimerField.isFocused() == false)
 				timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
+			
+			if(timeModeButton.getText() != saveData.getTimeMode())
+				timeModeButton.setText(saveData.getTimeMode());
 			
 			if(minuteMarkButton.getBoolean() != saveData.isMinuteMark())
 				minuteMarkButton.setBoolean(saveData.isMinuteMark());

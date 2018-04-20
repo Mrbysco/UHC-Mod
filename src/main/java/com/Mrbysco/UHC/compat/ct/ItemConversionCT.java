@@ -14,56 +14,51 @@ public class ItemConversionCT {
 
 	@ZenMethod
     public static void addConversion(IItemStack input, IItemStack result) {
-        CraftTweakerAPI.apply(new ActionItemConversion(input, result, false));
+        CraftTweakerAPI.apply(new ActionItemConversion(input, result));
 	}
 	
 	@ZenMethod
 	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, false));
+		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2));
 	}
 	
 	@ZenMethod
 	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2, IItemStack result3) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, false));
+		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3));
 	}
 	
 	@ZenMethod
 	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2, IItemStack result3, IItemStack result4) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, false));
+		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4));
 	}
 	
 	@ZenMethod
-	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2, IItemStack result3, IItemStack result4,
+	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2, IItemStack result3, IItemStack result4, 
 			IItemStack result5) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, false));
+		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5));
 	}
 	
 	@ZenMethod
 	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2, IItemStack result3, IItemStack result4,
 			IItemStack result5, IItemStack result6) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, result6, false));
+		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, result6));
 	}
 	
 	@ZenMethod
 	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2, IItemStack result3, IItemStack result4,
 			IItemStack result5, IItemStack result6, IItemStack result7) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, result6, result7, false));
+		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, result6, result7));
 	}
 	
 	@ZenMethod
 	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2, IItemStack result3, IItemStack result4,
 			IItemStack result5, IItemStack result6, IItemStack result7, IItemStack result8) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, result6, result7, result8, false));
+		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, result6, result7, result8));
 	}
 	
 	@ZenMethod
 	public static void addConversion(IItemStack input, IItemStack result, IItemStack result2, IItemStack result3, IItemStack result4,
 			IItemStack result5, IItemStack result6, IItemStack result7, IItemStack result8, IItemStack result9) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, result6, result7, result8, result9, false));
-	}
-	
-	@ZenMethod
-	public static void removeConversion(IItemStack input) {
-		CraftTweakerAPI.apply(new ActionItemConversion(input, true));
+		CraftTweakerAPI.apply(new ActionItemConversion(input, result, result2, result3, result4, result5, result6, result7, result8, result9));
 	}
 }

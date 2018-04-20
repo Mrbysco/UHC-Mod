@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import com.Mrbysco.UHC.lists.info.ItemConversionInfo;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -104,21 +102,5 @@ public class ConversionList {
 			return;
 		else
 			conversionList.add(conversion_info);
-	}
-	
-	public static void removeConversion(Item itemIn, int meta)
-	{
-		// Check if the info exists
-		for(ItemConversionInfo info : conversionList)
-		{
-			Item infoItem = info.getInput();
-			int infoMeta = info.getInputMeta();
-			
-			if(infoItem == itemIn && infoMeta == meta)
-			{
-				conversionList.remove(info);
-			}
-			
-		}
 	}
 }

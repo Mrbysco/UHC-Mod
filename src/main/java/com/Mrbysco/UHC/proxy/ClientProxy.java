@@ -3,7 +3,6 @@ package com.Mrbysco.UHC.proxy;
 import org.apache.logging.log4j.Logger;
 
 import com.Mrbysco.UHC.UltraHardCoremod;
-import com.Mrbysco.UHC.packets.ModPackethandler;
 
 public class ClientProxy extends ServerProxy{
 

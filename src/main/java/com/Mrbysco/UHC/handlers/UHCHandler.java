@@ -55,17 +55,6 @@ public class UHCHandler {
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			
-			if (saveData.isUhcOnGoing() == false)
-			{
-				for(EntityPlayer player : playerList)
-				{
-					if(player.isGlowing() == false)
-						player.setGlowing(true);
-					else
-						return;
-				}
-			}
-			
 			if(!playerList.isEmpty())
 			{	
 				if(saveData.isUhcStarting())

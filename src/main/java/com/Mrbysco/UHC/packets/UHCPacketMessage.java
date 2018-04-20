@@ -4,7 +4,6 @@ import com.Mrbysco.UHC.gui.GuiUHCBook;
 import com.Mrbysco.UHC.init.UHCSaveData;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;

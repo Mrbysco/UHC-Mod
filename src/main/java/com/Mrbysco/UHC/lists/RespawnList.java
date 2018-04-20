@@ -2,13 +2,9 @@ package com.Mrbysco.UHC.lists;
 
 import java.util.ArrayList;
 
-import com.Mrbysco.UHC.lists.info.AutoCookInfo;
 import com.Mrbysco.UHC.lists.info.RespawnInfo;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 
 public class RespawnList {

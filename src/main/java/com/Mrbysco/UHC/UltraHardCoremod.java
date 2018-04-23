@@ -18,6 +18,7 @@ import com.Mrbysco.UHC.handlers.UHCHandler;
 import com.Mrbysco.UHC.init.GuiHandler;
 import com.Mrbysco.UHC.lists.ConversionList;
 import com.Mrbysco.UHC.lists.CookList;
+import com.Mrbysco.UHC.lists.RespawnList;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.proxy.CommonProxy;
 
@@ -58,6 +59,8 @@ public class UltraHardCoremod {
 		
 		logger.debug("Initialize default conversion list");
 		ConversionList.initializeConversion();
+		
+		RespawnList.initializeRespawnList();
 		
 		logger.debug("Registering Packet");
 		ModPackethandler.registerMessages();

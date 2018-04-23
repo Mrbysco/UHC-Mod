@@ -7,14 +7,14 @@ import com.Mrbysco.UHC.init.UHCSaveData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.scoreboard.IScoreCriteria;
-import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team.CollisionRule;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -28,6 +28,8 @@ public class ScoreboardHandler {
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+			WorldServer wServer = server.getWorld(0);
+			GameRules rules = wServer.getGameRules();
 			
 			for (TextFormatting color : TextFormatting.values())
 			{
@@ -47,7 +49,7 @@ public class ScoreboardHandler {
 					}
 				}
 			}
-
+			
 			if(scoreboard.getTeam("spectator") == null)
 			{
 				ScorePlayerTeam team = scoreboard.createTeam("spectator");
@@ -58,80 +60,6 @@ public class ScoreboardHandler {
 			if(scoreboard.getObjective("health") == null)
 			{
 				scoreboard.addScoreObjective("health", IScoreCriteria.HEALTH);
-			}
-			
-			boolean healthExists = scoreboard.getObjective("health") != null;
-			if(saveData.isHealthInTab())
-			{
-				if(healthExists)
-				{
-					ScoreObjective score = scoreboard.getObjective("health");
-					if(scoreboard.getObjectiveInDisplaySlot(0) != score)
-					{
-						scoreboard.setObjectiveInDisplaySlot(0, score);
-						scoreboard.setObjectiveInDisplaySlot(1, null);
-						scoreboard.setObjectiveInDisplaySlot(2, null);
-					}
-				}
-			}
-			if(saveData.isHealthOnSide())
-			{
-				if(healthExists)
-				{
-					ScoreObjective score = scoreboard.getObjective("health");
-					if(scoreboard.getObjectiveInDisplaySlot(1) != score)
-					{
-						scoreboard.setObjectiveInDisplaySlot(0, null);
-						scoreboard.setObjectiveInDisplaySlot(1, score);
-						scoreboard.setObjectiveInDisplaySlot(2, null);
-					}
-				}
-			}
-			if(saveData.isHealthUnderName())
-			{
-				if(healthExists)
-				{
-					ScoreObjective score = scoreboard.getObjective("health");
-					if(scoreboard.getObjectiveInDisplaySlot(2) != score)
-					{
-						scoreboard.setObjectiveInDisplaySlot(0, null);
-						scoreboard.setObjectiveInDisplaySlot(1, null);
-						scoreboard.setObjectiveInDisplaySlot(2, score);
-					}
-				}
-			}
-			
-			for (ScorePlayerTeam team : scoreboard.getTeams())
-			{
-				if(saveData.isFriendlyFire())
-				{
-					if (team.getAllowFriendlyFire() != true)
-					{
-						team.setAllowFriendlyFire(true);
-					}
-				}
-				else
-				{
-					if (team.getAllowFriendlyFire() != false)
-					{
-						team.setAllowFriendlyFire(false);
-					}
-				}
-				
-				if(saveData.isTeamCollision())
-				{
-					if (team.getCollisionRule() != CollisionRule.ALWAYS)
-					{
-						team.setCollisionRule(CollisionRule.ALWAYS);
-					}
-				}
-				else
-				{
-					if (team.getCollisionRule() != CollisionRule.HIDE_FOR_OTHER_TEAMS)
-					{
-						team.setCollisionRule(CollisionRule.HIDE_FOR_OTHER_TEAMS);
-					}
-				}
 			}
 			
 			for(EntityPlayer player : playerList)

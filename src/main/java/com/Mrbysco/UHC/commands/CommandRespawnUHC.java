@@ -27,6 +27,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
+import net.minecraft.world.border.WorldBorder;
 import scala.actors.threadpool.Arrays;
 
 public class CommandRespawnUHC extends CommandBase
@@ -147,13 +148,15 @@ public class CommandRespawnUHC extends CommandBase
             notifyCommandListener(sender, this, "commands.uhc.respawn.success", new Object[] {set.size(), s, joinNiceString(set.toArray(new String[set.size()]))});
 
             String playerName = removeBrackets(set.toString());
-            System.out.println(set);
+            
             EntityPlayer player = server.getWorld(0).getPlayerEntityByName(getEntityName(server, sender, playerName));
 			final NBTTagCompound entityData = player.getEntityData();
-
             World world = server.getWorld(0);
             UHCSaveData uhcData = UHCSaveData.getForWorld(world);
-            
+			WorldBorder border = world.getWorldBorder();
+
+			border.setSize(30000000);
+			
             ScorePlayerTeam team = scoreboard.getTeam(s);
             if(team == null)
             {

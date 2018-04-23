@@ -171,3 +171,5 @@ uhc.start.3=3
 uhc.start.2=2
 uhc.start.1=1
 uhc.start.0=GO!
+
+uhc.team.won=Team %s has won the UHC!

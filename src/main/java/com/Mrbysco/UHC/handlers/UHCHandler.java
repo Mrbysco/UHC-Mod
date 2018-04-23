@@ -21,6 +21,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -28,7 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -38,6 +39,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
@@ -54,7 +56,7 @@ public class UHCHandler {
 			UHCTimerData timerData = UHCTimerData.getForWorld(world);
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-			
+						
 			if(!playerList.isEmpty())
 			{	
 				if(saveData.isUhcStarting())
@@ -67,37 +69,37 @@ public class UHCHandler {
 					if(timerData.getUhcStartTimer() == 40 || timerData.getUhcStartTimer() == 60 || timerData.getUhcStartTimer() == 80 || 
 						timerData.getUhcStartTimer() == 100 || timerData.getUhcStartTimer() == 120 || timerData.getUhcStartTimer() == 140)
 					{
-						if(timerData.getUhcStartTimer() == 20)
+						if(timerData.getUhcStartTimer() == 40)
 						{
-							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.5"));
-							++this.uhcStartTimer;
-							timerData.setUhcStartTimer(this.uhcStartTimer);
-							timerData.markDirty();
-						}
-						else if(timerData.getUhcStartTimer() == 40)
-						{
-							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.4"));
+							sendMessage(playerList, new TextComponentTranslation("uhc.start.5"));
 							++this.uhcStartTimer;
 							timerData.setUhcStartTimer(this.uhcStartTimer);
 							timerData.markDirty();
 						}
 						else if(timerData.getUhcStartTimer() == 60)
 						{
-							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.3"));
+							sendMessage(playerList, new TextComponentTranslation("uhc.start.4"));
 							++this.uhcStartTimer;
 							timerData.setUhcStartTimer(this.uhcStartTimer);
 							timerData.markDirty();
 						}
 						else if(timerData.getUhcStartTimer() == 80)
 						{
-							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.2"));
+							sendMessage(playerList, new TextComponentTranslation("uhc.start.3"));
 							++this.uhcStartTimer;
 							timerData.setUhcStartTimer(this.uhcStartTimer);
 							timerData.markDirty();
 						}
 						else if(timerData.getUhcStartTimer() == 100)
 						{
-							sendMessage(playerList, new TextComponentTranslation(TextFormatting.YELLOW + "uhc.start.1"));
+							sendMessage(playerList, new TextComponentTranslation("uhc.start.2"));
+							++this.uhcStartTimer;
+							timerData.setUhcStartTimer(this.uhcStartTimer);
+							timerData.markDirty();
+						}
+						else if(timerData.getUhcStartTimer() == 120)
+						{
+							sendMessage(playerList, new TextComponentTranslation("uhc.start.1"));
 							++this.uhcStartTimer;
 							timerData.setUhcStartTimer(this.uhcStartTimer);
 							timerData.markDirty();
@@ -109,7 +111,7 @@ public class UHCHandler {
 								player.clearActivePotions();
 							}
 							
-							sendMessage(playerList, new TextComponentString(TextFormatting.YELLOW + "uhc.start.0"));
+							sendMessage(playerList, new TextComponentString("uhc.start.0"));
 							this.uhcStartTimer = 0;
 
 							saveData.setUhcStarting(false);
@@ -121,7 +123,9 @@ public class UHCHandler {
 					else
 					{
 						for(EntityPlayerMP player : playerList)
-						{
+						{							
+							player.inventory.clear();
+							
 							if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
 								player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
 						}
@@ -157,6 +161,9 @@ public class UHCHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
+			MinecraftServer server = world.getMinecraftServer();
+			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+			
 			ItemStack bookStack = new ItemStack(ModItems.uhc_book);
 			ItemStack editStack = new ItemStack(Items.LEAD);
 			editStack.addEnchantment(Enchantments.BINDING_CURSE, 1);;
@@ -167,15 +174,23 @@ public class UHCHandler {
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 			List<Entity> entityList = world.loadedEntityList;
 			
-			for(Entity entity : entityList)
+			if(!saveData.isUhcOnGoing())
 			{
-				if(entity instanceof EntityPlayer)
+				for(Entity entity : entityList)
 				{
-					EntityPlayer player = (EntityPlayer) entity;
+					if (entity instanceof EntityItem) {
+						EntityItem itemEntity = (EntityItem) entity;
+						
+						if(itemEntity.getItem().getItem() == ModItems.uhc_book)
+							world.removeEntity(itemEntity);
+					}
+				}
+				
+				for(EntityPlayer player : playerList)
+				{
 					NBTTagCompound entityData = player.getEntityData();
-					boolean UHCFlag = saveData.isUhcOnGoing();
 					
-					if (entityData.getBoolean("canEditUHC") == true && !UHCFlag)
+					if (entityData.getBoolean("canEditUHC") == true)
 					{
 						if (player.inventory.getStackInSlot(39) == editStack)
 							return;
@@ -183,32 +198,17 @@ public class UHCHandler {
 						if (player.inventory.getStackInSlot(39).isEmpty())
 							player.inventory.setInventorySlotContents(39, editStack);
 					}
-					if (entityData.getBoolean("canEditUHC") == false)
-					{
-						if(player.inventory.getStackInSlot(39) == editStack)
-							player.inventory.removeStackFromSlot(39);
-					}
 					
-					if (!player.inventory.hasItemStack(bookStack) && !UHCFlag)
+					if (!player.inventory.hasItemStack(bookStack))
 					{
 						player.inventory.addItemStackToInventory(bookStack);
 					}
 					
-					if(!UHCFlag)
-					{
-						if(player.getActivePotionEffect(MobEffects.SATURATION) == null)
-							player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 32767 * 20, 10, true, false));
+					if(player.getActivePotionEffect(MobEffects.SATURATION) == null)
+						player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 32767 * 20, 10, true, false));
 
-						if(player.getActivePotionEffect(MobEffects.RESISTANCE) == null)
-							player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 32767 * 20, 10, true, false));
-					}
-				}
-				
-				if (entity instanceof EntityItem) {
-					EntityItem itemEntity = (EntityItem) entity;
-					
-					if(itemEntity.getItem().getItem() == ModItems.uhc_book)
-						world.removeEntity(itemEntity);
+					if(player.getActivePotionEffect(MobEffects.RESISTANCE) == null)
+						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 32767 * 20, 10, true, false));
 				}
 			}
 		}
@@ -377,17 +377,16 @@ public class UHCHandler {
 	public void onPlayerPermissionClone(PlayerEvent.Clone event) {
 		EntityPlayer originalPlayer = event.getOriginal();
 		EntityPlayer newPlayer = event.getEntityPlayer();
-
+		
 		UHCSaveData saveData = UHCSaveData.getForWorld(newPlayer.world);
 
 		NBTTagCompound originalData = originalPlayer.getEntityData();
 		NBTTagCompound newData = newPlayer.getEntityData();
 		
+		System.out.println("IM DEAD");
+		
 		if(!newPlayer.world.isRemote)
 		{
-			if(saveData.isUhcOnGoing())
-				newPlayer.setGameType(GameType.SPECTATOR);
-			
 			if(originalData.hasKey("canEditUHC"))
 			{
 				if(originalData.getBoolean("canEditUHC"))
@@ -401,7 +400,53 @@ public class UHCHandler {
 			newData.setInteger("deathY", deathPos.getY());
 			newData.setInteger("deathZ", deathPos.getZ());
 			newData.setInteger("deathDim", originalPlayer.dimension);
+			newData.setBoolean("dead", true);
 			newPlayer.setSpawnPoint(deathPos, true);
+		}
+	}
+	
+	@SubscribeEvent
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		EntityPlayer player = event.player;
+		World world = player.world;
+		if(!world.isRemote)
+		{
+			MinecraftServer server = world.getMinecraftServer();
+			Scoreboard scoreboard = world.getScoreboard();
+			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			
+			if(saveData.isUhcOnGoing())
+			{
+				player.setGameType(GameType.SPECTATOR);
+
+				if(scoreboard.getTeams().size() == 2)
+				{
+					ArrayList<ScorePlayerTeam> teamList = new ArrayList<>(scoreboard.getTeams());
+					if(teamList.get(0) == scoreboard.getTeam("spectator"))
+						return;
+					else
+						YouWonTheUHC(teamList.get(0), playerList, world);
+					
+					if(teamList.get(1) == scoreboard.getTeam("spectator"))
+						return;
+					else
+						YouWonTheUHC(teamList.get(1), playerList, world);
+				}
+			}
+		}
+	}
+	
+	public void YouWonTheUHC(ScorePlayerTeam team, ArrayList<EntityPlayerMP> playerList, World world)
+	{
+		if(!world.isRemote)
+		{
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			String teamName = team.getDisplayName();
+			for(EntityPlayer player : playerList)
+			{
+				player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {team.getColor() + teamName}));
+			}
 		}
 	}
 	

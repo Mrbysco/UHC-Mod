@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -111,6 +112,10 @@ public class UHCStartPacket implements IMessage{
 				
 				for(EntityPlayer player : playerList)
 				{
+					ScoreObjective score = scoreboard.getObjective("health");
+					if(score != null)
+						scoreboard.removeObjectiveFromEntity(player.getName(), score);
+					
 					if(player.isCreative())
 						player.setGameType(GameType.SURVIVAL);
 				}

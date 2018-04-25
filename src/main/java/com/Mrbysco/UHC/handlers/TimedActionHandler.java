@@ -37,7 +37,7 @@ public class TimedActionHandler {
 				if(saveData.isTimeLock())
 	    		{
 					int timeLockTimer = timerData.getTimeLockTimer();
-					boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
+					boolean timeFlag = timeLockTimer == TimerHandler.tickTime(timeLockTimer);
 					if(timeFlag)
 					{
 						if(rules.getBoolean("doDaylightCycle"))
@@ -70,7 +70,7 @@ public class TimedActionHandler {
 	    		if(saveData.isMinuteMark())
 	    		{
 	    			int minuteMarkTimer = saveData.getMinuteMarkTime();
-					boolean minuteMarkFlag = minuteMarkTimer == TimerHandler.tickTime(saveData.getMinuteMarkTime());
+					boolean minuteMarkFlag = minuteMarkTimer == TimerHandler.tickTime(minuteMarkTimer);
 					
 					if(minuteMarkFlag)
 					{
@@ -85,8 +85,8 @@ public class TimedActionHandler {
 	    		
 	    		if(saveData.isTimedNames())
 	    		{
-	    			int timedNameTimer = saveData.getMinuteMarkTime();
-	    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
+	    			int timedNameTimer = saveData.getNameTimer();
+	    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(timedNameTimer);
 	    			
 	    			if(timedNameFlag)
 	    			{
@@ -108,8 +108,8 @@ public class TimedActionHandler {
 	    		
 	    		if(saveData.isTimedGlow())
 	    		{
-	    			int timedGlowTimer = saveData.getMinuteMarkTime();
-	    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getNameTimer());
+	    			int timedGlowTimer = saveData.getGlowTime();
+	    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(timedGlowTimer);
 	    			
 	    			if(timedGlowFlag)
 	    			{

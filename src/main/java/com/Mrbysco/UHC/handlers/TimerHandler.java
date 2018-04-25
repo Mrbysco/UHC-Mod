@@ -29,7 +29,7 @@ public class TimerHandler {
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			
 			if(!playerList.isEmpty() && saveData.isUhcOnGoing())
-			{				
+			{
 				if(saveData.isShrinkEnabled())
 				{
 					if(timerData.getShrinkTimeUntil() != this.shrinkTimeUntil)

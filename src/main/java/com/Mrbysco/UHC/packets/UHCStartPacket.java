@@ -12,7 +12,9 @@ import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -147,6 +149,17 @@ public class UHCStartPacket implements IMessage{
 					border.setCenter(centerX, centerZ);
 				
 				border.setSize(BorderSize);
+				
+				for(EntityPlayerMP player : playerList)
+				{							
+					player.inventory.clear();
+					
+					if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
+						player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
+					
+					if(player.isGlowing())
+						player.setGlowing(false);
+				}
 				
 				saveData.setUhcStarting(true);
 				saveData.markDirty();

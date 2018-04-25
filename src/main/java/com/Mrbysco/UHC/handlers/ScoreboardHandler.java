@@ -43,25 +43,19 @@ public class ScoreboardHandler {
 					
 					if(scoreboard.getTeam(colorString) == null)
 					{
-						ScorePlayerTeam team = scoreboard.createTeam(color.getFriendlyName());
-						team.setPrefix(color.toString());
-						team.setColor(color);
+						makeTeam(scoreboard, color.getFriendlyName(), color);
 					}
 				}
 			}
 			
 			if(scoreboard.getTeam("solo") == null)
 			{
-				ScorePlayerTeam team = scoreboard.createTeam("solo");
-				team.setPrefix(TextFormatting.WHITE.toString());
-				team.setColor(TextFormatting.WHITE);
+				makeTeam(scoreboard, "solo", TextFormatting.WHITE);
 			}
 			
 			if(scoreboard.getTeam("spectator") == null)
 			{
-				ScorePlayerTeam team = scoreboard.createTeam("spectator");
-				team.setPrefix(TextFormatting.BLACK.toString());
-				team.setColor(TextFormatting.BLACK);
+				makeTeam(scoreboard, "spectator", TextFormatting.BLACK);
 			}
 			
 			if(scoreboard.getObjective("health") == null)
@@ -88,5 +82,12 @@ public class ScoreboardHandler {
 				}
 			}
 		}
+	}
+	
+	public void makeTeam(Scoreboard scoreboard, String teamName, TextFormatting color)
+	{
+		ScorePlayerTeam team = scoreboard.createTeam(teamName);
+		team.setPrefix(color.toString());
+		team.setColor(color);
 	}
 }

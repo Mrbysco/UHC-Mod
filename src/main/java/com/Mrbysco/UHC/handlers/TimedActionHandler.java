@@ -32,95 +32,103 @@ public class TimedActionHandler {
     		WorldBorder border = world.getWorldBorder();
 			GameRules rules = world.getGameRules();
 
-    		if(saveData.isTimeLock())
-    		{
-				int timeLockTimer = timerData.getTimeLockTimer();
-				boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
-				if(timeFlag)
-				{
-					if(rules.getBoolean("doDaylightCycle"))
+			if(saveData.isUhcOnGoing())
+			{
+				if(saveData.isTimeLock())
+	    		{
+					int timeLockTimer = timerData.getTimeLockTimer();
+					boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
+					if(timeFlag)
 					{
-						if(saveData.getTimeMode().equals("Day"))
+						if(rules.getBoolean("doDaylightCycle"))
 						{
-							if(world.isDaytime())
+							if(saveData.getTimeMode().equals("Day"))
 							{
-								if(rules.getBoolean("doDaylightCycle"))
-									rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(false));
+								if(world.isDaytime())
+								{
+									if(rules.getBoolean("doDaylightCycle"))
+										rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(false));
+								}
 							}
-						}
-						else if(saveData.getTimeMode().equals("Night"))
-						{
-							if(!world.isDaytime())
+							else if(saveData.getTimeMode().equals("Night"))
+							{
+								if(!world.isDaytime())
+								{
+									if(rules.getBoolean("doDaylightCycle"))
+										rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(false));
+								}
+							}
+							else
 							{
 								if(rules.getBoolean("doDaylightCycle"))
-									rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(false));
+									rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(true));
 							}
 						}
 					}
-				}
-    		}
-    		
-    		if(saveData.isMinuteMark())
-    		{
-    			int minuteMarkTimer = saveData.getMinuteMarkTime();
-				boolean minuteMarkFlag = minuteMarkTimer == TimerHandler.tickTime(saveData.getMinuteMarkTime());
-				
-				if(minuteMarkFlag)
-				{
-					for(EntityPlayerMP player : playerList)
+	    		}
+	    		
+	    		if(saveData.isMinuteMark())
+	    		{
+	    			int minuteMarkTimer = saveData.getMinuteMarkTime();
+					boolean minuteMarkFlag = minuteMarkTimer == TimerHandler.tickTime(saveData.getMinuteMarkTime());
+					
+					if(minuteMarkFlag)
 					{
-						player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {minuteMarkTimer}));
+						for(EntityPlayerMP player : playerList)
+						{
+							player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {minuteMarkTimer}));
+						}
+						timerData.setMinuteMarkTimer(0);
+						timerData.markDirty();
 					}
-					timerData.setMinuteMarkTimer(0);
-					timerData.markDirty();
-				}
-    		}
-    		
-    		if(saveData.isTimedNames())
-    		{
-    			int timedNameTimer = saveData.getMinuteMarkTime();
-    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
-    			
-    			if(timedNameFlag)
-    			{
-    				for (ScorePlayerTeam team : scoreboard.getTeams())
-    				{
-    					if (team.getNameTagVisibility() != Team.EnumVisible.ALWAYS)
-    						team.setNameTagVisibility(Team.EnumVisible.ALWAYS);
-    				}
-    			}
-    			else
-    			{
-    				for (ScorePlayerTeam team : scoreboard.getTeams())
-    				{
-    					if (team.getNameTagVisibility() != Team.EnumVisible.HIDE_FOR_OTHER_TEAMS)
-    						team.setNameTagVisibility(Team.EnumVisible.HIDE_FOR_OTHER_TEAMS);
-    				}
-    			}
-    		}
-    		
-    		if(saveData.isTimedGlow())
-    		{
-    			int timedGlowTimer = saveData.getMinuteMarkTime();
-    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getNameTimer());
-    			
-    			if(timedGlowFlag)
-    			{
-    				for (EntityPlayerMP player : playerList)
-    				{
-    					if(!player.isGlowing())
-    						player.setGlowing(true);
-    				}
-    			}
-    			else
-    			{
-    				for (EntityPlayerMP player : playerList)
-    				{
-    					if(player.isGlowing())
-    						player.setGlowing(false);
-    				}
-    			}
-    		}
+	    		}
+	    		
+	    		if(saveData.isTimedNames())
+	    		{
+	    			int timedNameTimer = saveData.getMinuteMarkTime();
+	    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
+	    			
+	    			if(timedNameFlag)
+	    			{
+	    				for (ScorePlayerTeam team : scoreboard.getTeams())
+	    				{
+	    					if (team.getNameTagVisibility() != Team.EnumVisible.ALWAYS)
+	    						team.setNameTagVisibility(Team.EnumVisible.ALWAYS);
+	    				}
+	    			}
+	    			else
+	    			{
+	    				for (ScorePlayerTeam team : scoreboard.getTeams())
+	    				{
+	    					if (team.getNameTagVisibility() != Team.EnumVisible.HIDE_FOR_OTHER_TEAMS)
+	    						team.setNameTagVisibility(Team.EnumVisible.HIDE_FOR_OTHER_TEAMS);
+	    				}
+	    			}
+	    		}
+	    		
+	    		if(saveData.isTimedGlow())
+	    		{
+	    			int timedGlowTimer = saveData.getMinuteMarkTime();
+	    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getNameTimer());
+	    			
+	    			if(timedGlowFlag)
+	    			{
+	    				for (EntityPlayerMP player : playerList)
+	    				{
+	    					if(!player.isGlowing())
+	    						player.setGlowing(true);
+	    				}
+	    			}
+	    			else
+	    			{
+	    				for (EntityPlayerMP player : playerList)
+	    				{
+	    					if(player.isGlowing())
+	    						player.setGlowing(false);
+	    				}
+	    			}
+	    		}
+			}
 		}
 	}
 }

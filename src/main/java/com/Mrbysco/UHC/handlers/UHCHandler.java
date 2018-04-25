@@ -114,7 +114,15 @@ public class UHCHandler {
 							
 							sendMessage(playerList, new TextComponentString("uhc.start.0"));
 							this.uhcStartTimer = 0;
-
+							
+							for(EntityPlayerMP player : playerList)
+							{							
+								player.inventory.clear();
+								
+								if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
+									player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
+							}
+							
 							saveData.setUhcStarting(false);
 							timerData.setUhcStartTimer(this.uhcStartTimer);
 							saveData.setUhcOnGoing(true);
@@ -123,14 +131,6 @@ public class UHCHandler {
 					}
 					else
 					{
-						for(EntityPlayerMP player : playerList)
-						{							
-							player.inventory.clear();
-							
-							if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
-								player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
-						}
-						
 						++this.uhcStartTimer;
 						timerData.setUhcStartTimer(this.uhcStartTimer);
 						timerData.markDirty();
@@ -473,21 +473,7 @@ public class UHCHandler {
 			
 			if(saveData.isUhcOnGoing())
 			{
-				player.setGameType(GameType.SPECTATOR);
-
-				if(scoreboard.getTeams().size() == 2)
-				{
-					ArrayList<ScorePlayerTeam> teamList = new ArrayList<>(scoreboard.getTeams());
-					if(teamList.get(0) == scoreboard.getTeam("spectator"))
-						return;
-					else
-						YouWonTheUHC(teamList.get(0), playerList, world);
-					
-					if(teamList.get(1) == scoreboard.getTeam("spectator"))
-						return;
-					else
-						YouWonTheUHC(teamList.get(1), playerList, world);
-				}
+				scoreboard.addPlayerToTeam(player.getName(), "spectator");
 			}
 		}
 	}

@@ -231,6 +231,18 @@ public class UHCHandler {
 							teamsAlive.add(team);
 					}
 				}
+				
+				if(!teamsAlive.isEmpty() && teamsAlive != null)
+				{
+					for(ScorePlayerTeam team : teamsAlive)
+					{
+						if(team.getMembershipCollection().size() < 1 && team != null)
+						{
+							teamsAlive.remove(team);
+						}
+					}
+				}
+				
 				System.out.println(teamsAlive.size());
 
 				if(teamsAlive.size() == 1)

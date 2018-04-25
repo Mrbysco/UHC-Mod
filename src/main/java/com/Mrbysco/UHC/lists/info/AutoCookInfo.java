@@ -1,42 +1,24 @@
 package com.Mrbysco.UHC.lists.info;
 
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class AutoCookInfo {
-	private Item input;
-	private int inputMeta;
-	private Item result;
-	private int resultMeta;
+	private ItemStack input;
+	private ItemStack result;
 	private float experience;
 	
-	public AutoCookInfo(Item itemIn, int meta, Item itemIn2, int meta2, float experienceAmount) {
-		this.input = itemIn;
-		this.inputMeta = meta;
-		this.result = itemIn2;
-		this.resultMeta = meta2;
+	public AutoCookInfo(ItemStack stack, ItemStack stack2, float experienceAmount) {
+		this.input = stack;
+		this.result = stack2;
 		this.experience = experienceAmount;
 	}
 	
-	public AutoCookInfo(Item itemIn, Item itemIn2, float experienceAmount) {
-		this.input = itemIn;
-		this.result = itemIn2;
-		this.experience = experienceAmount;
-	}
-	
-	public Item getInput() {
+	public ItemStack getInput() {
 		return input;
 	}
 	
-	public int getInputMeta() {
-		return inputMeta;
-	}
-	
-	public Item getResult() {
+	public ItemStack getResult() {
 		return result;
-	}
-	
-	public int getResultMeta() {
-		return resultMeta;
 	}
 	
 	public float getExperience() {

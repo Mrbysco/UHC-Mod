@@ -7,6 +7,7 @@ import com.Mrbysco.UHC.lists.info.AutoCookInfo;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class CookList {
 	public static ArrayList<AutoCookInfo> autoCookList = new ArrayList<>();
@@ -28,33 +29,47 @@ public class CookList {
 		addAutoCookInfo(Items.RABBIT, Items.COOKED_RABBIT, 0.35F);
 	}
 	
-	public static void addAutoCookInfo(Item itemIn, int meta, Item itemIn2, int meta2, float experienceAmount)
+	public static void addAutoCookInfo(ItemStack stack, ItemStack stack2, float experienceAmount)
 	{
 		// Check if the info doesn't already exist
-		autoCook_Info = new AutoCookInfo(itemIn, meta, itemIn2, meta2, experienceAmount);
+		autoCook_Info = new AutoCookInfo(stack2, stack2, experienceAmount);
 		if(autoCookList.contains(autoCook_Info))
 			return;
 		else
 			autoCookList.add(autoCook_Info);
 	}
 	
-	public static void addAutoCookInfo(Item itemIn, Item itemIn2, float experienceAmount)
+	public static void addAutoCookInfo(Item stack, Item stack2, float experienceAmount)
 	{
 		// Check if the info doesn't already exist
-		autoCook_Info = new AutoCookInfo(itemIn, 0, itemIn2, 0, experienceAmount);
+		autoCook_Info = new AutoCookInfo(new ItemStack(stack), new ItemStack(stack2), experienceAmount);
 		if(autoCookList.contains(autoCook_Info))
 			return;
 		else
 			autoCookList.add(autoCook_Info);
 	}
 	
-	public static void removeAutoCookInfo(Item itemIn, int meta, Item itemIn2, int meta2, float experienceAmount)
+	public static void addAutoCookInfo(Item stack, int meta, Item stack2, int meta2, float experienceAmount)
 	{
-		// Check if the info exists
-		autoCook_Info = new AutoCookInfo(itemIn, meta, itemIn2, meta2, experienceAmount);
+		// Check if the info doesn't already exist
+		autoCook_Info = new AutoCookInfo(new ItemStack(stack, meta), new ItemStack(stack2, meta2), experienceAmount);
 		if(autoCookList.contains(autoCook_Info))
-			autoCookList.remove(autoCook_Info);
-		else
 			return;
+		else
+			autoCookList.add(autoCook_Info);
+	}
+	
+	public static void removeAutoCookInfo(ItemStack output)
+	{
+		if(autoCookList != null)
+		{
+			for(AutoCookInfo info : autoCookList)
+			{
+				if(info.getResult().equals(output))
+				{
+					autoCookList.remove(info);
+				}
+			}
+		}
 	}
 }

@@ -33,9 +33,9 @@ public class AutoCookHandler {
 			{
 				for(AutoCookInfo info : CookList.autoCookList)
 				{
-					 if(drop.getItem() == info.getInput())
+					 if(drop.getItem() == info.getInput().getItem())
 					 {
-						 ItemStack stack = new ItemStack(info.getResult(), drop.getCount(), info.getResultMeta());
+						 ItemStack stack = new ItemStack(info.getResult().getItem(), drop.getCount(), info.getResult().getMetadata());
 						 drops.remove(drop);
 						 drops.add(stack);
 
@@ -77,10 +77,10 @@ public class AutoCookHandler {
 			{
 				for(AutoCookInfo info : CookList.autoCookList)
 				{
-					if(drop.getItem().getItem() == info.getInput())
+					if(drop.getItem().getItem() == info.getInput().getItem())
 					{
 						ItemStack stack = drop.getItem();
-						drop.setItem(new ItemStack(info.getResult(), stack.getCount(), info.getResultMeta()));
+						drop.setItem(new ItemStack(info.getResult().getItem(), stack.getCount(), info.getResult().getMetadata()));
 						 
 						float xpAmount = info.getExperience();
 						if(xpAmount != 0)
@@ -118,10 +118,10 @@ public class AutoCookHandler {
 		{
 			for(AutoCookInfo info : CookList.autoCookList)
 			{
-				if(item.getItem().getItem() == info.getInput())
+				if(item.getItem().getItem() == info.getInput().getItem())
 				{
 					ItemStack stack = item.getItem();
-					item.setItem(new ItemStack(info.getResult(), stack.getCount(), info.getResultMeta()));
+					item.setItem(new ItemStack(info.getResult().getItem(), stack.getCount(), info.getResult().getMetadata()));
 
 					float xpAmount = info.getExperience();
 					if(xpAmount != 0F)

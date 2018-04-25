@@ -56,7 +56,7 @@ public class ItemConversionHandler {
 			            Item item = findStack.getItem();
 			            int meta = findStack.getMetadata();
 			            
-			            if(!findStack.isEmpty() && item == info.getInput() && meta == info.getInputMeta()) {
+			            if(!findStack.isEmpty() && item == info.getInput().getItem() && meta == info.getInput().getMetadata()) {
 			                ItemStack itemstack = player.inventory.getStackInSlot(i);
 			                ItemStack stack = itemstack.copy();
 			                int count = stack.getCount();

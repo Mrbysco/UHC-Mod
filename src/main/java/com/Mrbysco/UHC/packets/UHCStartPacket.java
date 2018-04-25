@@ -62,14 +62,15 @@ public class UHCStartPacket implements IMessage{
 			if(playerData.getBoolean("canEditUHC") == true)
 			{
 				ArrayList<EntityPlayerMP>soloPlayers = (ArrayList<EntityPlayerMP>) playerList.clone();
+				ArrayList<EntityPlayerMP>teamPlayers = (ArrayList<EntityPlayerMP>) playerList.clone();
+				
 				for (EntityPlayer player : playerList)
 				{
-					if(player.getTeam() == null)
+					if(player.getTeam() != scoreboard.getTeam("solo"))
 						soloPlayers.remove(player);
-					
-					if(player.getTeam() == scoreboard.getTeam("spectator"))
-						playerList.remove(player);
 				}
+				
+				teamPlayers.removeAll(soloPlayers);
 				
 				double centerX = saveData.getBorderCenterX();
 				double centerZ = saveData.getBorderCenterZ();
@@ -83,7 +84,7 @@ public class UHCStartPacket implements IMessage{
 				if(saveData.isRandomSpawns())
 				{
 					try {
-						SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
+						SpreadUtil.spread(teamPlayers, soloPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
 					} catch (CommandException e) {
 						e.printStackTrace();
 					}
@@ -92,7 +93,7 @@ public class UHCStartPacket implements IMessage{
 				{
 					for(EntityPlayer player : playerList)
 					{
-						if(player.getTeam() != null)
+						if(player.getTeam() != scoreboard.getTeam("solo"))
 						{
 							BlockPos pos = TeamUtil.getPosForTeam(player.getTeam().getColor());
 							System.out.println(pos.toString());

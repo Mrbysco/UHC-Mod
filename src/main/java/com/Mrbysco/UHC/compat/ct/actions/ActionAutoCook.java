@@ -4,35 +4,43 @@ import com.Mrbysco.UHC.lists.CookList;
 
 import crafttweaker.IAction;
 import crafttweaker.api.item.IItemStack;
-import net.minecraft.item.Item;
+import crafttweaker.api.minecraft.CraftTweakerMC;
+import net.minecraft.item.ItemStack;
 
 public class ActionAutoCook implements IAction {
 
-	private final IItemStack rawProduct;
-	private final IItemStack cookedProduct;
+	private final ItemStack rawProduct;
+	private final ItemStack cookedProduct;
 	private final boolean removal;
 	private final float experience;
 
-	public ActionAutoCook(IItemStack stack1, IItemStack stack2, boolean removal, float experience) {
-		this.rawProduct = stack1;
-		this.cookedProduct = stack2;
-		this.removal = removal;
+	public ActionAutoCook(IItemStack stack1, IItemStack stack2, float experience) {
+		this.rawProduct = CraftTweakerMC.getItemStack(stack1);
+		this.cookedProduct = CraftTweakerMC.getItemStack(stack2);
+		this.removal = false;
 		this.experience = experience;
+	}
+	
+	public ActionAutoCook(IItemStack output) {
+		this.rawProduct = CraftTweakerMC.getItemStack(output);
+		this.cookedProduct = ItemStack.EMPTY;
+		this.removal = true;
+		this.experience = 0;
 	}
 	
 	@Override
 	public void apply() {
 		if (this.removal)
-			CookList.removeAutoCookInfo(Item.getByNameOrId(rawProduct.getName()), rawProduct.getMetadata(), Item.getByNameOrId(cookedProduct.getName()), cookedProduct.getMetadata() ,this.experience);
+			CookList.removeAutoCookInfo(rawProduct);
 		else
-			CookList.addAutoCookInfo(Item.getByNameOrId(rawProduct.getName()), rawProduct.getMetadata(), Item.getByNameOrId(cookedProduct.getName()), cookedProduct.getMetadata() ,this.experience);
+			CookList.addAutoCookInfo(rawProduct, cookedProduct, this.experience);
 	}
 
 	@Override
 	public String describe() {
 		if (this.removal)
-			return String.format(this.rawProduct.toString() + " to " + this.cookedProduct.toString() + " has been removed from the Auto Cook list");	
+			return String.format("Auto cooking " + this.rawProduct.getDisplayName() + " has been removed from the Auto Cook list");	
 		else
-			return String.format(this.rawProduct.toString() + " to " + this.cookedProduct.toString() + " has been added to the Auto Cook list");	
+			return String.format(this.rawProduct.getDisplayName() + " to " + this.cookedProduct.getDisplayName() + " has been added to the Auto Cook list");	
 	}
 }

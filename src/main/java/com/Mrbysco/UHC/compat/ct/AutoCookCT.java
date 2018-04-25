@@ -14,11 +14,11 @@ public class AutoCookCT {
 
 	@ZenMethod
     public static void addRecipe(IItemStack stack, IItemStack stack2, float experience) {
-        CraftTweakerAPI.apply(new ActionAutoCook(stack, stack2, false, experience));
+        CraftTweakerAPI.apply(new ActionAutoCook(stack, stack2, experience));
 	}
 	
 	@ZenMethod
-	public static void removeRecipe(IItemStack stack, IItemStack stack2, float experience) {
-		CraftTweakerAPI.apply(new ActionAutoCook(stack, stack2, true, experience));
+	public static void removeRecipe(IItemStack stack) {
+		CraftTweakerAPI.apply(new ActionAutoCook(stack));
 	}
 }

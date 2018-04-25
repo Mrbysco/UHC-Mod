@@ -25,7 +25,7 @@ public class UHCPacketTeamHandler implements IMessageHandler<UHCPacketTeam, IMes
 
 		Scoreboard scoreboard = serverPlayer.getServerWorld().getScoreboard();
 		if(message.team.equals("solo"))
-			scoreboard.removePlayerFromTeams(message.playerName);
+			scoreboard.addPlayerToTeam(message.playerName, message.team);
 		else
 		{
 			int maxTeamSize = saveData.getMaxTeamSize();

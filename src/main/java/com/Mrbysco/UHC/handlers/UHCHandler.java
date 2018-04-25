@@ -30,6 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -161,8 +162,6 @@ public class UHCHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
-			MinecraftServer server = world.getMinecraftServer();
-			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			
 			ItemStack bookStack = new ItemStack(ModItems.uhc_book);
 			ItemStack editStack = new ItemStack(Items.LEAD);
@@ -174,8 +173,11 @@ public class UHCHandler {
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);
 			List<Entity> entityList = world.loadedEntityList;
 			
-			if(!saveData.isUhcOnGoing())
+			if(!saveData.isUhcOnGoing() && !saveData.isUhcStarting())
 			{
+				MinecraftServer server = world.getMinecraftServer();
+				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+				
 				for(Entity entity : entityList)
 				{
 					if (entity instanceof EntityItem) {
@@ -209,6 +211,47 @@ public class UHCHandler {
 
 					if(player.getActivePotionEffect(MobEffects.RESISTANCE) == null)
 						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 32767 * 20, 10, true, false));
+				}
+			}
+			
+			if(saveData.isUhcOnGoing() && !saveData.isUhcIsFinished())
+			{
+				Scoreboard scoreboard = world.getScoreboard();
+				MinecraftServer server = world.getMinecraftServer();
+				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+				
+				ArrayList<ScorePlayerTeam> teamsAlive = new ArrayList<>();
+				for(ScorePlayerTeam team : scoreboard.getTeams())
+				{
+					if(team.getMembershipCollection().size() > 0 && team.getName() != "spectator")
+					{
+						if(teamsAlive.contains(team))
+							return;
+						else
+							teamsAlive.add(team);
+					}
+				}
+				System.out.println(teamsAlive.size());
+
+				if(teamsAlive.size() == 1)
+				{
+					ScorePlayerTeam team = teamsAlive.get(0);
+					if(teamsAlive.get(0) != null && team == scoreboard.getTeam("solo"))
+					{
+						if(team.getMembershipCollection().size() == 1)
+						{
+							for (String s : team.getMembershipCollection())
+				            {
+								SoloWonTheUHC(s, playerList, world);
+								saveData.setUhcIsFinished(true);
+				            }
+						}
+					}
+					else
+					{
+						YouWonTheUHC(teamsAlive.get(0), playerList, world);
+						saveData.setUhcIsFinished(true);
+					}
 				}
 			}
 		}
@@ -446,6 +489,18 @@ public class UHCHandler {
 			for(EntityPlayer player : playerList)
 			{
 				player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {team.getColor() + teamName}));
+			}
+		}
+	}
+	
+	public void SoloWonTheUHC(String user, ArrayList<EntityPlayerMP> playerList, World world)
+	{
+		if(!world.isRemote)
+		{
+			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			for(EntityPlayer player : playerList)
+			{
+				player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {TextFormatting.YELLOW + user}));
 			}
 		}
 	}

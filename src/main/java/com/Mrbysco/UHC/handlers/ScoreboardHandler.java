@@ -50,6 +50,13 @@ public class ScoreboardHandler {
 				}
 			}
 			
+			if(scoreboard.getTeam("solo") == null)
+			{
+				ScorePlayerTeam team = scoreboard.createTeam("solo");
+				team.setPrefix(TextFormatting.WHITE.toString());
+				team.setColor(TextFormatting.WHITE);
+			}
+			
 			if(scoreboard.getTeam("spectator") == null)
 			{
 				ScorePlayerTeam team = scoreboard.createTeam("spectator");

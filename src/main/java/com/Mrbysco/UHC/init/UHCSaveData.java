@@ -13,7 +13,8 @@ public class UHCSaveData extends WorldSavedData{
 	
 	private boolean uhcStarting;
 	private boolean uhcOnGoing;
-	
+	private boolean uhcIsFinished;
+
 	private boolean friendlyFire;
 	private boolean teamCollision;
 	private boolean healthInTab;
@@ -83,6 +84,7 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.uhcStarting = false;
 		this.uhcOnGoing = false;
+		this.uhcIsFinished = false;
 		this.autoCook = false;
 		this.itemConversion = false;
 		this.applyCustomHealth = false;
@@ -145,6 +147,7 @@ public class UHCSaveData extends WorldSavedData{
 
 		this.uhcStarting = false;
 		this.uhcOnGoing = false;
+		this.uhcIsFinished = false;
 		this.autoCook = false;
 		this.itemConversion = false;
 		this.applyCustomHealth = false;
@@ -205,6 +208,7 @@ public class UHCSaveData extends WorldSavedData{
 
 		this.uhcStarting = false;
 		this.uhcOnGoing = false;
+		this.uhcIsFinished = false;
 		this.autoCook = false;
 		this.itemConversion = false;
 		this.applyCustomHealth = false;
@@ -628,10 +632,19 @@ public class UHCSaveData extends WorldSavedData{
 		this.spawnRoomDimension = spawnRoomDimension;
 	}
 	
+	public boolean isUhcIsFinished() {
+		return uhcIsFinished;
+	}
+	
+	public void setUhcIsFinished(boolean uhcIsFinished) {
+		this.uhcIsFinished = uhcIsFinished;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcStarting = nbt.getBoolean("uhcStarting");
 		uhcOnGoing = nbt.getBoolean("uhcOnGoing");
+		uhcIsFinished = nbt.getBoolean("uhcIsFinished");
 		autoCook = nbt.getBoolean("autoCook");
 		itemConversion = nbt.getBoolean("itemConversion");
 		applyCustomHealth = nbt.getBoolean("CustomHealthApplied");
@@ -690,6 +703,7 @@ public class UHCSaveData extends WorldSavedData{
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
 		compound.setBoolean("uhcStarting", uhcStarting);
 		compound.setBoolean("uhcOnGoing", uhcOnGoing);
+		compound.setBoolean("uhcIsFinished", uhcIsFinished);
 		compound.setBoolean("autoCook", autoCook);
 		compound.setBoolean("itemConversion", itemConversion);
 		compound.setBoolean("CustomHealthApplied", applyCustomHealth);

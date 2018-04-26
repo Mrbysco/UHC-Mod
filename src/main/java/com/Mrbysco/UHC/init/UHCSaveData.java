@@ -1,6 +1,6 @@
 package com.Mrbysco.UHC.init;
 
-import com.blamejared.ctgui.reference.Reference;
+import com.Mrbysco.UHC.Reference;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -9,7 +9,7 @@ import net.minecraft.world.storage.WorldSavedData;
 
 public class UHCSaveData extends WorldSavedData{
 
-	private static final String DATA_NAME = Reference.MOD_ID + "_data";
+	private static final String DATA_NAME = Reference.MOD_ID + "_world_data";
 	
 	private boolean uhcStarting;
 	private boolean uhcOnGoing;

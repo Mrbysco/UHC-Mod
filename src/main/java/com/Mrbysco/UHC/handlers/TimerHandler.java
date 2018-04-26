@@ -77,7 +77,9 @@ public class TimerHandler {
 				if(saveData.isMinuteMark())
 				{
 					if(timerData.getMinuteMarkTimer() != this.minuteMarkTimer)
+					{
 						this.minuteMarkTimer = timerData.getMinuteMarkTimer();
+					}
 					
 					if(timerData.getMinuteMarkTimer() >= tickTime(saveData.getMinuteMarkTime()))
 					{
@@ -86,7 +88,7 @@ public class TimerHandler {
 					else
 					{
 						++this.minuteMarkTimer;
-						timerData.setMinuteMarkTimer(this.timeLockTimer);
+						timerData.setMinuteMarkTimer(this.minuteMarkTimer);
 						timerData.markDirty();
 					}
 				}
@@ -107,7 +109,7 @@ public class TimerHandler {
 					else
 					{
 						++this.nameTimer;
-						timerData.setNameTimer(this.timeLockTimer);
+						timerData.setNameTimer(this.nameTimer);
 						timerData.markDirty();
 					}			
 				}

@@ -22,7 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
-import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -53,7 +53,7 @@ public class UHCStartPacket implements IMessage{
 		private void handle(UHCStartPacket message, MessageContext ctx) {
 			EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
 			UHCSaveData saveData = UHCSaveData.getForWorld(serverPlayer.getServerWorld());
-			World world = serverPlayer.getServerWorld();
+			WorldServer world = serverPlayer.getServerWorld();
 			WorldBorder border = world.getWorldBorder();
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
@@ -148,7 +148,7 @@ public class UHCStartPacket implements IMessage{
 				if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
 					border.setCenter(centerX, centerZ);
 				
-				border.setSize(BorderSize);
+				border.setTransition(BorderSize);
 				
 				for(EntityPlayerMP player : playerList)
 				{							

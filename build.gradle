@@ -39,8 +39,6 @@ minecraft {
 
 dependencies {
 	deobfCompile "CraftTweaker2:CraftTweaker2-MC1120-Main:1.12-4.1.4.428"
-    deobfCompile "CraftTweaker2:CraftTweaker2-API:1.12-4.1.4.428"
-	deobfCompile "CraftTweaker2:ZenScript:1.12-4.1.4.428"
 	compile files("lib/twilightforest-1.12.2-3.6.345-universal.jar")
 }
 

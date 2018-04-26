@@ -28,7 +28,6 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
@@ -112,15 +111,13 @@ public class UHCHandler {
 								player.clearActivePotions();
 							}
 							
-							sendMessage(playerList, new TextComponentString("uhc.start.0"));
+							sendMessage(playerList, new TextComponentTranslation("uhc.start"));
 							this.uhcStartTimer = 0;
 							
 							for(EntityPlayerMP player : playerList)
 							{							
 								player.inventory.clear();
-								
-								if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
-									player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
+								player.clearActivePotions();
 							}
 							
 							saveData.setUhcStarting(false);
@@ -134,6 +131,12 @@ public class UHCHandler {
 						++this.uhcStartTimer;
 						timerData.setUhcStartTimer(this.uhcStartTimer);
 						timerData.markDirty();
+						
+						for(EntityPlayerMP player : playerList)
+						{							
+							if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
+								player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
+						}
 					}
 
 				}
@@ -242,9 +245,8 @@ public class UHCHandler {
 						}
 					}
 				}
-				
-				System.out.println(teamsAlive.size());
 
+				/* TEMP DISABLED
 				if(teamsAlive.size() == 1)
 				{
 					ScorePlayerTeam team = teamsAlive.get(0);
@@ -265,6 +267,7 @@ public class UHCHandler {
 						saveData.setUhcIsFinished(true);
 					}
 				}
+				*/
 			}
 		}
 	}

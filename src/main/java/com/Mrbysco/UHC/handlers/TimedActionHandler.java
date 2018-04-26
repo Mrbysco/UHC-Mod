@@ -37,7 +37,7 @@ public class TimedActionHandler {
 				if(saveData.isTimeLock())
 	    		{
 					int timeLockTimer = timerData.getTimeLockTimer();
-					boolean timeFlag = timeLockTimer == TimerHandler.tickTime(timeLockTimer);
+					boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
 					if(timeFlag)
 					{
 						if(rules.getBoolean("doDaylightCycle"))
@@ -69,14 +69,14 @@ public class TimedActionHandler {
 	    		
 	    		if(saveData.isMinuteMark())
 	    		{
-	    			int minuteMarkTimer = saveData.getMinuteMarkTime();
-					boolean minuteMarkFlag = minuteMarkTimer == TimerHandler.tickTime(minuteMarkTimer);
-					
+	    			int minuteMarkTimer = timerData.getMinuteMarkTimer();
+	    			int minutes = saveData.getMinuteMarkTime();
+					boolean minuteMarkFlag = minuteMarkTimer >= TimerHandler.tickTime(minutes);
 					if(minuteMarkFlag)
 					{
 						for(EntityPlayerMP player : playerList)
 						{
-							player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {minuteMarkTimer}));
+							player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {minutes}));
 						}
 						timerData.setMinuteMarkTimer(0);
 						timerData.markDirty();
@@ -85,8 +85,8 @@ public class TimedActionHandler {
 	    		
 	    		if(saveData.isTimedNames())
 	    		{
-	    			int timedNameTimer = saveData.getNameTimer();
-	    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(timedNameTimer);
+	    			int timedNameTimer = timerData.getNameTimer();
+	    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
 	    			
 	    			if(timedNameFlag)
 	    			{
@@ -108,8 +108,8 @@ public class TimedActionHandler {
 	    		
 	    		if(saveData.isTimedGlow())
 	    		{
-	    			int timedGlowTimer = saveData.getGlowTime();
-	    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(timedGlowTimer);
+	    			int timedGlowTimer = timerData.getGlowTimer();
+	    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getGlowTime());
 	    			
 	    			if(timedGlowFlag)
 	    			{

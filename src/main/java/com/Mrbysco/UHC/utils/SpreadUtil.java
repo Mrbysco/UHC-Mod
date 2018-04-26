@@ -1,6 +1,5 @@
 package com.Mrbysco.UHC.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -29,23 +28,6 @@ public class SpreadUtil {
         int i = spreadPositions(pos, spreadDistance, worldIn, random, d0, d1, d2, d3, aSpreadUtil$position, respectTeams);
         double d4 = setPlayerPositions(players, worldIn, aSpreadUtil$position, respectTeams);
     }
-	
-	public static void spread(List<EntityPlayerMP> teamPlayers, List<EntityPlayerMP> soloPlayers, SpreadPosition pos, double spreadDistance, double maxRange, World worldIn, boolean respectTeams) throws CommandException
-	{
-		List<EntityPlayerMP> allPlayers = new ArrayList<>();
-		allPlayers.addAll(teamPlayers);
-		allPlayers.addAll(soloPlayers);
-		
-		Random random = new Random();
-		double d0 = pos.x - maxRange;
-		double d1 = pos.z - maxRange;
-		double d2 = pos.x + maxRange;
-		double d3 = pos.z + maxRange;
-		SpreadPosition[] aSpreadUtil$position = createInitialPositions(random, respectTeams ? getNumberOfTeams(allPlayers) : allPlayers.size(), d0, d1, d2, d3);
-		int i = spreadPositions(pos, spreadDistance, worldIn, random, d0, d1, d2, d3, aSpreadUtil$position, respectTeams);
-		double d4 = setPlayerPositions(teamPlayers, worldIn, aSpreadUtil$position, respectTeams);
-		double d5 = setPlayerPositions(soloPlayers, worldIn, aSpreadUtil$position, false);
-	}
 	
 	public static SpreadPosition[] createInitialPositions(Random p_110670_1_, int p_110670_2_, double p_110670_3_, double p_110670_5_, double p_110670_7_, double p_110670_9_)
     {
@@ -190,6 +172,7 @@ public class SpreadUtil {
             }
 
             entity.setPositionAndUpdate((double)((float)MathHelper.floor(SpreadUtil$position.x) + 0.5F), (double)SpreadUtil$position.getSpawnY(worldIn), (double)MathHelper.floor(SpreadUtil$position.z) + 0.5D);
+
             double d2 = Double.MAX_VALUE;
 
             for (SpreadPosition SpreadUtil$position1 : p_110671_3_)

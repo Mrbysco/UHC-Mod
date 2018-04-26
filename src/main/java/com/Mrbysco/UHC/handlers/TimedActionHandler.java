@@ -11,6 +11,7 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
@@ -76,7 +77,7 @@ public class TimedActionHandler {
 					{
 						for(EntityPlayerMP player : playerList)
 						{
-							player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {minutes}));
+							player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + String.valueOf(minutes)}));
 						}
 						timerData.setMinuteMarkTimer(0);
 						timerData.markDirty();

@@ -163,7 +163,7 @@ color.white.name=Solo
 color.random.name=Randomize
 
 #Messages
-message.minutemark.time=§e%d Minutes has passed | Minute Mark§r
+message.minutemark.time=%d§r §eMinutes has passed | Minute Mark§r
 
 uhc.start.5=§eUHC Starting in 5§r
 uhc.start.4=§e4§r
@@ -172,4 +172,4 @@ uhc.start.2=§e2§r
 uhc.start.1=§e1§r
 uhc.start=§eGO!§r
 
-uhc.team.won=§eTeam %s has won the UHC!§r
+uhc.team.won=§eTeam §r%s§e has won the UHC!§r

@@ -44,7 +44,7 @@ public class BorderHandler {
 			}
 			if(saveData.getOriginalBorderCenterZ() == -1)
 			{
-				double originalZ = border.getCenterX();
+				double originalZ = border.getCenterZ();
 				saveData.setOriginalBorderCenterZ(originalZ);
 				saveData.markDirty();
 			}
@@ -59,8 +59,8 @@ public class BorderHandler {
 				}
 				else
 				{
-					double originalZ = border.getCenterX();
-					saveData.setBorderCenterZ(originalZ);
+					double originalX = border.getCenterX();
+					saveData.setBorderCenterX(originalX);
 					saveData.markDirty();
 				}
 			}
@@ -74,7 +74,7 @@ public class BorderHandler {
 				}
 				else
 				{
-					double originalZ = border.getCenterX();
+					double originalZ = border.getCenterZ();
 					saveData.setBorderCenterZ(originalZ);
 					saveData.markDirty();
 				}

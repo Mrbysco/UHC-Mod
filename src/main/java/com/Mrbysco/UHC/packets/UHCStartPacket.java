@@ -76,9 +76,17 @@ public class UHCStartPacket implements IMessage{
 				
 				double centerX = saveData.getBorderCenterX();
 				double centerZ = saveData.getBorderCenterZ();
+				if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
+					border.setCenter(centerX, centerZ);
+				
+				int BorderSize = saveData.getBorderSize();
+				border.setTransition(BorderSize);
+				
 				double spreadDistance = saveData.getSpreadDistance();
 				double spreadMaxRange = saveData.getSpreadMaxRange();
-				int BorderSize = saveData.getBorderSize();
+				
+				if(spreadMaxRange >= BorderSize)
+					spreadMaxRange = spreadMaxRange/2;
 				
 				world.setWorldTime(0);
 				info.setRaining(false);
@@ -86,7 +94,13 @@ public class UHCStartPacket implements IMessage{
 				if(saveData.isRandomSpawns())
 				{
 					try {
-						SpreadUtil.spread(teamPlayers, soloPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
+						SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
+					} catch (CommandException e) {
+						e.printStackTrace();
+					}
+					
+					try {
+						SpreadUtil.spread(teamPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, false);
 					} catch (CommandException e) {
 						e.printStackTrace();
 					}
@@ -98,7 +112,6 @@ public class UHCStartPacket implements IMessage{
 						if(player.getTeam() != scoreboard.getTeam("solo"))
 						{
 							BlockPos pos = TeamUtil.getPosForTeam(player.getTeam().getColor());
-							System.out.println(pos.toString());
 							
 				            ((EntityPlayerMP)player).connection.setPlayerLocation(pos.getX(), pos.getY(), pos.getZ(), player.rotationYaw, player.rotationPitch);
 						}
@@ -144,11 +157,6 @@ public class UHCStartPacket implements IMessage{
 					saveData.setSpawnRoomDimension(0);
 					saveData.markDirty();
 				}
-				
-				if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
-					border.setCenter(centerX, centerZ);
-				
-				border.setTransition(BorderSize);
 				
 				for(EntityPlayerMP player : playerList)
 				{							

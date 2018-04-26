@@ -163,7 +163,12 @@ color.white.name=Solo
 color.random.name=Randomize
 
 #Messages
+message.minutemark.single.time=%d§r §eMinute has passed | Minute Mark§r
 message.minutemark.time=%d§r §eMinutes has passed | Minute Mark§r
+message.border.moving=§cThe world border has started moving!§r
+message.timelock=§cThe time will be locked to §r%d
+message.timedname=§6Name tags are now visible!§r
+message.timedglow=§6Players will now glow!§r
 
 uhc.start.5=§eUHC Starting in 5§r
 uhc.start.4=§e4§r

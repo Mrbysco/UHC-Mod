@@ -39,7 +39,7 @@ public class TimedActionHandler {
 	    		{
 					int timeLockTimer = timerData.getTimeLockTimer();
 					boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
-					if(timeFlag)
+					if(timeFlag && !saveData.isTimeLockApplied())
 					{
 						if(rules.getBoolean("doDaylightCycle"))
 						{
@@ -65,6 +65,14 @@ public class TimedActionHandler {
 									rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(true));
 							}
 						}
+						
+						for(EntityPlayerMP player : playerList)
+						{
+							player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+						}
+						
+						saveData.setTimeLockApplied(true);
+						saveData.markDirty();
 					}
 	    		}
 	    		
@@ -72,19 +80,28 @@ public class TimedActionHandler {
 	    		{
 	    			int minuteMarkTimer = timerData.getMinuteMarkTimer();
 	    			int minutes = saveData.getMinuteMarkTime();
+	    			int minuteAmount = timerData.getMinuteMarkAmount();
 					boolean minuteMarkFlag = minuteMarkTimer >= TimerHandler.tickTime(minutes);
 					if(minuteMarkFlag)
 					{
+						if(minuteAmount != timerData.getMinuteMarkAmount())
+							minuteAmount = timerData.getMinuteMarkAmount();
+						
+						++minuteAmount;
+						timerData.setMinuteMarkAmount(minuteAmount);
 						for(EntityPlayerMP player : playerList)
 						{
-							player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + String.valueOf(minutes)}));
+							if(minuteAmount == 1)
+								player.sendMessage(new TextComponentTranslation("message.minutemark.single.time", new Object[] {TextFormatting.YELLOW + String.valueOf(minutes * minuteAmount)}));
+							else
+								player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + String.valueOf(minutes * minuteAmount)}));
 						}
 						timerData.setMinuteMarkTimer(0);
 						timerData.markDirty();
 					}
 	    		}
 	    		
-	    		if(saveData.isTimedNames())
+	    		if(saveData.isTimedNames() && !saveData.isTimedNamesApplied())
 	    		{
 	    			int timedNameTimer = timerData.getNameTimer();
 	    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
@@ -105,9 +122,17 @@ public class TimedActionHandler {
 	    						team.setNameTagVisibility(Team.EnumVisible.HIDE_FOR_OTHER_TEAMS);
 	    				}
 	    			}
+
+	    			for(EntityPlayerMP player : playerList)
+					{
+						player.sendMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+					}
+	    			
+					saveData.setTimedNamesApplied(true);
+					saveData.markDirty();
 	    		}
 	    		
-	    		if(saveData.isTimedGlow())
+	    		if(saveData.isTimedGlow() && !saveData.isGlowTimeApplied())
 	    		{
 	    			int timedGlowTimer = timerData.getGlowTimer();
 	    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getGlowTime());
@@ -128,6 +153,14 @@ public class TimedActionHandler {
 	    						player.setGlowing(false);
 	    				}
 	    			}
+	    			
+	    			for(EntityPlayerMP player : playerList)
+					{
+						player.sendMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+					}
+
+					saveData.setGlowTimeApplied(true);
+					saveData.markDirty();
 	    		}
 			}
 		}

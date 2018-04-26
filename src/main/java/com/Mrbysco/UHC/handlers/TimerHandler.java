@@ -30,50 +30,58 @@ public class TimerHandler {
 			
 			if(!playerList.isEmpty() && saveData.isUhcOnGoing())
 			{
-				if(saveData.isShrinkEnabled())
+				if(!saveData.isShrinkApplied())
 				{
-					if(timerData.getShrinkTimeUntil() != this.shrinkTimeUntil)
+					if(saveData.isShrinkEnabled())
 					{
-						this.shrinkTimeUntil = timerData.getShrinkTimeUntil();
-					}
-					
-					if(timerData.getShrinkTimeUntil() >= tickTime(saveData.getShrinkTimer()))
-					{
-						this.shrinkTimeUntil = tickTime(saveData.getShrinkTimer());
-					}
-					else
-					{
-						++this.shrinkTimeUntil;
-						timerData.setShrinkTimeUntil(this.shrinkTimeUntil);
-						timerData.markDirty();
-					}
-				}
-				else
-				{
-					timerData.setShrinkTimeUntil(0);
-					timerData.markDirty();
-				}
-				if(saveData.isTimeLock())
-				{
-					if(timerData.getTimeLockTimer() != this.timeLockTimer)
-						this.timeLockTimer = timerData.getTimeLockTimer();
-					
-					if(timerData.getTimeLockTimer() >= tickTime(saveData.getTimeLockTimer()))
-					{
-						this.timeLockTimer = tickTime(saveData.getTimeLockTimer());
+						if(timerData.getShrinkTimeUntil() != this.shrinkTimeUntil)
+						{
+							this.shrinkTimeUntil = timerData.getShrinkTimeUntil();
+						}
+						
+						if(timerData.getShrinkTimeUntil() >= tickTime(saveData.getShrinkTimer()))
+						{
+							this.shrinkTimeUntil = tickTime(saveData.getShrinkTimer());
+						}
+						else
+						{
+							++this.shrinkTimeUntil;
+							timerData.setShrinkTimeUntil(this.shrinkTimeUntil);
+							timerData.markDirty();
+						}
 					}
 					else
 					{
-						++this.timeLockTimer;
-						timerData.setTimeLockTimer(this.timeLockTimer);
+						timerData.setShrinkTimeUntil(0);
 						timerData.markDirty();
-					}			
+					}
 				}
-				else
+				
+				if(!saveData.isTimeLockApplied())
 				{
-					timerData.setTimeLockTimer(0);
-					timerData.markDirty();
+					if(saveData.isTimeLock())
+					{
+						if(timerData.getTimeLockTimer() != this.timeLockTimer)
+							this.timeLockTimer = timerData.getTimeLockTimer();
+						
+						if(timerData.getTimeLockTimer() >= tickTime(saveData.getTimeLockTimer()))
+						{
+							this.timeLockTimer = tickTime(saveData.getTimeLockTimer());
+						}
+						else
+						{
+							++this.timeLockTimer;
+							timerData.setTimeLockTimer(this.timeLockTimer);
+							timerData.markDirty();
+						}			
+					}
+					else
+					{
+						timerData.setTimeLockTimer(0);
+						timerData.markDirty();
+					}
 				}
+				
 				if(saveData.isMinuteMark())
 				{
 					if(timerData.getMinuteMarkTimer() != this.minuteMarkTimer)
@@ -97,47 +105,55 @@ public class TimerHandler {
 					timerData.setMinuteMarkTimer(0);
 					timerData.markDirty();
 				}
-				if(saveData.isTimedNames())
+				
+				if(!saveData.isTimedNamesApplied())
 				{
-					if(timerData.getNameTimer() != this.nameTimer)
-						this.nameTimer = timerData.getNameTimer();
-					
-					if(timerData.getNameTimer() >= tickTime(saveData.getNameTimer()))
+					if(saveData.isTimedNames())
 					{
-						this.nameTimer = tickTime(saveData.getNameTimer());
+						if(timerData.getNameTimer() != this.nameTimer)
+							this.nameTimer = timerData.getNameTimer();
+						
+						if(timerData.getNameTimer() >= tickTime(saveData.getNameTimer()))
+						{
+							this.nameTimer = tickTime(saveData.getNameTimer());
+						}
+						else
+						{
+							++this.nameTimer;
+							timerData.setNameTimer(this.nameTimer);
+							timerData.markDirty();
+						}			
 					}
 					else
 					{
-						++this.nameTimer;
-						timerData.setNameTimer(this.nameTimer);
+						timerData.setNameTimer(0);
 						timerData.markDirty();
-					}			
+					}
 				}
-				else
+				
+				if(!saveData.isGlowTimeApplied())
 				{
-					timerData.setNameTimer(0);
-					timerData.markDirty();
-				}
-				if(saveData.isTimedGlow())
-				{
-					if(timerData.getGlowTimer() != this.glowTimer)
-						this.glowTimer = timerData.getGlowTimer();
-					
-					if(timerData.getGlowTimer() >= tickTime(saveData.getGlowTime()))
+					if(saveData.isTimedGlow())
 					{
-						this.glowTimer = tickTime(saveData.getGlowTime());
+						if(timerData.getGlowTimer() != this.glowTimer)
+							this.glowTimer = timerData.getGlowTimer();
+						
+						if(timerData.getGlowTimer() >= tickTime(saveData.getGlowTime()))
+						{
+							this.glowTimer = tickTime(saveData.getGlowTime());
+						}
+						else
+						{
+							++this.glowTimer;
+							timerData.setGlowTimer(this.glowTimer);
+							timerData.markDirty();
+						}			
 					}
 					else
 					{
-						++this.glowTimer;
-						timerData.setGlowTimer(this.glowTimer);
+						timerData.setGlowTimer(0);
 						timerData.markDirty();
-					}			
-				}
-				else
-				{
-					timerData.setGlowTimer(0);
-					timerData.markDirty();
+					}
 				}
 			}
 		}

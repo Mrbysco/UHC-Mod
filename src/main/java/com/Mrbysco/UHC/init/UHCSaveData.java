@@ -47,14 +47,17 @@ public class UHCSaveData extends WorldSavedData{
 
 	private boolean timeLock;
 	private int timeLockTimer;
+	private boolean timeLockApplied;
 	private String timeMode;
 	
 	private boolean minuteMark;
 	private int minuteMarkTime;
 	private boolean timedNames;
 	private int nameTimer;
+	private boolean timedNamesApplied;
 	private boolean timedGlow;
 	private int glowTime;
+	private boolean glowTimeApplied;
 	
 	private boolean netherEnabled;
 	private boolean regenPotions;
@@ -109,14 +112,17 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.timeLock = false;
 		this.timeLockTimer = 60;
+		this.timeLockApplied = false;
 		this.timeMode = "Day";
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
 		this.timedNames = false;
 		this.nameTimer = 30;
+		this.timedNamesApplied = false;
 		this.timedGlow = false;
 		this.glowTime = 30;
+		this.glowTimeApplied = false;
 		
 		this.netherEnabled = true;
 		this.regenPotions = true;
@@ -172,14 +178,17 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.timeLock = false;
 		this.timeLockTimer = 60;
+		this.timeLockApplied = false;
 		this.timeMode = "Day";
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
 		this.timedNames = false;
 		this.nameTimer = 30;
+		this.timedNamesApplied = false;
 		this.timedGlow = false;
 		this.glowTime = 30;
+		this.glowTimeApplied = false;
 		
 		this.netherEnabled = true;
 		this.regenPotions = true;
@@ -231,14 +240,17 @@ public class UHCSaveData extends WorldSavedData{
 		
 		this.timeLock = false;
 		this.timeLockTimer = 60;
+		this.timeLockApplied = false;
 		this.timeMode = "Day";
 		
 		this.minuteMark = false;
 		this.minuteMarkTime = 30;
 		this.timedNames = false;
 		this.nameTimer = 30;
+		this.timedNamesApplied = false;
 		this.timedGlow = false;
 		this.glowTime = 30;
+		this.glowTimeApplied = false;
 		
 		this.netherEnabled = true;
 		this.regenPotions = true;
@@ -640,6 +652,30 @@ public class UHCSaveData extends WorldSavedData{
 		this.uhcIsFinished = uhcIsFinished;
 	}
 	
+	public boolean isTimedNamesApplied() {
+		return timedNamesApplied;
+	}
+	
+	public void setTimedNamesApplied(boolean timedNamesApplied) {
+		this.timedNamesApplied = timedNamesApplied;
+	}
+	
+	public boolean isGlowTimeApplied() {
+		return glowTimeApplied;
+	}
+	
+	public void setGlowTimeApplied(boolean glowTimeApplied) {
+		this.glowTimeApplied = glowTimeApplied;
+	}
+	
+	public boolean isTimeLockApplied() {
+		return timeLockApplied;
+	}
+	
+	public void setTimeLockApplied(boolean timeLockApplied) {
+		this.timeLockApplied = timeLockApplied;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcStarting = nbt.getBoolean("uhcStarting");
@@ -675,14 +711,17 @@ public class UHCSaveData extends WorldSavedData{
 		
 		timeLock = nbt.getBoolean("timeLock");
 		timeLockTimer = nbt.getInteger("timeLockTimer");
+		timeLockApplied = nbt.getBoolean("timeLockApplied");
 		timeMode = nbt.getString("timeMode");
 		
 		minuteMark = nbt.getBoolean("minuteMark");
 		minuteMarkTime = nbt.getInteger("minuteMarkTime");
 		timedNames = nbt.getBoolean("timedNames");
 		nameTimer = nbt.getInteger("nameTimer");
+		timedNamesApplied = nbt.getBoolean("timedNamesApplied");
 		timedGlow = nbt.getBoolean("timedGlow");
 		glowTime = nbt.getInteger("glowTime");
+		glowTimeApplied = nbt.getBoolean("glowTimeApplied");
 
 		netherEnabled = nbt.getBoolean("netherEnabled");
 		weatherEnabled = nbt.getBoolean("weatherEnabled");
@@ -734,14 +773,17 @@ public class UHCSaveData extends WorldSavedData{
 
 		compound.setBoolean("timeLock", timeLock);
 		compound.setInteger("timeLockTimer", timeLockTimer);
+		compound.setBoolean("timeLockApplied", timeLockApplied);
 		compound.setString("timeMode", timeMode);
 		
 		compound.setBoolean("minuteMark", minuteMark);
 		compound.setInteger("minuteMarkTime", minuteMarkTime);
 		compound.setBoolean("timedNames", timedNames);
 		compound.setInteger("nameTimer", nameTimer);
+		compound.setBoolean("timedNamesApplied", timedNamesApplied);
 		compound.setBoolean("timedGlow", timedGlow);
 		compound.setInteger("glowTime", glowTime);
+		compound.setBoolean("glowTimeApplied", glowTimeApplied);
 		
 		compound.setBoolean("netherEnabled", netherEnabled);
 		compound.setBoolean("weatherEnabled", weatherEnabled);

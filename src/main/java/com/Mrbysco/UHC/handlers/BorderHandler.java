@@ -102,6 +102,9 @@ public class BorderHandler {
 					if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
 					{
 						border.setTransition(oldSize, newSize, shrinkTimeSec);
+						for(EntityPlayerMP player : playerList)
+							player.sendMessage(new TextComponentTranslation("message.border.moving"));
+						
 						saveData.setShrinkApplied(true);
 						saveData.markDirty();
 					}

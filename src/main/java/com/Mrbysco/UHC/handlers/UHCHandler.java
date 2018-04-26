@@ -136,6 +136,9 @@ public class UHCHandler {
 						{							
 							if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
 								player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
+							
+							if(player.getActivePotionEffect(MobEffects.SLOWNESS) == null)
+								player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 32767 * 20, 10, true, false));
 						}
 					}
 

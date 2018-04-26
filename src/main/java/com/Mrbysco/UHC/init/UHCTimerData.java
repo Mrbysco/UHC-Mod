@@ -14,6 +14,7 @@ public class UHCTimerData extends WorldSavedData{
 	private int shrinkTimeUntil;
 	private int timeLockTimer;
 	private int minuteMarkTimer;
+	private int minuteMarkAmount;
 	private int nameTimer;
 	private int glowTimer;
 	private boolean controlled;
@@ -25,6 +26,7 @@ public class UHCTimerData extends WorldSavedData{
 		this.shrinkTimeUntil = 0;
 		this.timeLockTimer = 0;
 		this.minuteMarkTimer = 0;
+		this.minuteMarkAmount = 0;
 		this.nameTimer = 0;
 		this.glowTimer = 0;
 		this.controlled = false;
@@ -37,6 +39,7 @@ public class UHCTimerData extends WorldSavedData{
 		this.shrinkTimeUntil = 0;
 		this.timeLockTimer = 0;
 		this.minuteMarkTimer = 0;
+		this.minuteMarkAmount = 0;
 		this.nameTimer = 0;
 		this.glowTimer = 0;
 		this.controlled = false;
@@ -47,6 +50,7 @@ public class UHCTimerData extends WorldSavedData{
 		this.shrinkTimeUntil = 0;
 		this.timeLockTimer = 0;
 		this.minuteMarkTimer = 0;
+		this.minuteMarkAmount = 0;
 		this.nameTimer = 0;
 		this.glowTimer = 0;
 		this.controlled = false;
@@ -109,11 +113,20 @@ public class UHCTimerData extends WorldSavedData{
 		this.uhcStartTimer = uhcStartTimer;
 	}
 
+	public int getMinuteMarkAmount() {
+		return minuteMarkAmount;
+	}
+	
+	public void setMinuteMarkAmount(int minuteMarkAmount) {
+		this.minuteMarkAmount = minuteMarkAmount;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		shrinkTimeUntil = nbt.getInteger("shrinkTimeUntil");
 		timeLockTimer = nbt.getInteger("timeLockTimer");
 		minuteMarkTimer = nbt.getInteger("minuteMarkTimer");
+		minuteMarkAmount = nbt.getInteger("minuteMarkAmount");
 		nameTimer = nbt.getInteger("nameTimer");
 		glowTimer = nbt.getInteger("glowTimer");
 		controlled = nbt.getBoolean("pointControlled");
@@ -125,6 +138,7 @@ public class UHCTimerData extends WorldSavedData{
 		compound.setInteger("shrinkTimeUntil", shrinkTimeUntil);
 		compound.setInteger("timeLockTimer", timeLockTimer);
 		compound.setInteger("minuteMarkTimer", minuteMarkTimer);
+		compound.setInteger("minuteMarkAmount", minuteMarkAmount);
 		compound.setInteger("nameTimer", nameTimer);
 		compound.setInteger("glowTimer", glowTimer);
 		compound.setBoolean("pointControlled", controlled);

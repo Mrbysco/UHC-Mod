@@ -91,7 +91,7 @@ public class AutoCookHandler {
 			{
 				for(AutoCookInfo info : CookList.autoCookList)
 				{
-					if(drop.getItem().getItem() == info.getInput().getItem())
+					if(drop.getItem().isItemEqual(info.getInput()))
 					{
 						ItemStack stack = drop.getItem();
 						drop.setItem(new ItemStack(info.getResult().getItem(), stack.getCount(), info.getResult().getMetadata()));
@@ -132,7 +132,7 @@ public class AutoCookHandler {
 		{
 			for(AutoCookInfo info : CookList.autoCookList)
 			{
-				if(item.getItem().getItem() == info.getInput().getItem())
+				if(item.getItem().isItemEqual(info.getInput()))
 				{
 					ItemStack stack = item.getItem();
 					item.setItem(new ItemStack(info.getResult().getItem(), stack.getCount(), info.getResult().getMetadata()));

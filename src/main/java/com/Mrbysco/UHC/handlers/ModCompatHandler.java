@@ -71,7 +71,7 @@ public class ModCompatHandler {
 						}
 					}
 					
-					if(!collidingList.isEmpty() && !bossActive)
+					if(!collidingList.isEmpty())
 					{
 						for (EntityPlayerMP player : collidingList)
 						{
@@ -83,7 +83,7 @@ public class ModCompatHandler {
 									return;
 								else
 								{
-									if(info.timer == 0)
+									if(info.timer == 0 && !bossActive)
 									{
 										info.teamsReached.add(team);
 

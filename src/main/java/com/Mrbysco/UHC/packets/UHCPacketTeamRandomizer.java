@@ -3,7 +3,6 @@ package com.Mrbysco.UHC.packets;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.Mrbysco.UHC.UltraHardCoremod;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.utils.TeamUtil;
 
@@ -59,41 +58,35 @@ public class UHCPacketTeamRandomizer implements IMessage
 			
 			if(playerData.getBoolean("canEditUHC") == true)
 			{
+				ArrayList<EntityPlayerMP>teamPlayers = (ArrayList<EntityPlayerMP>) playerList.clone();
+
 				for (EntityPlayer player : playerList)
 				{
 					if(player.getTeam() == scoreboard.getTeam("spectator"))
-						playerList.remove(player);
+						teamPlayers.remove(player);
 					else
 						scoreboard.removePlayerFromTeams(player.getName());
 				}
 			
 				int randomTeams = saveData.getRandomTeamSize();
 				Collections.shuffle(playerList);
-				ArrayList<EntityPlayerMP>tempList = (ArrayList<EntityPlayerMP>) playerList.clone();
+				ArrayList<EntityPlayerMP>tempList = (ArrayList<EntityPlayerMP>) teamPlayers.clone();
 
 				int playerAmount = playerList.size();
 				int amountPerTeam = (int)Math.ceil((double)playerAmount / (double)randomTeams);
-				UltraHardCoremod.logger.debug(amountPerTeam);
-				UltraHardCoremod.logger.debug(tempList);
-				//System.out.println(amountPerTeam);
-				//System.out.println(tempList);
 				for(int i = 0; i < randomTeams; i++)
 				{
-					UltraHardCoremod.logger.debug("i = " + i);
-					//System.out.println("i = " + i);
 					for(int j = 0; j < amountPerTeam; j++)
 					{
 						if(tempList.size() != 0)
 						{
 							EntityPlayer player = tempList.get(0);
-							
-							UltraHardCoremod.logger.debug("j = " + j);
-							//System.out.println("j = " + j);
-							UltraHardCoremod.logger.debug("player = " + player.getName());
-							//System.out.println("player = " + player.getName());
 							scoreboard.addPlayerToTeam(player.getName(), TeamUtil.getTeamNameFromInt(i+1));
-							player.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), TeamUtil.getTeamNameFromInt(i+1).replaceAll("_", " ")}));
 							
+							for(EntityPlayerMP players : playerList)
+							{
+								players.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), TeamUtil.getTeamNameFromInt(i+1).replaceAll("_", " ")}));
+							}
 							tempList.remove(0);
 						}
 					}

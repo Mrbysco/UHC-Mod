@@ -7,7 +7,6 @@ import com.Mrbysco.UHC.lists.info.ItemConversionInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -28,9 +27,7 @@ public class ItemConversionHandler {
 				for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
 		        {
 					ItemStack findStack = player.inventory.getStackInSlot(i);
-		            Item item = findStack.getItem();
-		            int meta = findStack.getMetadata();
-		            if(!findStack.isEmpty() && item == Items.GOLDEN_APPLE && meta == 1)
+		            if(!findStack.isEmpty() && findStack.getItem() == Items.GOLDEN_APPLE && findStack.getMetadata() == 1)
 		            {
 		            	ItemStack itemstack = player.inventory.getStackInSlot(i);
 		                ItemStack stack = itemstack.copy();
@@ -41,8 +38,43 @@ public class ItemConversionHandler {
 		                
 		                giveResult(player, copyStack(gold_block), count);
 						giveResult(player, copyStack(apple), count);
+		            }   
+				}
+			}
+			
+			if (saveData.isLevel2Potions())
+			{
+				for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
+		        {
+					ItemStack findStack = player.inventory.getStackInSlot(i);
+		            if(!findStack.isEmpty() && findStack.getItem() == Items.GLOWSTONE_DUST)
+		            {
+		            	ItemStack itemstack = player.inventory.getStackInSlot(i);
+		                ItemStack stack = itemstack.copy();
+		                int count = stack.getCount();
+		                
+		                ItemStack glowstoneBlock = new ItemStack(Blocks.GLOWSTONE);
+		                
+						giveResult(player, copyStack(glowstoneBlock), count);
 		            }
-			            
+				}
+			}
+			
+			if (saveData.isRegenPotions())
+			{
+				for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
+				{
+					ItemStack findStack = player.inventory.getStackInSlot(i);
+					if(!findStack.isEmpty() && findStack.getItem() == Items.GOLDEN_APPLE)
+					{
+						ItemStack itemstack = player.inventory.getStackInSlot(i);
+						ItemStack stack = itemstack.copy();
+						int count = stack.getCount();
+						
+						ItemStack gold = new ItemStack(Items.GOLD_INGOT);
+						
+						giveResult(player, copyStack(gold), count);
+					}
 				}
 			}
 			
@@ -53,11 +85,9 @@ public class ItemConversionHandler {
 					for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
 			        {
 			            ItemStack findStack = player.inventory.getStackInSlot(i);
-			            Item item = findStack.getItem();
-			            int meta = findStack.getMetadata();
 			            
-			            if(!findStack.isEmpty() && item == info.getInput().getItem() && meta == info.getInput().getMetadata()) {
-			                ItemStack itemstack = player.inventory.getStackInSlot(i);
+			            if(!findStack.isEmpty() && findStack.isItemEqualIgnoreDurability(info.getInput())) {
+			                ItemStack itemstack = findStack.copy();
 			                ItemStack stack = itemstack.copy();
 			                int count = stack.getCount();
 			                

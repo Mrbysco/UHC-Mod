@@ -1425,7 +1425,7 @@ public class GuiUHCBook extends GuiScreen{
             else if(button.id == 43)
             {
             	boolean flag = saveData.isRegenPotions();
-            	regenPotions = !flag;
+            	regenPotions = !saveData.isRegenPotions();
             	sendPage4Packet();
             }
             else if(button.id == 44)

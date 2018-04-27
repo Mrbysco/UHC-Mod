@@ -22,6 +22,7 @@ import net.minecraft.item.ItemMapBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.play.server.SPacketTitle;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -118,7 +119,7 @@ public class UHCHandler {
 								player.inventory.clearMatchingItems(Items.LEAD, -1, 0, null);
 								player.clearActivePotions();
 								
-								if(!!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
+								if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
 								{
 									for(SpawnItemInfo info : SpawnItemList.spawnItemList)
 									{
@@ -191,7 +192,6 @@ public class UHCHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
-			
 			ItemStack bookStack = new ItemStack(ModItems.uhc_book);
 			ItemStack editStack = new ItemStack(Items.LEAD);
 			editStack.addEnchantment(Enchantments.BINDING_CURSE, 1);;
@@ -207,7 +207,7 @@ public class UHCHandler {
 				MinecraftServer server = world.getMinecraftServer();
 				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 				
-				for(EntityPlayer player : playerList)
+				for(EntityPlayerMP player : playerList)
 				{
 					NBTTagCompound entityData = player.getEntityData();
 					
@@ -263,6 +263,7 @@ public class UHCHandler {
 					}
 				}
 				
+				/*
 				if(teamsAlive.size() == 1)
 				{
 					ScorePlayerTeam team = teamsAlive.get(0);
@@ -283,6 +284,7 @@ public class UHCHandler {
 						saveData.setUhcIsFinished(true);
 					}
 				}
+				 */
 			}
 		}
 	}

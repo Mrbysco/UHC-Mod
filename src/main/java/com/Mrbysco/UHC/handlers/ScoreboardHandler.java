@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.IScoreCriteria;
+import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -65,9 +66,42 @@ public class ScoreboardHandler {
 				scoreboard.addScoreObjective("health", IScoreCriteria.HEALTH);
 			}
 			
+			boolean healthExists = scoreboard.getObjective("health") != null;
+			
+			if(saveData.isHealthInTab() && healthExists)
+			{
+				ScoreObjective score = scoreboard.getObjective("health");
+				if(scoreboard.getObjectiveInDisplaySlot(0) != score)
+				{
+					scoreboard.setObjectiveInDisplaySlot(0, score);
+					scoreboard.setObjectiveInDisplaySlot(1, null);
+					scoreboard.setObjectiveInDisplaySlot(2, null);
+				}
+			}
+			if(saveData.isHealthOnSide() && healthExists)
+			{
+				ScoreObjective score = scoreboard.getObjective("health");
+				if(scoreboard.getObjectiveInDisplaySlot(1) != score)
+				{
+					scoreboard.setObjectiveInDisplaySlot(0, null);
+					scoreboard.setObjectiveInDisplaySlot(1, score);
+					scoreboard.setObjectiveInDisplaySlot(2, null);
+				}
+			}
+			if(saveData.isHealthUnderName() && healthExists)
+			{
+				ScoreObjective score = scoreboard.getObjective("health");
+				if(scoreboard.getObjectiveInDisplaySlot(2) != score)
+				{
+					scoreboard.setObjectiveInDisplaySlot(0, null);
+					scoreboard.setObjectiveInDisplaySlot(1, null);
+					scoreboard.setObjectiveInDisplaySlot(2, score);
+				}
+			}
+			
 			for(EntityPlayer player : playerList)
 			{
-				if (saveData.isUhcOnGoing() == false)
+				if (!saveData.isUhcOnGoing())
 				{
 					if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
 						player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));

@@ -72,7 +72,9 @@ public class TimedActionHandler {
 						{
 							for(EntityPlayerMP player : playerList)
 							{
-								player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+		    					player.sendStatusMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}), true);
+
+								player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}));
 							}
 							
 							saveData.setTimeLockApplied(true);
@@ -97,9 +99,9 @@ public class TimedActionHandler {
 						for(EntityPlayerMP player : playerList)
 						{
 							if(minuteAmount == 1)
-								player.sendMessage(new TextComponentTranslation("message.minutemark.single.time", new Object[] {TextFormatting.YELLOW + String.valueOf(minutes * minuteAmount)}));
+	    						player.sendStatusMessage(new TextComponentTranslation("message.minutemark.single.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
 							else
-								player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + String.valueOf(minutes * minuteAmount)}));
+		    					player.sendStatusMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
 						}
 						timerData.setMinuteMarkTimer(0);
 						timerData.markDirty();
@@ -121,7 +123,7 @@ public class TimedActionHandler {
 	    				
 	    				for(EntityPlayerMP player : playerList)
 						{
-							player.sendMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+	    					player.sendStatusMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
 						}
 
 						saveData.setTimedNamesApplied(true);
@@ -148,12 +150,14 @@ public class TimedActionHandler {
 	    				{
 	    					if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
 	    						player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));
-	    					
-							player.sendMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
 	    				}
 	    				
 	    				if(!saveData.isGlowTimeApplied())
 	    				{
+	    					for (EntityPlayerMP player : playerList)
+	    					{
+		    					player.sendStatusMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+	    					}
 							saveData.setGlowTimeApplied(true);
 							saveData.markDirty();
 	    				}

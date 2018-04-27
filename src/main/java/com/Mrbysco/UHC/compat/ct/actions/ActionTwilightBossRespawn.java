@@ -30,9 +30,9 @@ public class ActionTwilightBossRespawn implements IAction {
 			this.ID = 2;
 		else if(bossL.contains("ur") && bossL.contains("ghast"))
 			this.ID = 3;
-		else if(bossL.contains("phantom"))
+		else if(bossL.contains("phantom") || bossL.contains("knight"))
 			this.ID = 4;
-		else if(bossL.contains("queen") || bossL.contains("knight"))
+		else if(bossL.contains("queen") || bossL.contains("snow"))
 			this.ID = 5;
 		else if(bossL.contains("mino"))
 			this.ID = 6;

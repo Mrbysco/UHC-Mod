@@ -724,6 +724,10 @@ public class UHCSaveData extends WorldSavedData{
 		glowTimeApplied = nbt.getBoolean("glowTimeApplied");
 
 		netherEnabled = nbt.getBoolean("netherEnabled");
+		regenPotions = nbt.getBoolean("regenPotions");
+		level2Potions = nbt.getBoolean("level2Potions");
+		notchApples = nbt.getBoolean("notchApples");
+		
 		weatherEnabled = nbt.getBoolean("weatherEnabled");
 		mobGriefing = nbt.getBoolean("mobGriefing");
 		
@@ -786,6 +790,10 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setBoolean("glowTimeApplied", glowTimeApplied);
 		
 		compound.setBoolean("netherEnabled", netherEnabled);
+		compound.setBoolean("regenPotions", regenPotions);
+		compound.setBoolean("level2Potions", level2Potions);
+		compound.setBoolean("notchApples", notchApples);
+
 		compound.setBoolean("weatherEnabled", weatherEnabled);
 		compound.setBoolean("mobGriefing", mobGriefing);
 		

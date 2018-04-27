@@ -10,6 +10,7 @@ import com.Mrbysco.UHC.utils.SpreadUtil;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.NumberInvalidException;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketTitle;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -81,7 +82,7 @@ public class BorderHandler {
 				}
 			}
     		
-			if(!saveData.isUhcOnGoing())
+			if(saveData.isUhcOnGoing())
 			{
 				if(saveData.isShrinkEnabled())
 				{
@@ -106,7 +107,6 @@ public class BorderHandler {
 					} catch (NumberInvalidException e1) {
 						e1.printStackTrace();
 					}
-					//System.out.println(shrinkTimeSec);
 					
 					if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
 					{
@@ -114,7 +114,10 @@ public class BorderHandler {
 						System.out.println("hi");
 						border.setTransition(oldSize, newSize, shrinkTimeSec);
 						for(EntityPlayerMP player : playerList)
-							player.sendMessage(new TextComponentTranslation("message.border.moving"));
+						{
+							SPacketTitle spackettitle1 = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentTranslation("message.border.moving"));
+							player.connection.sendPacket(spackettitle1);
+						}
 						
 						saveData.setShrinkApplied(true);
 						saveData.markDirty();

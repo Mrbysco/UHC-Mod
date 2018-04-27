@@ -9,6 +9,8 @@ import com.Mrbysco.UHC.lists.RespawnList;
 import com.Mrbysco.UHC.lists.info.RespawnInfo;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
@@ -40,6 +42,8 @@ public class ModCompatHandler {
     		WorldBorder border = world.getWorldBorder();
 			GameRules rules = world.getGameRules();
 			
+			ArrayList<Entity> entityList = new ArrayList<>(world.loadedEntityList);
+			
 			//if(saveData.isUhcOnGoing())
 			if(!RespawnList.respawnList.isEmpty())
 			{
@@ -50,18 +54,31 @@ public class ModCompatHandler {
 					AxisAlignedBB hitbox = new AxisAlignedBB(pos.getX() - 0.5f, 0 - 0.5f, pos.getZ() - 0.5f, pos.getX() + 0.5f, 256 + 0.5f, pos.getZ() + 0.5f)
 							.expand(-50, -50, -50).expand(50, 50, 50);
 					ArrayList<EntityPlayerMP> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayerMP.class, hitbox));
+					
+					ArrayList<EntityMob> collidingBossMobs = new ArrayList<>(world.getEntitiesWithinAABB(EntityMob.class, hitbox));
 					int respawnTime = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 1200);
 					
-					if(!collidingList.isEmpty())
+					boolean bossActive = false;
+					
+					if(!collidingBossMobs.isEmpty())
+					{
+						for (EntityMob mob : collidingBossMobs)
+						{
+							if(!mob.isNonBoss())
+							{
+								bossActive = true;
+							}
+						}
+					}
+					
+					if(!collidingList.isEmpty() && !bossActive)
 					{
 						for (EntityPlayerMP player : collidingList)
 						{
 							Team team = player.getTeam();
 							
-							if(team != null && !player.isSpectator())
+							if(team != null && team != scoreboard.getTeam("solo") && !player.isSpectator())
 							{
-								System.out.print(info.timer);
-
 								if(info.teamsReached.contains(team))
 									return;
 								else
@@ -71,6 +88,7 @@ public class ModCompatHandler {
 										info.teamsReached.add(team);
 
 										world.setBlockState(pos, state);
+										bossActive = true;
 										info.timer = respawnTime;
 									}
 								}

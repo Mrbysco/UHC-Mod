@@ -22,7 +22,7 @@ repositories {
 	}
 }
 
-version = "0.4.1"
+version = "0.5"
 group = "com.Mrbysco.UHC" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Ultra Hard Coremod"
 

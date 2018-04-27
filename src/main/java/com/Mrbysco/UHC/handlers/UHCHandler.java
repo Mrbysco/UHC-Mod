@@ -117,6 +117,22 @@ public class UHCHandler {
 								player.inventory.clearMatchingItems(ModItems.uhc_book, -1, 0, null);
 								player.inventory.clearMatchingItems(Items.LEAD, -1, 0, null);
 								player.clearActivePotions();
+								
+								if(!!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
+								{
+									for(SpawnItemInfo info : SpawnItemList.spawnItemList)
+									{
+										giveResult(player, info.getstack1().copy());
+										giveResult(player, info.getstack2().copy());
+										giveResult(player, info.getstack3().copy());
+										giveResult(player, info.getstack4().copy());
+										giveResult(player, info.getstack5().copy());
+										giveResult(player, info.getstack6().copy());
+										giveResult(player, info.getstack7().copy());
+										giveResult(player, info.getstack8().copy());
+										giveResult(player, info.getstack9().copy());
+									}
+								}
 							}
 							
 							saveData.setUhcStarting(false);
@@ -204,44 +220,10 @@ public class UHCHandler {
 							player.inventory.setInventorySlotContents(39, editStack);
 					}
 					
-					if (!player.inventory.hasItemStack(bookStack))
+					if(!player.inventory.getItemStack().isItemEqual(bookStack))
 					{
-						player.inventory.addItemStackToInventory(bookStack);
-					}
-					
-					if(!player.isSpectator())
-					{
-						if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
-						{
-							for (SpawnItemInfo info : SpawnItemList.spawnItemList)
-							{
-								addItemIfNotHeld(player, info.getstack1().copy());
-								addItemIfNotHeld(player, info.getstack2().copy());
-								addItemIfNotHeld(player, info.getstack3().copy());
-								addItemIfNotHeld(player, info.getstack4().copy());
-								addItemIfNotHeld(player, info.getstack5().copy());
-								addItemIfNotHeld(player, info.getstack6().copy());
-								addItemIfNotHeld(player, info.getstack7().copy());
-								addItemIfNotHeld(player, info.getstack8().copy());
-								addItemIfNotHeld(player, info.getstack9().copy());
-								
-								for(int i = 0; i < player.inventory.getSizeInventory(); i++)
-								{
-									ItemStack invStack = player.inventory.getStackInSlot(i);
-									
-									setExtraCount(invStack, info.getstack1());
-									setExtraCount(invStack, info.getstack2());
-									setExtraCount(invStack, info.getstack3());
-									setExtraCount(invStack, info.getstack4());
-									setExtraCount(invStack, info.getstack5());
-									setExtraCount(invStack, info.getstack6());
-									setExtraCount(invStack, info.getstack7());
-									setExtraCount(invStack, info.getstack8());
-									setExtraCount(invStack, info.getstack9());
-								}
-								
-							}
-						}
+						if (!player.inventory.hasItemStack(bookStack))
+							player.inventory.addItemStackToInventory(bookStack);
 					}
 					
 					if(player.getActivePotionEffect(MobEffects.SATURATION) == null)
@@ -305,32 +287,6 @@ public class UHCHandler {
 		}
 	}
 	
-	public void addItemIfNotHeld(EntityPlayer player, ItemStack stack)
-	{
-		if(stack.getItem() instanceof ItemMapBase)
-		{
-			if(!(player.inventory.getItemStack().getItem() instanceof ItemMapBase))
-			{
-				if(!player.inventory.hasItemStack(stack))
-					giveResult(player, stack);
-			}
-		}
-		else
-		{
-			if(!player.inventory.getItemStack().isItemEqual(stack))
-			{
-				if(!player.inventory.hasItemStack(stack))
-					giveResult(player, stack);
-			}
-		}
-	}
-	
-	public void setExtraCount(ItemStack invStack, ItemStack stack)
-	{
-		if(invStack.isItemEqualIgnoreDurability(stack) && invStack.getCount() > 1)
-			invStack.setCount(1);
-	}
-	
 	@SubscribeEvent
 	public void throwEvent(ItemTossEvent event)
 	{
@@ -343,34 +299,18 @@ public class UHCHandler {
 		{
 			if(stack.getItem() == ModItems.uhc_book)
 				event.setCanceled(true);
-			
-			if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
-			{
-				for (SpawnItemInfo info : SpawnItemList.spawnItemList)
-				{
-					stopThrowing(event, info.getstack1());
-					stopThrowing(event, info.getstack2());
-					stopThrowing(event, info.getstack3());
-					stopThrowing(event, info.getstack4());
-					stopThrowing(event, info.getstack5());
-					stopThrowing(event, info.getstack6());
-					stopThrowing(event, info.getstack7());
-					stopThrowing(event, info.getstack8());
-					stopThrowing(event, info.getstack9());
-				}
-			}
 		}
 	}
 	
-	public void stopThrowing(ItemTossEvent event, ItemStack stack) {
-		if(stack.getItem() instanceof ItemMapBase)
+	public void stopThrowing(ItemTossEvent event, ItemStack stack, ItemStack stack2) {
+		if(stack2.getItem() instanceof ItemMapBase)
 		{
 			if(stack.getItem() instanceof ItemMapBase)
 				event.setCanceled(true);
 		}
 		else
 		{
-			if(stack.isItemEqualIgnoreDurability(stack))
+			if(stack.isItemEqualIgnoreDurability(stack2))
 				event.setCanceled(true);
 		}
 	}

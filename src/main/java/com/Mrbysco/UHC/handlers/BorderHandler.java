@@ -8,6 +8,7 @@ import com.Mrbysco.UHC.utils.SpreadPosition;
 import com.Mrbysco.UHC.utils.SpreadUtil;
 
 import net.minecraft.command.CommandException;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -92,15 +93,25 @@ public class BorderHandler {
 					double centerX = saveData.getBorderCenterX();
 					double centerZ = saveData.getBorderCenterZ();
 					double spreadDistance = saveData.getSpreadDistance();
+					
 					int BorderSize = saveData.getBorderSize();
 					
 					int oldSize = saveData.getBorderSize();
 					int newSize = saveData.getShrinkSize();
-					int shrinkTimeSec = saveData.getShrinkTimer()*60;
 					//shrink time * 60 as worldborder checks in seconds
-		    		
+	                long shrinkTimeSec = 0L;
+	                
+					try {
+						shrinkTimeSec = saveData.getShrinkOvertime() > 0 ? parseLong(saveData.getShrinkOvertime(), 0L, 9223372036854775L) * 60 * 1000L : 0L;
+					} catch (NumberInvalidException e1) {
+						e1.printStackTrace();
+					}
+					//System.out.println(shrinkTimeSec);
+					
 					if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
 					{
+						
+						System.out.println("hi");
 						border.setTransition(oldSize, newSize, shrinkTimeSec);
 						for(EntityPlayerMP player : playerList)
 							player.sendMessage(new TextComponentTranslation("message.border.moving"));
@@ -112,7 +123,7 @@ public class BorderHandler {
 					{
 						try {
 							SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), spreadDistance / ((double) oldSize / (double) newSize), 
-								newSize, world, true);
+								(newSize / 2), world, true);
 						} catch (CommandException e) {
 							e.printStackTrace();
 						}
@@ -186,4 +197,34 @@ public class BorderHandler {
 			}
 		}
 	}
+	
+	public static long parseLong(String input) throws NumberInvalidException
+    {
+        try
+        {
+            return Long.parseLong(input);
+        }
+        catch (NumberFormatException var2)
+        {
+            throw new NumberInvalidException("commands.generic.num.invalid", new Object[] {input});
+        }
+    }
+	
+	public static long parseLong(int input, long min, long max) throws NumberInvalidException
+    {
+        long i = parseLong(String.valueOf(input));
+
+        if (i < min)
+        {
+            throw new NumberInvalidException("commands.generic.num.tooSmall", new Object[] {i, min});
+        }
+        else if (i > max)
+        {
+            throw new NumberInvalidException("commands.generic.num.tooBig", new Object[] {i, max});
+        }
+        else
+        {
+            return i;
+        }
+    }
 }

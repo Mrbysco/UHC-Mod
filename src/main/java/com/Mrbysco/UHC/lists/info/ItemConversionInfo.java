@@ -24,7 +24,7 @@ public class ItemConversionInfo {
 		this.result3 = result3;
 		this.result4 = result4;
 		this.result5 = result5;
-		this.result5 = result6;
+		this.result6 = result6;
 		this.result7 = result7;
 		this.result8 = result8;
 		this.result9 = result9;

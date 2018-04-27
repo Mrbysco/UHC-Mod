@@ -85,14 +85,15 @@ public class UHCStartPacket implements IMessage{
 				double spreadDistance = saveData.getSpreadDistance();
 				double spreadMaxRange = saveData.getSpreadMaxRange();
 				
-				if(spreadMaxRange >= BorderSize)
-					spreadMaxRange = spreadMaxRange/2;
+				if(spreadMaxRange >= (BorderSize / 2))
+					spreadMaxRange = (spreadMaxRange / 2);
 				
 				world.setWorldTime(0);
 				info.setRaining(false);
 				
 				if(saveData.isRandomSpawns())
 				{
+					System.out.println(soloPlayers.toString());
 					try {
 						SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
 					} catch (CommandException e) {

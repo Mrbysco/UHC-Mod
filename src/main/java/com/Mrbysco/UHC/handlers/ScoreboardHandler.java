@@ -6,6 +6,8 @@ import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.IScoreCriteria;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -67,10 +69,8 @@ public class ScoreboardHandler {
 			{
 				if (saveData.isUhcOnGoing() == false)
 				{
-					if(player.isGlowing() == false)
-						player.setGlowing(true);
-					else
-						return;
+					if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
+						player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));
 				}
 				
 				if(scoreboard.getPlayersTeam(player.getName()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing())

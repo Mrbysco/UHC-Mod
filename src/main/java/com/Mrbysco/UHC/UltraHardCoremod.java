@@ -19,6 +19,7 @@ import com.Mrbysco.UHC.init.GuiHandler;
 import com.Mrbysco.UHC.lists.ConversionList;
 import com.Mrbysco.UHC.lists.CookList;
 import com.Mrbysco.UHC.lists.RespawnList;
+import com.Mrbysco.UHC.lists.SpawnItemList;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.proxy.CommonProxy;
 
@@ -53,14 +54,6 @@ public class UltraHardCoremod {
 	{
 		logger.debug("Registering config / checking config");
 		MinecraftForge.EVENT_BUS.register(new UltraHardCoremodConfigGen());
-
-		logger.debug("Initialize default cook list");
-		CookList.initializeAutoCook();
-		
-		logger.debug("Initialize default conversion list");
-		ConversionList.initializeConversion();
-		
-		RespawnList.initializeRespawnList();
 		
 		logger.debug("Registering Packet");
 		ModPackethandler.registerMessages();
@@ -85,6 +78,17 @@ public class UltraHardCoremod {
 		MinecraftForge.EVENT_BUS.register(new ModCompatHandler());
 		
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+		
+		logger.debug("Initialize default cook list");
+		CookList.initializeAutoCook();
+		
+		logger.debug("Initialize default conversion list");
+		ConversionList.initializeConversion();
+		
+		logger.debug("Initialize default spawn item list (which is empty)");
+		SpawnItemList.initializeSpawnItems();
+		
+		RespawnList.initializeRespawnList();
 		
 		proxy.Init();
     }

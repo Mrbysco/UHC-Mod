@@ -6,6 +6,8 @@ import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
@@ -39,7 +41,7 @@ public class TimedActionHandler {
 	    		{
 					int timeLockTimer = timerData.getTimeLockTimer();
 					boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
-					if(timeFlag && !saveData.isTimeLockApplied())
+					if(timeFlag)
 					{
 						if(rules.getBoolean("doDaylightCycle"))
 						{
@@ -66,13 +68,16 @@ public class TimedActionHandler {
 							}
 						}
 						
-						for(EntityPlayerMP player : playerList)
+						if(!saveData.isTimeLockApplied())
 						{
-							player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+							for(EntityPlayerMP player : playerList)
+							{
+								player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+							}
+							
+							saveData.setTimeLockApplied(true);
+							saveData.markDirty();
 						}
-						
-						saveData.setTimeLockApplied(true);
-						saveData.markDirty();
 					}
 	    		}
 	    		
@@ -101,18 +106,26 @@ public class TimedActionHandler {
 					}
 	    		}
 	    		
-	    		if(saveData.isTimedNames() && !saveData.isTimedNamesApplied())
+	    		if(saveData.isTimedNames())
 	    		{
 	    			int timedNameTimer = timerData.getNameTimer();
 	    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
 	    			
-	    			if(timedNameFlag)
+	    			if(timedNameFlag && !saveData.isTimedNamesApplied())
 	    			{
 	    				for (ScorePlayerTeam team : scoreboard.getTeams())
 	    				{
 	    					if (team.getNameTagVisibility() != Team.EnumVisible.ALWAYS)
 	    						team.setNameTagVisibility(Team.EnumVisible.ALWAYS);
 	    				}
+	    				
+	    				for(EntityPlayerMP player : playerList)
+						{
+							player.sendMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+						}
+
+						saveData.setTimedNamesApplied(true);
+						saveData.markDirty();
 	    			}
 	    			else
 	    			{
@@ -122,27 +135,27 @@ public class TimedActionHandler {
 	    						team.setNameTagVisibility(Team.EnumVisible.HIDE_FOR_OTHER_TEAMS);
 	    				}
 	    			}
-
-	    			for(EntityPlayerMP player : playerList)
-					{
-						player.sendMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
-					}
-	    			
-					saveData.setTimedNamesApplied(true);
-					saveData.markDirty();
 	    		}
 	    		
-	    		if(saveData.isTimedGlow() && !saveData.isGlowTimeApplied())
+	    		if(saveData.isTimedGlow())
 	    		{
 	    			int timedGlowTimer = timerData.getGlowTimer();
 	    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getGlowTime());
-	    			
+
 	    			if(timedGlowFlag)
 	    			{
 	    				for (EntityPlayerMP player : playerList)
 	    				{
-	    					if(!player.isGlowing())
-	    						player.setGlowing(true);
+	    					if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
+	    						player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));
+	    					
+							player.sendMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+	    				}
+	    				
+	    				if(!saveData.isGlowTimeApplied())
+	    				{
+							saveData.setGlowTimeApplied(true);
+							saveData.markDirty();
 	    				}
 	    			}
 	    			else
@@ -153,14 +166,6 @@ public class TimedActionHandler {
 	    						player.setGlowing(false);
 	    				}
 	    			}
-	    			
-	    			for(EntityPlayerMP player : playerList)
-					{
-						player.sendMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
-					}
-
-					saveData.setGlowTimeApplied(true);
-					saveData.markDirty();
 	    		}
 			}
 		}

@@ -6,17 +6,19 @@ import java.util.List;
 import com.Mrbysco.UHC.init.ModItems;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
+import com.Mrbysco.UHC.lists.SpawnItemList;
+import com.Mrbysco.UHC.lists.info.SpawnItemInfo;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.packets.UHCPacketMessage;
 import com.Mrbysco.UHC.utils.UHCTeleporter;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemMapBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
@@ -35,6 +37,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -106,17 +109,13 @@ public class UHCHandler {
 						}
 						else if(timerData.getUhcStartTimer() == 140)
 						{
-							for(EntityPlayerMP player : playerList)
-							{
-								player.clearActivePotions();
-							}
-							
 							sendMessage(playerList, new TextComponentTranslation("uhc.start"));
 							this.uhcStartTimer = 0;
 							
 							for(EntityPlayerMP player : playerList)
 							{							
-								player.inventory.clear();
+								player.inventory.clearMatchingItems(ModItems.uhc_book, -1, 0, null);
+								player.inventory.clearMatchingItems(Items.LEAD, -1, 0, null);
 								player.clearActivePotions();
 							}
 							
@@ -155,6 +154,14 @@ public class UHCHandler {
 		}
 	}
 	
+	public void giveResult(EntityPlayer player, ItemStack stack)
+	{
+		if(stack == ItemStack.EMPTY || stack == null)
+			return;
+		else
+			player.addItemStackToInventory(stack);
+	}
+	
 	public static void sendMessage(ArrayList<EntityPlayerMP> list, ITextComponent text)
 	{
 		for (EntityPlayerMP player : list)
@@ -184,16 +191,6 @@ public class UHCHandler {
 				MinecraftServer server = world.getMinecraftServer();
 				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 				
-				for(Entity entity : entityList)
-				{
-					if (entity instanceof EntityItem) {
-						EntityItem itemEntity = (EntityItem) entity;
-						
-						if(itemEntity.getItem().getItem() == ModItems.uhc_book)
-							world.removeEntity(itemEntity);
-					}
-				}
-				
 				for(EntityPlayer player : playerList)
 				{
 					NBTTagCompound entityData = player.getEntityData();
@@ -210,6 +207,41 @@ public class UHCHandler {
 					if (!player.inventory.hasItemStack(bookStack))
 					{
 						player.inventory.addItemStackToInventory(bookStack);
+					}
+					
+					if(!player.isSpectator())
+					{
+						if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
+						{
+							for (SpawnItemInfo info : SpawnItemList.spawnItemList)
+							{
+								addItemIfNotHeld(player, info.getstack1().copy());
+								addItemIfNotHeld(player, info.getstack2().copy());
+								addItemIfNotHeld(player, info.getstack3().copy());
+								addItemIfNotHeld(player, info.getstack4().copy());
+								addItemIfNotHeld(player, info.getstack5().copy());
+								addItemIfNotHeld(player, info.getstack6().copy());
+								addItemIfNotHeld(player, info.getstack7().copy());
+								addItemIfNotHeld(player, info.getstack8().copy());
+								addItemIfNotHeld(player, info.getstack9().copy());
+								
+								for(int i = 0; i < player.inventory.getSizeInventory(); i++)
+								{
+									ItemStack invStack = player.inventory.getStackInSlot(i);
+									
+									setExtraCount(invStack, info.getstack1());
+									setExtraCount(invStack, info.getstack2());
+									setExtraCount(invStack, info.getstack3());
+									setExtraCount(invStack, info.getstack4());
+									setExtraCount(invStack, info.getstack5());
+									setExtraCount(invStack, info.getstack6());
+									setExtraCount(invStack, info.getstack7());
+									setExtraCount(invStack, info.getstack8());
+									setExtraCount(invStack, info.getstack9());
+								}
+								
+							}
+						}
 					}
 					
 					if(player.getActivePotionEffect(MobEffects.SATURATION) == null)
@@ -248,8 +280,7 @@ public class UHCHandler {
 						}
 					}
 				}
-
-				/* TEMP DISABLED
+				
 				if(teamsAlive.size() == 1)
 				{
 					ScorePlayerTeam team = teamsAlive.get(0);
@@ -270,8 +301,77 @@ public class UHCHandler {
 						saveData.setUhcIsFinished(true);
 					}
 				}
-				*/
 			}
+		}
+	}
+	
+	public void addItemIfNotHeld(EntityPlayer player, ItemStack stack)
+	{
+		if(stack.getItem() instanceof ItemMapBase)
+		{
+			if(!(player.inventory.getItemStack().getItem() instanceof ItemMapBase))
+			{
+				if(!player.inventory.hasItemStack(stack))
+					giveResult(player, stack);
+			}
+		}
+		else
+		{
+			if(!player.inventory.getItemStack().isItemEqual(stack))
+			{
+				if(!player.inventory.hasItemStack(stack))
+					giveResult(player, stack);
+			}
+		}
+	}
+	
+	public void setExtraCount(ItemStack invStack, ItemStack stack)
+	{
+		if(invStack.isItemEqualIgnoreDurability(stack) && invStack.getCount() > 1)
+			invStack.setCount(1);
+	}
+	
+	@SubscribeEvent
+	public void throwEvent(ItemTossEvent event)
+	{
+		Entity entity = event.getEntity();
+		World world = entity.world;
+		ItemStack stack = event.getEntityItem().getItem();
+		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		
+		if(!saveData.isUhcOnGoing())
+		{
+			if(stack.getItem() == ModItems.uhc_book)
+				event.setCanceled(true);
+			
+			if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
+			{
+				for (SpawnItemInfo info : SpawnItemList.spawnItemList)
+				{
+					stopThrowing(event, info.getstack1());
+					stopThrowing(event, info.getstack2());
+					stopThrowing(event, info.getstack3());
+					stopThrowing(event, info.getstack4());
+					stopThrowing(event, info.getstack5());
+					stopThrowing(event, info.getstack6());
+					stopThrowing(event, info.getstack7());
+					stopThrowing(event, info.getstack8());
+					stopThrowing(event, info.getstack9());
+				}
+			}
+		}
+	}
+	
+	public void stopThrowing(ItemTossEvent event, ItemStack stack) {
+		if(stack.getItem() instanceof ItemMapBase)
+		{
+			if(stack.getItem() instanceof ItemMapBase)
+				event.setCanceled(true);
+		}
+		else
+		{
+			if(stack.isItemEqualIgnoreDurability(stack))
+				event.setCanceled(true);
 		}
 	}
 	
@@ -443,8 +543,6 @@ public class UHCHandler {
 
 		NBTTagCompound originalData = originalPlayer.getEntityData();
 		NBTTagCompound newData = newPlayer.getEntityData();
-		
-		System.out.println("IM DEAD");
 		
 		if(!newPlayer.world.isRemote)
 		{

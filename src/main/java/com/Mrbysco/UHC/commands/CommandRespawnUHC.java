@@ -1,5 +1,6 @@
 package com.Mrbysco.UHC.commands;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +29,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
-import scala.actors.threadpool.Arrays;
 
 public class CommandRespawnUHC extends CommandBase
 {

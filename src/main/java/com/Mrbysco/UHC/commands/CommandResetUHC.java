@@ -93,7 +93,7 @@ public class CommandResetUHC extends CommandBase
 				}
 			}
 			
-			border.setTransition(6.0E7D);
+			server.commandManager.executeCommand(server, "/worldborder set 60000000");
 
     		timerData.resetAll();
     		timerData.markDirty();

@@ -102,7 +102,6 @@ public class BorderHandler {
 						
 						int oldSize = saveData.getBorderSize();
 						int newSize = saveData.getShrinkSize();
-						//shrink time * 60 as worldborder checks in seconds
 		                long shrinkTimeSec = 0L;
 		                
 						try {

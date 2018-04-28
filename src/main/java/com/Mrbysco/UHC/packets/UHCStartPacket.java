@@ -70,6 +70,8 @@ public class UHCStartPacket implements IMessage{
 					
 					for (EntityPlayer player : playerList)
 					{
+						if(player.getTeam() == null)
+							scoreboard.addPlayerToTeam(player.getName(), "solo");
 						if(player.getTeam() != scoreboard.getTeam("solo"))
 							soloPlayers.remove(player);
 					}

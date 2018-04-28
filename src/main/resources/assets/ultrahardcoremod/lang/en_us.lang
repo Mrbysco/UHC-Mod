@@ -164,7 +164,7 @@ color.random.name=Randomize
 
 #Messages
 message.minutemark.single.time=%d§r §eMinute has passed | Minute Mark§r
-message.minutemark.time=%d§r §eMinutes has passed | Minute Mark§r
+message.minutemark.time=%d§r §eMinutes have passed | Minute Mark§r
 message.border.moving=§cThe world border has started moving!§r
 message.timelock=§6The time will be locked to §r%d
 message.timedname=§6Name tags are now visible!§r
@@ -177,4 +177,5 @@ uhc.start.2=§e2§r
 uhc.start.1=§e1§r
 uhc.start=§eGO!§r
 
-uhc.team.won=§eTeam §r%s§e has won the UHC!§r
+uhc.player.won=§6Team §r%s§6 has won the UHC!§r
+uhc.team.won=§6Player §r%s§6 has won the UHC on their own!§r

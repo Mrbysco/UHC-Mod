@@ -1,6 +1,5 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -235,7 +235,7 @@ public class UHCHandler {
 			EntityPlayer player = event.player;
 			World world = player.world;
 			ItemStack bookStack = new ItemStack(ModItems.uhc_book);
-
+			
 			if(DimensionManager.getWorld(0) != null)
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
@@ -277,7 +277,7 @@ public class UHCHandler {
 					ArrayList<ScorePlayerTeam> teamsAlive = new ArrayList<>();
 					for(ScorePlayerTeam team : scoreboard.getTeams())
 					{
-						if(team.getMembershipCollection().size() > 0 && team.getName() != "spectator")
+						if(team.getMembershipCollection().size() > 0 && team != scoreboard.getTeam("spectator"))
 						{
 							if(teamsAlive.contains(team))
 								return;
@@ -285,7 +285,7 @@ public class UHCHandler {
 								teamsAlive.add(team);
 						}
 					}
-					
+
 					if(!teamsAlive.isEmpty() && teamsAlive != null)
 					{
 						for(ScorePlayerTeam team : teamsAlive)
@@ -316,6 +316,15 @@ public class UHCHandler {
 						else
 						{
 							YouWonTheUHC(teamsAlive.get(0), playerList, world);
+							for(int i = 0; i > 7; i++)
+							{
+								for(String players : teamsAlive.get(0).getMembershipCollection())
+								{
+									EntityPlayer teamPlayer = world.getPlayerEntityByName(players);
+									EntityFireworkRocket rocket = new EntityFireworkRocket(world, player.posX, player.posY + 3, player.posZ, getFirework(world.rand));
+									player.world.spawnEntity(rocket);
+								}
+							}
 							saveData.setUhcIsFinished(true);
 						}
 					}
@@ -587,20 +596,18 @@ public class UHCHandler {
 				String teamName = team.getDisplayName();
 				for(EntityPlayer player : playerList)
 				{
-					player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {team.getColor() + teamName}));
-				}
-				
-				for(String member : team.getMembershipCollection())
-				{
-					for(int i = 0; i > 7; i++)
+					if(player.getTeam() == team)
 					{
-						EntityPlayer player = world.getPlayerEntityByName(member);
-						if(player != null)
+						for(int i = 0; i < 10; i++)
 						{
-							EntityFireworkRocket rocket = new EntityFireworkRocket(world, player.posX, player.posY, player.posZ, getFirework(world.rand));
-							player.world.spawnEntity(rocket);
+							if(world.rand.nextInt(10) < 3)
+							{
+								EntityFireworkRocket rocket = new EntityFireworkRocket(world, player.posX, player.posY + 3, player.posZ, getFirework(world.rand));
+								player.world.spawnEntity(rocket);
+							}
 						}
 					}
+					player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {team.getColor() + teamName}));
 				}
 			}
 		}
@@ -615,38 +622,47 @@ public class UHCHandler {
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				for(EntityPlayer player : playerList)
 				{
-					player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {TextFormatting.YELLOW + winningPlayer.getName()}));
-				}
-				
-				for(int i = 0; i > 7; i++)
-				{
-					if(winningPlayer != null)
+					if(player.getName() == winningPlayer.getName())
 					{
-						EntityFireworkRocket rocket = new EntityFireworkRocket(world, winningPlayer.posX, winningPlayer.posY, winningPlayer.posZ, getFirework(world.rand));
-						winningPlayer.world.spawnEntity(rocket);	
+						for(int i = 0; i < 10; i++)
+						{
+							if(world.rand.nextInt(10) < 3)
+							{
+								EntityFireworkRocket rocket = new EntityFireworkRocket(world, winningPlayer.posX, winningPlayer.posY + 3, winningPlayer.posZ, getFirework(world.rand));
+								player.world.spawnEntity(rocket);
+							}
+						}
 					}
+					player.sendMessage(new TextComponentTranslation("uhc.player.won", new Object[] {TextFormatting.DARK_RED + winningPlayer.getName()}));
 				}
 			}
 		}
 	}
 	
 	public ItemStack getFirework(Random rand) {
-        ItemStack firework = new ItemStack(Items.FIREWORKS);
-        firework.setTagCompound(new NBTTagCompound());
+		ItemStack firework = new ItemStack(Items.FIREWORKS);
+		firework.setTagCompound(new NBTTagCompound());
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setBoolean("Flicker", true);
+		nbt.setBoolean("Trail", true);
 
-        NBTTagCompound data = new NBTTagCompound();
-        data.setByte("Flight", (byte) 1);
+		int[] colors = new int[rand.nextInt(8) + 1];
+		for (int i = 0; i < colors.length; i++) 
+		{
+			colors[i] = ItemDye.DYE_COLORS[rand.nextInt(16)];
+		}
+		nbt.setIntArray("Colors", colors);
+		byte type = (byte) (rand.nextInt(3) + 1);
+		type = type == 3 ? 4 : type;
+		nbt.setByte("Type", type);
 
-        NBTTagList list = new NBTTagList();
-        NBTTagCompound fireworkData = new NBTTagCompound();
+		NBTTagList explosions = new NBTTagList();
+		explosions.appendTag(nbt);
 
-        fireworkData.setByte("Trail", (byte) 1);
-        fireworkData.setByte("Type", (byte) 3);
-        fireworkData.setIntArray("Colors", new int[]{new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)).getRGB()});
-
-        list.appendTag(fireworkData);
-        data.setTag("Explosions", list);
-        firework.getTagCompound().setTag("Fireworks", data);
+		NBTTagCompound fireworkTag = new NBTTagCompound();
+		fireworkTag.setTag("Explosions", explosions);
+		fireworkTag.setByte("Flight", (byte) 1);
+		firework.getTagCompound().setTag("Fireworks", fireworkTag); 
 
         return firework;
 	}
@@ -658,8 +674,12 @@ public class UHCHandler {
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			World world = event.getWorld();
+			Scoreboard scoreboard = world.getScoreboard();
 			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-
+			
+			if(player.getTeam() == null)
+				scoreboard.addPlayerToTeam(player.getName(), "solo");
+			
 			ModPackethandler.INSTANCE.sendTo(new UHCPacketMessage(saveData), (EntityPlayerMP) player);
 		}
 	}

@@ -10,6 +10,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
@@ -88,7 +89,8 @@ public class UHCPacketTeamRandomizer implements IMessage
 								
 								for(EntityPlayerMP players : playerList)
 								{
-									players.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), TeamUtil.getTeamNameFromInt(i+1).replaceAll("_", " ")}));
+									ScorePlayerTeam team = scoreboard.getTeam(TeamUtil.getTeamNameFromInt(i+1).replaceAll("_", " "));
+									players.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), team.getColor() + team.getName()}));
 								}
 								tempList.remove(0);
 							}

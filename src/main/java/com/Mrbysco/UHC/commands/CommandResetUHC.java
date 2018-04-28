@@ -63,14 +63,14 @@ public class CommandResetUHC extends CommandBase
         {
         	UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
     		UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-			WorldBorder border = world.getWorldBorder();
+			WorldBorder border = server.worlds[0].getWorldBorder();
 
 			Scoreboard scoreboard = world.getScoreboard();
-			border.setTransition(30000000);
 			
 			for(EntityPlayerMP player : playerList)
 			{
 				player.inventory.clear();
+				player.heal(100);
 				
 				if(player.getTeam() != null)
 					scoreboard.removePlayerFromTeams(player.getName());		
@@ -93,6 +93,8 @@ public class CommandResetUHC extends CommandBase
 				}
 			}
 			
+			border.setTransition(6.0E7D);
+
     		timerData.resetAll();
     		timerData.markDirty();
     		saveData.resetAll();

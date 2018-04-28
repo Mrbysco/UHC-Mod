@@ -24,6 +24,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import twilightforest.block.BlockTFBossSpawner;
 
 public class ModCompatHandler {
 	
@@ -47,59 +48,65 @@ public class ModCompatHandler {
 				
 				ArrayList<Entity> entityList = new ArrayList<>(world.loadedEntityList);
 				
-				//if(saveData.isUhcOnGoing())
-				if(!RespawnList.respawnList.isEmpty())
+				if(saveData.isUhcOnGoing() && !saveData.isUhcIsFinished())
 				{
-					for (RespawnInfo info : RespawnList.respawnList)
+					if(!RespawnList.respawnList.isEmpty())
 					{
-						BlockPos pos = info.getPos();
-						IBlockState state = info.getState();
-						AxisAlignedBB hitbox = new AxisAlignedBB(pos.getX() - 0.5f, 0 - 0.5f, pos.getZ() - 0.5f, pos.getX() + 0.5f, 256 + 0.5f, pos.getZ() + 0.5f)
-								.expand(-50, -50, -50).expand(50, 50, 50);
-						ArrayList<EntityPlayerMP> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayerMP.class, hitbox));
-						
-						ArrayList<EntityMob> collidingBossMobs = new ArrayList<>(world.getEntitiesWithinAABB(EntityMob.class, hitbox));
-						int respawnTime = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 1200);
-						
-						boolean bossActive = false;
-						
-						if(!collidingBossMobs.isEmpty())
+						for (RespawnInfo info : RespawnList.respawnList)
 						{
-							for (EntityMob mob : collidingBossMobs)
+							BlockPos pos = info.getPos();
+							IBlockState state = info.getState();
+							AxisAlignedBB hitbox = new AxisAlignedBB(pos.getX() - 0.5f, 0 - 0.5f, pos.getZ() - 0.5f, pos.getX() + 0.5f, 256 + 0.5f, pos.getZ() + 0.5f)
+									.expand(-50, -50, -50).expand(50, 50, 50);
+							ArrayList<EntityPlayerMP> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayerMP.class, hitbox));
+							
+							ArrayList<EntityMob> collidingBossMobs = new ArrayList<>(world.getEntitiesWithinAABB(EntityMob.class, hitbox));
+							int respawnTime = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 1200);
+
+							if(world.getBlockState(info.getPos()).getBlock() instanceof BlockTFBossSpawner)
 							{
-								if(!mob.isNonBoss())
+								if(!info.isSpawnerExists())
+									info.setSpawnerExists(true);
+							}
+							
+							if(!collidingBossMobs.isEmpty() && !info.isBossExists())
+							{
+								for (EntityMob mob : collidingBossMobs)
 								{
-									bossActive = true;
+									if(!mob.isNonBoss())
+									{
+										info.setBossExists(true);
+									}
 								}
 							}
-						}
-						
-						if(!collidingList.isEmpty())
-						{
-							for (EntityPlayerMP player : collidingList)
+							
+							if(!collidingList.isEmpty())
 							{
-								Team team = player.getTeam();
-								
-								if(team != null && team != scoreboard.getTeam("solo") && !player.isSpectator())
+								for (EntityPlayerMP player : collidingList)
 								{
-									if(info.teamsReached.contains(team))
-										return;
-									else
+									Team team = player.getTeam();
+									
+									if(team != null && team != scoreboard.getTeam("solo") && !player.isSpectator())
 									{
-										if(info.timer == 0 && !bossActive)
+										if(info.teamsReached.contains(team))
+											return;
+										else
 										{
-											info.teamsReached.add(team);
-	
-											world.setBlockState(pos, state);
-											bossActive = true;
-											info.timer = respawnTime;
+											if(info.timer == 0 && !info.isBossExists() && !info.isSpawnerExists())
+											{
+												info.teamsReached.add(team);
+												
+												world.setBlockState(pos, state);
+												info.setBossExists(true);
+												info.timer = respawnTime;
+											}
 										}
 									}
 								}
 							}
+							if(info.timer > 0)
+							       info.timer--;
 						}
-						if(info.timer > 0)
-						       info.timer--;
 					}
 				}
 			}

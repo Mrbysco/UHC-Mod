@@ -11,12 +11,16 @@ public class RespawnInfo {
 	private IBlockState state;
 	public int timer;
 	public ArrayList<Team> teamsReached;
+	public boolean spawnerExists;
+	public boolean bossExists;
 	
 	public RespawnInfo(BlockPos pos, IBlockState state) {
 		this.pos = pos;
 		this.state = state;
 		this.timer = 0;
 		this.teamsReached = new ArrayList<>();
+		this.spawnerExists = false;
+		this.bossExists = false;
 	}
 	
 	public BlockPos getPos() {
@@ -26,4 +30,21 @@ public class RespawnInfo {
 	public IBlockState getState() {
 		return state;
 	}
+	
+	public boolean isBossExists() {
+		return bossExists;
+	}
+	
+	public void setBossExists(boolean bossExists) {
+		this.bossExists = bossExists;
+	}
+	
+	public boolean isSpawnerExists() {
+		return spawnerExists;
+	}
+	
+	public void setSpawnerExists(boolean spawnerExists) {
+		this.spawnerExists = spawnerExists;
+	}
+	
 }

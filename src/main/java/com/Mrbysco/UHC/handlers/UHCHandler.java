@@ -22,7 +22,6 @@ import net.minecraft.item.ItemMapBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.network.play.server.SPacketTitle;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -60,7 +59,7 @@ public class UHCHandler {
 			UHCTimerData timerData = UHCTimerData.getForWorld(world);
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-						
+			
 			if(!playerList.isEmpty())
 			{	
 				if(saveData.isUhcStarting())
@@ -114,7 +113,7 @@ public class UHCHandler {
 							this.uhcStartTimer = 0;
 							
 							for(EntityPlayerMP player : playerList)
-							{							
+							{	
 								player.inventory.clearMatchingItems(ModItems.uhc_book, -1, 0, null);
 								player.inventory.clearMatchingItems(Items.LEAD, -1, 0, null);
 								player.clearActivePotions();
@@ -155,9 +154,8 @@ public class UHCHandler {
 							
 							if(player.getActivePotionEffect(MobEffects.SLOWNESS) == null)
 								player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 32767 * 20, 10, true, false));
-						}
+						}	
 					}
-
 				}
 				else
 				{
@@ -196,7 +194,10 @@ public class UHCHandler {
 			ItemStack editStack = new ItemStack(Items.LEAD);
 			editStack.addEnchantment(Enchantments.BINDING_CURSE, 1);;
 			editStack.addEnchantment(Enchantments.VANISHING_CURSE, 1);;
-			editStack.setStackDisplayName("Editors Monacle");
+			editStack.setStackDisplayName("Editors Monocle");
+			NBTTagCompound nbt = editStack.getTagCompound();
+			nbt.setInteger("HideFlags", 1);
+			editStack.setTagCompound(nbt);
 			editStack.setTagInfo("lore", new NBTTagString("You have the power to edit the main UHC settings"));
 
 			UHCSaveData saveData = UHCSaveData.getForWorld(world);

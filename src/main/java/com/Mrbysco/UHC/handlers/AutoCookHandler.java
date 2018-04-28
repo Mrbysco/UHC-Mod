@@ -50,27 +50,27 @@ public class AutoCookHandler {
 						 drops.remove(drop);
 						 drops.add(stack);
 						 	
-							/*
-							 * if(xpAmount != 0)
-							{
-								int xp = 0;
-								for (int i = 0; i < stack.getCount(); i++) {
-									float random = rand.nextFloat();
-									if(random <= xpAmount)
-									{
-										xp = xp + (int)Math.ceil(xpAmount);
-									}
-								}
-								
-								
-								
-								if(xp != 0)
+						/*
+						 * if(xpAmount != 0)
+						{
+							int xp = 0;
+							for (int i = 0; i < stack.getCount(); i++) {
+								float random = rand.nextFloat();
+								if(random <= xpAmount)
 								{
-									EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, xp);
-									world.spawnEntity(exp);
+									xp = xp + (int)Math.ceil(xpAmount);
 								}
 							}
-							 */
+							
+							
+							
+							if(xp != 0)
+							{
+								EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, xp);
+								world.spawnEntity(exp);
+							}
+						}
+						 */
 					 }
 				}
 			}
@@ -94,25 +94,17 @@ public class AutoCookHandler {
 					if(drop.getItem().isItemEqual(info.getInput()))
 					{
 						ItemStack stack = drop.getItem();
-						drop.setItem(new ItemStack(info.getResult().getItem(), stack.getCount(), info.getResult().getMetadata()));
+						ItemStack newStack = info.getResult().copy();
+						newStack.setCount(stack.getCount() * info.getResult().copy().getCount());
+						drop.setItem(newStack);
 						 
-						float xpAmount = info.getExperience();
-						if(xpAmount != 0)
+						float xpAmount = info.getExperience() * stack.getCount();
+						while (xpAmount > 0)
 						{
-							int xp = 0;
-							for (int i = 0; i < stack.getCount(); i++) {
-								float random = rand.nextFloat();
-								if(random <= xpAmount)
-								{
-									xp = xp + (int)Math.ceil(xpAmount);
-								}
-							}
-							
-							if(xp != 0)
-							{
-								EntityXPOrb exp = new EntityXPOrb(world, pos.getX(), pos.getY(), pos.getZ(), xp);
-								world.spawnEntity(exp);
-							}
+							int i = EntityXPOrb.getXPSplit((int) xpAmount);
+							xpAmount -= i;
+							EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i);
+							world.spawnEntity(exp);
 						}
 					}
 				}
@@ -135,25 +127,17 @@ public class AutoCookHandler {
 				if(item.getItem().isItemEqual(info.getInput()))
 				{
 					ItemStack stack = item.getItem();
-					item.setItem(new ItemStack(info.getResult().getItem(), stack.getCount(), info.getResult().getMetadata()));
+					ItemStack newStack = info.getResult().copy();
+					newStack.setCount(stack.getCount() * info.getResult().copy().getCount());
+					item.setItem(newStack);
 
-					float xpAmount = info.getExperience();
-					if(xpAmount != 0F)
-					{					
-						int xp = 0;
-						for (int i = 0; i < stack.getCount(); i++) {
-							float random = rand.nextFloat();
-							if(random <= xpAmount)
-							{
-								xp = xp + (int)Math.ceil(xpAmount);
-							}
-						}
-						
-						if(xp != 0)
-						{
-							EntityXPOrb exp = new EntityXPOrb(world, pos.getX(), pos.getY(), pos.getZ(), xp);
-							world.spawnEntity(exp);
-						}
+					float xpAmount = info.getExperience() * stack.getCount();
+					while (xpAmount > 0)
+					{
+						int i = EntityXPOrb.getXPSplit((int) xpAmount);
+						xpAmount -= i;
+						EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i);
+						world.spawnEntity(exp);
 					}
 				}
 			}

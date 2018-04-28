@@ -170,6 +170,7 @@ public class UHCStartPacket implements IMessage{
 						player.setGlowing(false);
 				}
 				
+				saveData.setUHCDimension(serverPlayer.world.provider.getDimension());
 				saveData.setUhcStarting(true);
 				saveData.markDirty();
 			}

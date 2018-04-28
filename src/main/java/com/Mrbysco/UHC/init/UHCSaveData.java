@@ -14,6 +14,7 @@ public class UHCSaveData extends WorldSavedData{
 	private boolean uhcStarting;
 	private boolean uhcOnGoing;
 	private boolean uhcIsFinished;
+	private int UHCDimension;
 
 	private boolean friendlyFire;
 	private boolean teamCollision;
@@ -74,11 +75,10 @@ public class UHCSaveData extends WorldSavedData{
 
 	private boolean spawnRoom;
 	private int spawnRoomDimension;
-	//private int UHCDimension;
 
 	public UHCSaveData(String name) {
 		super(name);
-		
+		this.UHCDimension = 0;
 		this.friendlyFire = true;
 		this.teamCollision = true;
 		this.healthInTab = true;
@@ -144,7 +144,8 @@ public class UHCSaveData extends WorldSavedData{
 
 	public UHCSaveData() {
 		super(DATA_NAME);
-		
+
+		this.UHCDimension = 0;
 		this.friendlyFire = true;
 		this.teamCollision = true;
 		this.healthInTab = true;
@@ -209,6 +210,7 @@ public class UHCSaveData extends WorldSavedData{
 	}
 	
 	public void resetAll() {
+		this.UHCDimension = 0;
 		this.friendlyFire = true;
 		this.teamCollision = true;
 		this.healthInTab = true;
@@ -676,6 +678,13 @@ public class UHCSaveData extends WorldSavedData{
 		this.timeLockApplied = timeLockApplied;
 	}
 	
+	public int getUHCDimension() {
+		return UHCDimension;
+	}
+	
+	public void setUHCDimension(int uHCDimension) {
+		UHCDimension = uHCDimension;
+	}
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcStarting = nbt.getBoolean("uhcStarting");
@@ -739,7 +748,7 @@ public class UHCSaveData extends WorldSavedData{
 		spawnRoom = nbt.getBoolean("spawnRoom");
 		spawnRoomDimension = nbt.getInteger("spawnRoomDimension");
 		
-		//UHCDimension = nbt.getInteger("UHCDimension");
+		UHCDimension = nbt.getInteger("UHCDimension");
 	}
 	
 	@Override
@@ -805,7 +814,7 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setBoolean("spawnRoom", spawnRoom);
 		compound.setInteger("spawnRoomDimension", spawnRoomDimension);
 
-		//compound.setInteger("UHCDimension", UHCDimension);
+		compound.setInteger("UHCDimension", UHCDimension);
 		return compound;
 	}
 	

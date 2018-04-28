@@ -182,6 +182,8 @@ public class CommandRespawnUHC extends CommandBase
     			}
                 player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
                 player.setGameType(GameType.SURVIVAL);
+                if(scoreboard.getObjective("health") != null)
+			        scoreboard.removeObjectiveFromEntity(player.getName(), scoreboard.getObjective("health"));
             }
             else
             {
@@ -208,6 +210,8 @@ public class CommandRespawnUHC extends CommandBase
     			}
                 player.setPositionAndUpdate(posX, posY, posZ);
             	player.setGameType(GameType.SURVIVAL);
+            	if(scoreboard.getObjective("health") != null)
+			        scoreboard.removeObjectiveFromEntity(player.getName(), scoreboard.getObjective("health"));
             }
             
             double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();

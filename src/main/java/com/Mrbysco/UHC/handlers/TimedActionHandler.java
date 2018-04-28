@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
 
+import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -75,9 +77,7 @@ public class TimedActionHandler {
 							{
 								for(EntityPlayerMP player : playerList)
 								{
-			    					player.sendStatusMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}), true);
-	
-									player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}));
+			    					player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}));
 								}
 								
 								saveData.setTimeLockApplied(true);
@@ -101,10 +101,20 @@ public class TimedActionHandler {
 							timerData.setMinuteMarkAmount(minuteAmount);
 							for(EntityPlayerMP player : playerList)
 							{
+								EntityFireworkRocket rocket = new EntityFireworkRocket(world, player.posX, player.posY, player.posZ, ItemStack.EMPTY);
+								
 								if(minuteAmount == 1)
+								{
 		    						player.sendStatusMessage(new TextComponentTranslation("message.minutemark.single.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+		    						player.sendMessage(new TextComponentTranslation("message.minutemark.single.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+		    						player.world.spawnEntity(rocket);
+								}
 								else
+								{
 			    					player.sendStatusMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+			    					player.sendMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
+		    						player.world.spawnEntity(rocket);
+								}
 							}
 							timerData.setMinuteMarkTimer(0);
 							timerData.markDirty();
@@ -126,7 +136,7 @@ public class TimedActionHandler {
 		    				
 		    				for(EntityPlayerMP player : playerList)
 							{
-		    					player.sendStatusMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+		    					player.sendMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
 							}
 	
 							saveData.setTimedNamesApplied(true);
@@ -159,7 +169,7 @@ public class TimedActionHandler {
 		    				{
 		    					for (EntityPlayerMP player : playerList)
 		    					{
-			    					player.sendStatusMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+			    					player.sendMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}));
 		    					}
 								saveData.setGlowTimeApplied(true);
 								saveData.markDirty();

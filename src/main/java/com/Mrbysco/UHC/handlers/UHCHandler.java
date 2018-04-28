@@ -1,7 +1,9 @@
 package com.Mrbysco.UHC.handlers;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.Mrbysco.UHC.init.ModItems;
 import com.Mrbysco.UHC.init.UHCSaveData;
@@ -13,6 +15,7 @@ import com.Mrbysco.UHC.packets.UHCPacketMessage;
 import com.Mrbysco.UHC.utils.UHCTeleporter;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
@@ -20,6 +23,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -292,8 +296,8 @@ public class UHCHandler {
 							}
 						}
 					}
-					
-					/*
+					ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+
 					if(teamsAlive.size() == 1)
 					{
 						ScorePlayerTeam team = teamsAlive.get(0);
@@ -303,7 +307,8 @@ public class UHCHandler {
 							{
 								for (String s : team.getMembershipCollection())
 					            {
-									SoloWonTheUHC(s, playerList, world);
+									EntityPlayer winningPlayer = world.getPlayerEntityByName(s);
+									SoloWonTheUHC(winningPlayer, playerList, world);
 									saveData.setUhcIsFinished(true);
 					            }
 							}
@@ -314,7 +319,6 @@ public class UHCHandler {
 							saveData.setUhcIsFinished(true);
 						}
 					}
-					 */
 				}
 			}
 		}
@@ -559,11 +563,16 @@ public class UHCHandler {
 			MinecraftServer server = world.getMinecraftServer();
 			Scoreboard scoreboard = world.getScoreboard();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			
-			if(saveData.isUhcOnGoing())
+			if(DimensionManager.getWorld(0) != null)
 			{
-				scoreboard.addPlayerToTeam(player.getName(), "spectator");
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				if(saveData.isUhcOnGoing())
+				{
+					scoreboard.addPlayerToTeam(player.getName(), "spectator");
+					
+					if(scoreboard.getObjective("health") != null)
+				        scoreboard.removeObjectiveFromEntity(player.getName(), scoreboard.getObjective("health"));
+				}
 			}
 		}
 	}
@@ -572,25 +581,74 @@ public class UHCHandler {
 	{
 		if(!world.isRemote)
 		{
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			String teamName = team.getDisplayName();
-			for(EntityPlayer player : playerList)
+			if(DimensionManager.getWorld(0) != null)
 			{
-				player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {team.getColor() + teamName}));
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				String teamName = team.getDisplayName();
+				for(EntityPlayer player : playerList)
+				{
+					player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {team.getColor() + teamName}));
+				}
+				
+				for(String member : team.getMembershipCollection())
+				{
+					for(int i = 0; i > 7; i++)
+					{
+						EntityPlayer player = world.getPlayerEntityByName(member);
+						if(player != null)
+						{
+							EntityFireworkRocket rocket = new EntityFireworkRocket(world, player.posX, player.posY, player.posZ, getFirework(world.rand));
+							player.world.spawnEntity(rocket);
+						}
+					}
+				}
 			}
 		}
 	}
 	
-	public void SoloWonTheUHC(String user, ArrayList<EntityPlayerMP> playerList, World world)
+	public void SoloWonTheUHC(EntityPlayer winningPlayer, ArrayList<EntityPlayerMP> playerList, World world)
 	{
 		if(!world.isRemote)
 		{
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			for(EntityPlayer player : playerList)
+			if(DimensionManager.getWorld(0) != null)
 			{
-				player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {TextFormatting.YELLOW + user}));
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				for(EntityPlayer player : playerList)
+				{
+					player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {TextFormatting.YELLOW + winningPlayer.getName()}));
+				}
+				
+				for(int i = 0; i > 7; i++)
+				{
+					if(winningPlayer != null)
+					{
+						EntityFireworkRocket rocket = new EntityFireworkRocket(world, winningPlayer.posX, winningPlayer.posY, winningPlayer.posZ, getFirework(world.rand));
+						winningPlayer.world.spawnEntity(rocket);	
+					}
+				}
 			}
 		}
+	}
+	
+	public ItemStack getFirework(Random rand) {
+        ItemStack firework = new ItemStack(Items.FIREWORKS);
+        firework.setTagCompound(new NBTTagCompound());
+
+        NBTTagCompound data = new NBTTagCompound();
+        data.setByte("Flight", (byte) 1);
+
+        NBTTagList list = new NBTTagList();
+        NBTTagCompound fireworkData = new NBTTagCompound();
+
+        fireworkData.setByte("Trail", (byte) 1);
+        fireworkData.setByte("Type", (byte) 3);
+        fireworkData.setIntArray("Colors", new int[]{new Color(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255)).getRGB()});
+
+        list.appendTag(fireworkData);
+        data.setTag("Explosions", list);
+        firework.getTagCompound().setTag("Fireworks", data);
+
+        return firework;
 	}
 	
 	@SubscribeEvent

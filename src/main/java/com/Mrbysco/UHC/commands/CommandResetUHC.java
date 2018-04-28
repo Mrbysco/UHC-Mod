@@ -20,6 +20,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
 
 public class CommandResetUHC extends CommandBase
@@ -62,9 +63,11 @@ public class CommandResetUHC extends CommandBase
         {
         	UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
     		UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-    		
-			Scoreboard scoreboard = world.getScoreboard();
+			WorldBorder border = world.getWorldBorder();
 
+			Scoreboard scoreboard = world.getScoreboard();
+			border.setTransition(30000000);
+			
 			for(EntityPlayerMP player : playerList)
 			{
 				player.inventory.clear();

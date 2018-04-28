@@ -114,9 +114,10 @@ public class ScoreboardHandler {
 
 			if (!saveData.isUhcOnGoing() && !saveData.isUhcStarting())
 			{
-				System.out.println("hi");
 				if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
+				{
 					player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));
+				}
 			}
 			
 			if(scoreboard.getPlayersTeam(player.getName()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing())

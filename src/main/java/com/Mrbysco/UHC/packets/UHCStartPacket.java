@@ -136,7 +136,7 @@ public class UHCStartPacket implements IMessage{
 						player.setGameType(GameType.SURVIVAL);
 					
 					if (player.getActivePotionEffect(MobEffects.GLOWING) != null)
-						player.removeActivePotionEffect(MobEffects.GLOWING);
+						player.removePotionEffect(MobEffects.GLOWING);
 				}
 				
 				if(saveData.isSpawnRoom())

@@ -4,10 +4,8 @@ import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,29 +16,31 @@ public class UHCPage4PacketHandler implements IMessageHandler<UHCPage4Packet, IM
 	@Override
 	public IMessage onMessage(UHCPage4Packet message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
-		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-		NBTTagCompound playerData = serverPlayer.getEntityData();
-		
-		if(playerData.getBoolean("canEditUHC") == true)
+		if(DimensionManager.getWorld(0) != null)
 		{
-			saveData.setRegenPotions(message.regenPotions);
-			saveData.setLevel2Potions(message.level2Potions);
-			saveData.setNotchApples(message.notchApples);
-			saveData.setAutoCook(message.autoCook);
-			saveData.setItemConversion(message.itemConversion);
-			saveData.setNetherEnabled(message.netherTravel);
-			saveData.setHealthInTab(message.healthTab);
-			saveData.setHealthOnSide(message.healthSide);
-			saveData.setHealthUnderName(message.healthName);
-			saveData.markDirty();
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			NBTTagCompound playerData = serverPlayer.getEntityData();
 			
-			ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
+			if(playerData.getBoolean("canEditUHC") == true)
+			{
+				saveData.setRegenPotions(message.regenPotions);
+				saveData.setLevel2Potions(message.level2Potions);
+				saveData.setNotchApples(message.notchApples);
+				saveData.setAutoCook(message.autoCook);
+				saveData.setItemConversion(message.itemConversion);
+				saveData.setNetherEnabled(message.netherTravel);
+				saveData.setHealthInTab(message.healthTab);
+				saveData.setHealthOnSide(message.healthSide);
+				saveData.setHealthUnderName(message.healthName);
+				saveData.markDirty();
+				
+				ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
+			}
+			else
+			{
+				serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to edit the UHC book."));
+			}
 		}
-		else
-		{
-			serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to edit the UHC book."));
-		}
-		
 		return null;
 	}
 }

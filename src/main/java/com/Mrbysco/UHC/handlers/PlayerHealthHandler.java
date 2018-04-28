@@ -19,30 +19,33 @@ public class PlayerHealthHandler {
 		if (event.phase == Phase.START && event.side.isServer()) {
 			EntityPlayer player = event.player;
 			World world = player.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			final NBTTagCompound entityData = player.getEntityData();
-			
-			double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
-			boolean flag = saveData.isApplyCustomHealth();
-			double maxHealth = (double) saveData.getMaxHealth();
-
-			if(saveData.isApplyCustomHealth())
+			if(DimensionManager.getWorld(0) != null)
 			{
-				if(playerHealth != maxHealth)
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				final NBTTagCompound entityData = player.getEntityData();
+				
+				double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
+				boolean flag = saveData.isApplyCustomHealth();
+				double maxHealth = (double) saveData.getMaxHealth();
+	
+				if(saveData.isApplyCustomHealth())
 				{
-					this.setHealth(player, saveData.getMaxHealth());
-		            entityData.setBoolean("modifiedMaxHealth", true);
+					if(playerHealth != maxHealth)
+					{
+						this.setHealth(player, saveData.getMaxHealth());
+			            entityData.setBoolean("modifiedMaxHealth", true);
+					}
+				}
+				else
+				{
+					if(playerHealth != 20.0)
+					{
+						this.setHealth(player, 20);
+			            entityData.setBoolean("modifiedMaxHealth", false);
+					}
 				}
 			}
-			else
-			{
-				if(playerHealth != 20.0)
-				{
-					this.setHealth(player, 20);
-		            entityData.setBoolean("modifiedMaxHealth", false);
-				}
-			}
-		} 
+		}
 	}
 	
 	public void setHealth(EntityPlayer entity, int maxHealth) {

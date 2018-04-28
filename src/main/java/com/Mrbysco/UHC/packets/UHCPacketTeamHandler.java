@@ -22,33 +22,36 @@ public class UHCPacketTeamHandler implements IMessageHandler<UHCPacketTeam, IMes
 	
 	private void handle(UHCPacketTeam message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
-		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-
-		Scoreboard scoreboard = serverPlayer.getServerWorld().getScoreboard();
-		if(message.team.equals("solo"))
-			scoreboard.addPlayerToTeam(message.playerName, message.team);
-		else
+		if(DimensionManager.getWorld(0) != null)
 		{
-			int maxTeamSize = saveData.getMaxTeamSize();
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			
-			if(maxTeamSize == -1)
+			Scoreboard scoreboard = serverPlayer.getServerWorld().getScoreboard();
+			if(message.team.equals("solo"))
 				scoreboard.addPlayerToTeam(message.playerName, message.team);
 			else
 			{
-				if(scoreboard.getTeam(message.team).getMembershipCollection().size() < maxTeamSize)
+				int maxTeamSize = saveData.getMaxTeamSize();
+				
+				if(maxTeamSize == -1)
 					scoreboard.addPlayerToTeam(message.playerName, message.team);
 				else
-					serverPlayer.sendMessage(new TextComponentTranslation("book.uhc.team.maxed", new Object[] {message.team}));
+				{
+					if(scoreboard.getTeam(message.team).getMembershipCollection().size() < maxTeamSize)
+						scoreboard.addPlayerToTeam(message.playerName, message.team);
+					else
+						serverPlayer.sendMessage(new TextComponentTranslation("book.uhc.team.maxed", new Object[] {message.team}));
+				}
 			}
-		}
-		
-		
-		for(EntityPlayerMP players : serverPlayer.getServer().getPlayerList().getPlayers())
-		{
-			if(message.team.equals("solo"))
-				players.sendMessage(new TextComponentTranslation("book.uhc.team.solo", new Object[] {message.playerName, TextFormatting.fromColorIndex(message.colorIndex) + message.teamName}));
-			else
-				players.sendMessage(new TextComponentTranslation("book.uhc.team.selected", new Object[] {message.playerName, TextFormatting.fromColorIndex(message.colorIndex) + message.teamName}));
+			
+			
+			for(EntityPlayerMP players : serverPlayer.getServer().getPlayerList().getPlayers())
+			{
+				if(message.team.equals("solo"))
+					players.sendMessage(new TextComponentTranslation("book.uhc.team.solo", new Object[] {message.playerName, TextFormatting.fromColorIndex(message.colorIndex) + message.teamName}));
+				else
+					players.sendMessage(new TextComponentTranslation("book.uhc.team.selected", new Object[] {message.playerName, TextFormatting.fromColorIndex(message.colorIndex) + message.teamName}));
+			}
 		}
 	}
 }

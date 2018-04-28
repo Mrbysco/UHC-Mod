@@ -24,136 +24,139 @@ public class TimerHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-			MinecraftServer server = world.getMinecraftServer();
-			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-			
-			if(!playerList.isEmpty() && saveData.isUhcOnGoing())
+			if(DimensionManager.getWorld(0) != null)
 			{
-				if(!saveData.isShrinkApplied())
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
+				MinecraftServer server = world.getMinecraftServer();
+				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+				
+				if(!playerList.isEmpty() && saveData.isUhcOnGoing())
 				{
-					if(saveData.isShrinkEnabled())
+					if(!saveData.isShrinkApplied())
 					{
-						if(timerData.getShrinkTimeUntil() != this.shrinkTimeUntil)
+						if(saveData.isShrinkEnabled())
 						{
-							this.shrinkTimeUntil = timerData.getShrinkTimeUntil();
-						}
-						
-						if(timerData.getShrinkTimeUntil() >= tickTime(saveData.getShrinkTimer()))
-						{
-							this.shrinkTimeUntil = tickTime(saveData.getShrinkTimer());
+							if(timerData.getShrinkTimeUntil() != this.shrinkTimeUntil)
+							{
+								this.shrinkTimeUntil = timerData.getShrinkTimeUntil();
+							}
+							
+							if(timerData.getShrinkTimeUntil() >= tickTime(saveData.getShrinkTimer()))
+							{
+								this.shrinkTimeUntil = tickTime(saveData.getShrinkTimer());
+							}
+							else
+							{
+								++this.shrinkTimeUntil;
+								timerData.setShrinkTimeUntil(this.shrinkTimeUntil);
+								timerData.markDirty();
+							}
 						}
 						else
 						{
-							++this.shrinkTimeUntil;
-							timerData.setShrinkTimeUntil(this.shrinkTimeUntil);
+							timerData.setShrinkTimeUntil(0);
 							timerData.markDirty();
 						}
-					}
-					else
-					{
-						timerData.setShrinkTimeUntil(0);
-						timerData.markDirty();
-					}
-				}
-				
-				if(!saveData.isTimeLockApplied())
-				{
-					if(saveData.isTimeLock())
-					{
-						if(timerData.getTimeLockTimer() != this.timeLockTimer)
-							this.timeLockTimer = timerData.getTimeLockTimer();
-						
-						if(timerData.getTimeLockTimer() >= tickTime(saveData.getTimeLockTimer()))
-						{
-							this.timeLockTimer = tickTime(saveData.getTimeLockTimer());
-						}
-						else
-						{
-							++this.timeLockTimer;
-							timerData.setTimeLockTimer(this.timeLockTimer);
-							timerData.markDirty();
-						}			
-					}
-					else
-					{
-						timerData.setTimeLockTimer(0);
-						timerData.markDirty();
-					}
-				}
-				
-				if(saveData.isMinuteMark())
-				{
-					if(timerData.getMinuteMarkTimer() != this.minuteMarkTimer)
-					{
-						this.minuteMarkTimer = timerData.getMinuteMarkTimer();
 					}
 					
-					if(timerData.getMinuteMarkTimer() >= tickTime(saveData.getMinuteMarkTime()))
+					if(!saveData.isTimeLockApplied())
 					{
-						this.minuteMarkTimer = tickTime(saveData.getMinuteMarkTime());
-					}
-					else
-					{
-						++this.minuteMarkTimer;
-						timerData.setMinuteMarkTimer(this.minuteMarkTimer);
-						timerData.markDirty();
-					}
-				}
-				else
-				{
-					timerData.setMinuteMarkTimer(0);
-					timerData.markDirty();
-				}
-				
-				if(!saveData.isTimedNamesApplied())
-				{
-					if(saveData.isTimedNames())
-					{
-						if(timerData.getNameTimer() != this.nameTimer)
-							this.nameTimer = timerData.getNameTimer();
-						
-						if(timerData.getNameTimer() >= tickTime(saveData.getNameTimer()))
+						if(saveData.isTimeLock())
 						{
-							this.nameTimer = tickTime(saveData.getNameTimer());
+							if(timerData.getTimeLockTimer() != this.timeLockTimer)
+								this.timeLockTimer = timerData.getTimeLockTimer();
+							
+							if(timerData.getTimeLockTimer() >= tickTime(saveData.getTimeLockTimer()))
+							{
+								this.timeLockTimer = tickTime(saveData.getTimeLockTimer());
+							}
+							else
+							{
+								++this.timeLockTimer;
+								timerData.setTimeLockTimer(this.timeLockTimer);
+								timerData.markDirty();
+							}			
 						}
 						else
 						{
-							++this.nameTimer;
-							timerData.setNameTimer(this.nameTimer);
+							timerData.setTimeLockTimer(0);
 							timerData.markDirty();
-						}			
+						}
 					}
-					else
+					
+					if(saveData.isMinuteMark())
 					{
-						timerData.setNameTimer(0);
-						timerData.markDirty();
-					}
-				}
-				
-				if(!saveData.isGlowTimeApplied())
-				{
-					if(saveData.isTimedGlow())
-					{
-						if(timerData.getGlowTimer() != this.glowTimer)
-							this.glowTimer = timerData.getGlowTimer();
-						
-						if(timerData.getGlowTimer() >= tickTime(saveData.getGlowTime()))
+						if(timerData.getMinuteMarkTimer() != this.minuteMarkTimer)
 						{
-							this.glowTimer = tickTime(saveData.getGlowTime());
+							this.minuteMarkTimer = timerData.getMinuteMarkTimer();
+						}
+						
+						if(timerData.getMinuteMarkTimer() >= tickTime(saveData.getMinuteMarkTime()))
+						{
+							this.minuteMarkTimer = tickTime(saveData.getMinuteMarkTime());
 						}
 						else
 						{
-							++this.glowTimer;
-							timerData.setGlowTimer(this.glowTimer);
+							++this.minuteMarkTimer;
+							timerData.setMinuteMarkTimer(this.minuteMarkTimer);
 							timerData.markDirty();
-						}			
+						}
 					}
 					else
 					{
-						timerData.setGlowTimer(0);
+						timerData.setMinuteMarkTimer(0);
 						timerData.markDirty();
+					}
+					
+					if(!saveData.isTimedNamesApplied())
+					{
+						if(saveData.isTimedNames())
+						{
+							if(timerData.getNameTimer() != this.nameTimer)
+								this.nameTimer = timerData.getNameTimer();
+							
+							if(timerData.getNameTimer() >= tickTime(saveData.getNameTimer()))
+							{
+								this.nameTimer = tickTime(saveData.getNameTimer());
+							}
+							else
+							{
+								++this.nameTimer;
+								timerData.setNameTimer(this.nameTimer);
+								timerData.markDirty();
+							}			
+						}
+						else
+						{
+							timerData.setNameTimer(0);
+							timerData.markDirty();
+						}
+					}
+					
+					if(!saveData.isGlowTimeApplied())
+					{
+						if(saveData.isTimedGlow())
+						{
+							if(timerData.getGlowTimer() != this.glowTimer)
+								this.glowTimer = timerData.getGlowTimer();
+							
+							if(timerData.getGlowTimer() >= tickTime(saveData.getGlowTime()))
+							{
+								this.glowTimer = tickTime(saveData.getGlowTime());
+							}
+							else
+							{
+								++this.glowTimer;
+								timerData.setGlowTimer(this.glowTimer);
+								timerData.markDirty();
+							}			
+						}
+						else
+						{
+							timerData.setGlowTimer(0);
+							timerData.markDirty();
+						}
 					}
 				}
 			}

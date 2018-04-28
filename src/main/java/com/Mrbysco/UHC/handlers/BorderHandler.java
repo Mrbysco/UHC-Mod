@@ -35,163 +35,166 @@ public class BorderHandler {
 			ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 			
 			Scoreboard scoreboard = world.getScoreboard();
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-    		WorldBorder border = world.getWorldBorder();
-    		
-    		if(saveData.getOriginalBorderCenterX() == -1)
+			if(DimensionManager.getWorld(0) != null)
 			{
-				double originalX = border.getCenterX();
-				saveData.setOriginalBorderCenterX(originalX);
-				saveData.markDirty();
-			}
-			if(saveData.getOriginalBorderCenterZ() == -1)
-			{
-				double originalZ = border.getCenterZ();
-				saveData.setOriginalBorderCenterZ(originalZ);
-				saveData.markDirty();
-			}
-			
-			if(saveData.getBorderCenterX() == -1)
-			{
-				if(saveData.getOriginalBorderCenterX() != -1)
-				{
-					double originalX = saveData.getOriginalBorderCenterX();
-					saveData.setBorderCenterX(originalX);
-					saveData.markDirty();
-				}
-				else
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
+	    		WorldBorder border = world.getWorldBorder();
+	    		
+	    		if(saveData.getOriginalBorderCenterX() == -1)
 				{
 					double originalX = border.getCenterX();
-					saveData.setBorderCenterX(originalX);
+					saveData.setOriginalBorderCenterX(originalX);
 					saveData.markDirty();
 				}
-			}
-			if(saveData.getBorderCenterZ() == -1)
-			{
-				if(saveData.getOriginalBorderCenterX() != -1)
-				{
-					double originalZ = saveData.getOriginalBorderCenterZ();
-					saveData.setBorderCenterZ(originalZ);
-					saveData.markDirty();
-				}
-				else
+				if(saveData.getOriginalBorderCenterZ() == -1)
 				{
 					double originalZ = border.getCenterZ();
-					saveData.setBorderCenterZ(originalZ);
+					saveData.setOriginalBorderCenterZ(originalZ);
 					saveData.markDirty();
 				}
-			}
-    		
-			if(saveData.isUhcOnGoing())
-			{
-				if(saveData.isShrinkEnabled())
+				
+				if(saveData.getBorderCenterX() == -1)
 				{
-					int shrinkTimer = timerData.getShrinkTimeUntil();
-					boolean shrinkFlag = shrinkTimer == TimerHandler.tickTime(saveData.getShrinkTimer());
-					boolean shrinkApplied = saveData.isShrinkApplied();
-					String shrinkMode = saveData.getShrinkMode();
-					
-					double centerX = saveData.getBorderCenterX();
-					double centerZ = saveData.getBorderCenterZ();
-					double spreadDistance = saveData.getSpreadDistance();
-					
-					int BorderSize = saveData.getBorderSize();
-					
-					int oldSize = saveData.getBorderSize();
-					int newSize = saveData.getShrinkSize();
-					//shrink time * 60 as worldborder checks in seconds
-	                long shrinkTimeSec = 0L;
-	                
-					try {
-						shrinkTimeSec = saveData.getShrinkOvertime() > 0 ? parseLong(saveData.getShrinkOvertime(), 0L, 9223372036854775L) * 60 * 1000L : 0L;
-					} catch (NumberInvalidException e1) {
-						e1.printStackTrace();
-					}
-					
-					if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
+					if(saveData.getOriginalBorderCenterX() != -1)
 					{
-						border.setTransition(oldSize, newSize, shrinkTimeSec);
-						for(EntityPlayerMP player : playerList)
-						{
-							SPacketTitle spackettitle1 = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentTranslation("message.border.moving"));
-							player.connection.sendPacket(spackettitle1);
-						}
-						
-						saveData.setShrinkApplied(true);
+						double originalX = saveData.getOriginalBorderCenterX();
+						saveData.setBorderCenterX(originalX);
 						saveData.markDirty();
 					}
-					if(shrinkMode.equals("Arena") && shrinkFlag && !shrinkApplied)
+					else
 					{
+						double originalX = border.getCenterX();
+						saveData.setBorderCenterX(originalX);
+						saveData.markDirty();
+					}
+				}
+				if(saveData.getBorderCenterZ() == -1)
+				{
+					if(saveData.getOriginalBorderCenterX() != -1)
+					{
+						double originalZ = saveData.getOriginalBorderCenterZ();
+						saveData.setBorderCenterZ(originalZ);
+						saveData.markDirty();
+					}
+					else
+					{
+						double originalZ = border.getCenterZ();
+						saveData.setBorderCenterZ(originalZ);
+						saveData.markDirty();
+					}
+				}
+	    		
+				if(saveData.isUhcOnGoing())
+				{
+					if(saveData.isShrinkEnabled())
+					{
+						int shrinkTimer = timerData.getShrinkTimeUntil();
+						boolean shrinkFlag = shrinkTimer == TimerHandler.tickTime(saveData.getShrinkTimer());
+						boolean shrinkApplied = saveData.isShrinkApplied();
+						String shrinkMode = saveData.getShrinkMode();
+						
+						double centerX = saveData.getBorderCenterX();
+						double centerZ = saveData.getBorderCenterZ();
+						double spreadDistance = saveData.getSpreadDistance();
+						
+						int BorderSize = saveData.getBorderSize();
+						
+						int oldSize = saveData.getBorderSize();
+						int newSize = saveData.getShrinkSize();
+						//shrink time * 60 as worldborder checks in seconds
+		                long shrinkTimeSec = 0L;
+		                
 						try {
-							SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), spreadDistance / ((double) oldSize / (double) newSize), 
-								(newSize / 2), world, true);
-						} catch (CommandException e) {
-							e.printStackTrace();
+							shrinkTimeSec = saveData.getShrinkOvertime() > 0 ? parseLong(saveData.getShrinkOvertime(), 0L, 9223372036854775L) * 60 * 1000L : 0L;
+						} catch (NumberInvalidException e1) {
+							e1.printStackTrace();
 						}
 						
-						border.setSize(newSize);
-						
-						saveData.setShrinkApplied(true);
-						saveData.markDirty();
-					}
-					if(shrinkMode.equals("Control") && shrinkFlag)
-					{
-						boolean controlled = timerData.isControlled();
-						
-						AxisAlignedBB hitbox = new AxisAlignedBB(saveData.getBorderCenterX() - 0.5f, 0 - 0.5f, saveData.getBorderCenterZ() - 0.5f, saveData.getBorderCenterX() + 0.5f, 256 + 0.5f, saveData.getBorderCenterZ() + 0.5f)
-								.expand(-20, -20, -20).expand(20, 20, 20);
-						ArrayList<ScorePlayerTeam> teams = new ArrayList<>(scoreboard.getTeams());
-						
-						ArrayList<EntityPlayerMP> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayerMP.class, hitbox));
-						
-						if(collidingList.isEmpty())
+						if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
 						{
-							controlled = false;
-							if(timerData.isControlled() != controlled)
+							border.setTransition(oldSize, newSize, shrinkTimeSec);
+							for(EntityPlayerMP player : playerList)
 							{
-								timerData.setControlled(controlled);
-								timerData.markDirty();
+								SPacketTitle spackettitle1 = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentTranslation("message.border.moving"));
+								player.connection.sendPacket(spackettitle1);
 							}
+							
+							saveData.setShrinkApplied(true);
+							saveData.markDirty();
 						}
-						else
+						if(shrinkMode.equals("Arena") && shrinkFlag && !shrinkApplied)
 						{
-							if(!collidingList.get(0).isSpectator())
+							try {
+								SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), spreadDistance / ((double) oldSize / (double) newSize), 
+									(newSize / 2), world, true);
+							} catch (CommandException e) {
+								e.printStackTrace();
+							}
+							
+							border.setSize(newSize);
+							
+							saveData.setShrinkApplied(true);
+							saveData.markDirty();
+						}
+						if(shrinkMode.equals("Control") && shrinkFlag)
+						{
+							boolean controlled = timerData.isControlled();
+							
+							AxisAlignedBB hitbox = new AxisAlignedBB(saveData.getBorderCenterX() - 0.5f, 0 - 0.5f, saveData.getBorderCenterZ() - 0.5f, saveData.getBorderCenterX() + 0.5f, 256 + 0.5f, saveData.getBorderCenterZ() + 0.5f)
+									.expand(-20, -20, -20).expand(20, 20, 20);
+							ArrayList<ScorePlayerTeam> teams = new ArrayList<>(scoreboard.getTeams());
+							
+							ArrayList<EntityPlayerMP> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayerMP.class, hitbox));
+							
+							if(collidingList.isEmpty())
 							{
-								controlled = true;
+								controlled = false;
 								if(timerData.isControlled() != controlled)
 								{
 									timerData.setControlled(controlled);
 									timerData.markDirty();
 								}
 							}
-						}
-						
-						if(controlled)
-						{
-							if(controlTimer >= 20)
-							{
-								for(EntityPlayerMP players : playerList)
-								{
-									EntityPlayerMP player = collidingList.get(0);
-									
-									if(player.getTeam() != null)
-									{
-										String teamName = player.getTeam().getName();
-										players.sendStatusMessage(new TextComponentTranslation("book.uhc.shrink.control", new Object[] {teamName.substring(0, 1).toUpperCase() + teamName.substring(1)}), true);
-									}
-									else
-										players.sendStatusMessage(new TextComponentTranslation("book.uhc.shrink.control", new Object[] {player.getName()}), true);
-								}
-								
-								int size = border.getSize();
-								border.setSize(size - 1);
-								
-								controlTimer = 0;
-							}
 							else
 							{
-								this.controlTimer++;
+								if(!collidingList.get(0).isSpectator())
+								{
+									controlled = true;
+									if(timerData.isControlled() != controlled)
+									{
+										timerData.setControlled(controlled);
+										timerData.markDirty();
+									}
+								}
+							}
+							
+							if(controlled)
+							{
+								if(controlTimer >= 20)
+								{
+									for(EntityPlayerMP players : playerList)
+									{
+										EntityPlayerMP player = collidingList.get(0);
+										
+										if(player.getTeam() != null)
+										{
+											String teamName = player.getTeam().getName();
+											players.sendStatusMessage(new TextComponentTranslation("book.uhc.shrink.control", new Object[] {teamName.substring(0, 1).toUpperCase() + teamName.substring(1)}), true);
+										}
+										else
+											players.sendStatusMessage(new TextComponentTranslation("book.uhc.shrink.control", new Object[] {player.getName()}), true);
+									}
+									
+									int size = border.getSize();
+									border.setSize(size - 1);
+									
+									controlTimer = 0;
+								}
+								else
+								{
+									this.controlTimer++;
+								}
 							}
 						}
 					}

@@ -15,22 +15,25 @@ public class GameRuleHandler {
 	public void GameRules(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			MinecraftServer server = event.world.getMinecraftServer();
-			WorldServer wServer = server.getWorld(0);
-			GameRules rules = wServer.getGameRules();
-			WorldInfo wInfo = event.world.getWorldInfo();
-
-			if(!saveData.isWeatherEnabled())
+			if(DimensionManager.getWorld(0) != null)
 			{
-				if(event.world.isRaining())
-					wInfo.setRaining(false);
-				if(rules.getBoolean("doWeatherCycle"))
-					rules.setOrCreateGameRule("doWeatherCycle", String.valueOf(false));
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				MinecraftServer server = event.world.getMinecraftServer();
+				WorldServer wServer = server.getWorld(0);
+				GameRules rules = wServer.getGameRules();
+				WorldInfo wInfo = event.world.getWorldInfo();
+	
+				if(!saveData.isWeatherEnabled())
+				{
+					if(event.world.isRaining())
+						wInfo.setRaining(false);
+					if(rules.getBoolean("doWeatherCycle"))
+						rules.setOrCreateGameRule("doWeatherCycle", String.valueOf(false));
+				}
+				
+				if(rules.getBoolean("naturalRegeneration") == true)
+					rules.setOrCreateGameRule("naturalRegeneration", String.valueOf(false));
 			}
-			
-			if(rules.getBoolean("naturalRegeneration") == true)
-				rules.setOrCreateGameRule("naturalRegeneration", String.valueOf(false));
 		}
 	}
 }

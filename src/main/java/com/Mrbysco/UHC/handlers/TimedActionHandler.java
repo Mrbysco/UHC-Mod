@@ -31,147 +31,150 @@ public class TimedActionHandler {
 			ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 			
 			Scoreboard scoreboard = world.getScoreboard();
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-    		WorldBorder border = world.getWorldBorder();
-			GameRules rules = world.getGameRules();
-
-			if(saveData.isUhcOnGoing())
+			if(DimensionManager.getWorld(0) != null)
 			{
-				if(saveData.isTimeLock())
-	    		{
-					int timeLockTimer = timerData.getTimeLockTimer();
-					boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
-					if(timeFlag)
-					{
-						if(rules.getBoolean("doDaylightCycle"))
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
+	    		WorldBorder border = world.getWorldBorder();
+				GameRules rules = world.getGameRules();
+	
+				if(saveData.isUhcOnGoing())
+				{
+					if(saveData.isTimeLock())
+		    		{
+						int timeLockTimer = timerData.getTimeLockTimer();
+						boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
+						if(timeFlag)
 						{
-							if(saveData.getTimeMode().equals("Day"))
+							if(rules.getBoolean("doDaylightCycle"))
 							{
-								if(world.isDaytime())
+								if(saveData.getTimeMode().equals("Day"))
+								{
+									if(world.isDaytime())
+									{
+										if(rules.getBoolean("doDaylightCycle"))
+											rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(false));
+									}
+								}
+								else if(saveData.getTimeMode().equals("Night"))
+								{
+									if(!world.isDaytime())
+									{
+										if(rules.getBoolean("doDaylightCycle"))
+											rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(false));
+									}
+								}
+								else
 								{
 									if(rules.getBoolean("doDaylightCycle"))
-										rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(false));
+										rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(true));
 								}
-							}
-							else if(saveData.getTimeMode().equals("Night"))
-							{
-								if(!world.isDaytime())
-								{
-									if(rules.getBoolean("doDaylightCycle"))
-										rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(false));
-								}
-							}
-							else
-							{
-								if(rules.getBoolean("doDaylightCycle"))
-									rules.setOrCreateGameRule("doDaylightCycle", String.valueOf(true));
-							}
-						}
-						
-						if(!saveData.isTimeLockApplied())
-						{
-							for(EntityPlayerMP player : playerList)
-							{
-		    					player.sendStatusMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}), true);
-
-								player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}));
 							}
 							
-							saveData.setTimeLockApplied(true);
-							saveData.markDirty();
+							if(!saveData.isTimeLockApplied())
+							{
+								for(EntityPlayerMP player : playerList)
+								{
+			    					player.sendStatusMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}), true);
+	
+									player.sendMessage(new TextComponentTranslation("message.timelock", new Object[] {TextFormatting.GOLD + saveData.getTimeMode()}));
+								}
+								
+								saveData.setTimeLockApplied(true);
+								saveData.markDirty();
+							}
 						}
-					}
-	    		}
-	    		
-	    		if(saveData.isMinuteMark())
-	    		{
-	    			int minuteMarkTimer = timerData.getMinuteMarkTimer();
-	    			int minutes = saveData.getMinuteMarkTime();
-	    			int minuteAmount = timerData.getMinuteMarkAmount();
-					boolean minuteMarkFlag = minuteMarkTimer >= TimerHandler.tickTime(minutes);
-					if(minuteMarkFlag)
-					{
-						if(minuteAmount != timerData.getMinuteMarkAmount())
-							minuteAmount = timerData.getMinuteMarkAmount();
-						
-						++minuteAmount;
-						timerData.setMinuteMarkAmount(minuteAmount);
-						for(EntityPlayerMP player : playerList)
+		    		}
+		    		
+		    		if(saveData.isMinuteMark())
+		    		{
+		    			int minuteMarkTimer = timerData.getMinuteMarkTimer();
+		    			int minutes = saveData.getMinuteMarkTime();
+		    			int minuteAmount = timerData.getMinuteMarkAmount();
+						boolean minuteMarkFlag = minuteMarkTimer >= TimerHandler.tickTime(minutes);
+						if(minuteMarkFlag)
 						{
-							if(minuteAmount == 1)
-	    						player.sendStatusMessage(new TextComponentTranslation("message.minutemark.single.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
-							else
-		    					player.sendStatusMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+							if(minuteAmount != timerData.getMinuteMarkAmount())
+								minuteAmount = timerData.getMinuteMarkAmount();
+							
+							++minuteAmount;
+							timerData.setMinuteMarkAmount(minuteAmount);
+							for(EntityPlayerMP player : playerList)
+							{
+								if(minuteAmount == 1)
+		    						player.sendStatusMessage(new TextComponentTranslation("message.minutemark.single.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+								else
+			    					player.sendStatusMessage(new TextComponentTranslation("message.minutemark.time", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+							}
+							timerData.setMinuteMarkTimer(0);
+							timerData.markDirty();
 						}
-						timerData.setMinuteMarkTimer(0);
-						timerData.markDirty();
-					}
-	    		}
-	    		
-	    		if(saveData.isTimedNames())
-	    		{
-	    			int timedNameTimer = timerData.getNameTimer();
-	    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
-	    			
-	    			if(timedNameFlag && !saveData.isTimedNamesApplied())
-	    			{
-	    				for (ScorePlayerTeam team : scoreboard.getTeams())
-	    				{
-	    					if (team.getNameTagVisibility() != Team.EnumVisible.ALWAYS)
-	    						team.setNameTagVisibility(Team.EnumVisible.ALWAYS);
-	    				}
-	    				
-	    				for(EntityPlayerMP player : playerList)
-						{
-	    					player.sendStatusMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
-						}
-
-						saveData.setTimedNamesApplied(true);
-						saveData.markDirty();
-	    			}
-	    			else
-	    			{
-	    				for (ScorePlayerTeam team : scoreboard.getTeams())
-	    				{
-	    					if (team.getNameTagVisibility() != Team.EnumVisible.HIDE_FOR_OTHER_TEAMS)
-	    						team.setNameTagVisibility(Team.EnumVisible.HIDE_FOR_OTHER_TEAMS);
-	    				}
-	    			}
-	    		}
-	    		
-	    		if(saveData.isTimedGlow())
-	    		{
-	    			int timedGlowTimer = timerData.getGlowTimer();
-	    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getGlowTime());
-
-	    			if(timedGlowFlag)
-	    			{
-	    				for (EntityPlayerMP player : playerList)
-	    				{
-	    					if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
-	    						player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));
-	    				}
-	    				
-	    				if(!saveData.isGlowTimeApplied())
-	    				{
-	    					for (EntityPlayerMP player : playerList)
-	    					{
-		    					player.sendStatusMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
-	    					}
-							saveData.setGlowTimeApplied(true);
+		    		}
+		    		
+		    		if(saveData.isTimedNames())
+		    		{
+		    			int timedNameTimer = timerData.getNameTimer();
+		    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
+		    			
+		    			if(timedNameFlag && !saveData.isTimedNamesApplied())
+		    			{
+		    				for (ScorePlayerTeam team : scoreboard.getTeams())
+		    				{
+		    					if (team.getNameTagVisibility() != Team.EnumVisible.ALWAYS)
+		    						team.setNameTagVisibility(Team.EnumVisible.ALWAYS);
+		    				}
+		    				
+		    				for(EntityPlayerMP player : playerList)
+							{
+		    					player.sendStatusMessage(new TextComponentTranslation("message.timedname", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+							}
+	
+							saveData.setTimedNamesApplied(true);
 							saveData.markDirty();
-	    				}
-	    			}
-	    			else
-	    			{
-	    				for (EntityPlayerMP player : playerList)
-	    				{
-	    					if(player.isGlowing())
-	    						player.setGlowing(false);
-	    				}
-	    			}
-	    		}
+		    			}
+		    			else
+		    			{
+		    				for (ScorePlayerTeam team : scoreboard.getTeams())
+		    				{
+		    					if (team.getNameTagVisibility() != Team.EnumVisible.HIDE_FOR_OTHER_TEAMS)
+		    						team.setNameTagVisibility(Team.EnumVisible.HIDE_FOR_OTHER_TEAMS);
+		    				}
+		    			}
+		    		}
+		    		
+		    		if(saveData.isTimedGlow())
+		    		{
+		    			int timedGlowTimer = timerData.getGlowTimer();
+		    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getGlowTime());
+	
+		    			if(timedGlowFlag)
+		    			{
+		    				for (EntityPlayerMP player : playerList)
+		    				{
+		    					if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
+		    						player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));
+		    				}
+		    				
+		    				if(!saveData.isGlowTimeApplied())
+		    				{
+		    					for (EntityPlayerMP player : playerList)
+		    					{
+			    					player.sendStatusMessage(new TextComponentTranslation("message.timedglow", new Object[] {TextFormatting.YELLOW + saveData.getTimeMode()}), true);
+		    					}
+								saveData.setGlowTimeApplied(true);
+								saveData.markDirty();
+		    				}
+		    			}
+		    			else
+		    			{
+		    				for (EntityPlayerMP player : playerList)
+		    				{
+		    					if(player.isGlowing())
+		    						player.setGlowing(false);
+		    				}
+		    			}
+		    		}
+				}
 			}
 		}
 	}

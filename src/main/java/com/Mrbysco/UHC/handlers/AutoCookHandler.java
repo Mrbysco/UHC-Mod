@@ -26,31 +26,34 @@ public class AutoCookHandler {
 		BlockPos pos = event.getPos();
 		Random rand = world.rand;
 		List<ItemStack> drops = event.getDrops();
-		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-
-		if(saveData.isAutoCook() && !world.isRemote)
+		if(DimensionManager.getWorld(0) != null)
 		{
-			for(ItemStack drop : drops)
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+
+			if(saveData.isAutoCook() && !world.isRemote)
 			{
-				for(AutoCookInfo info : CookList.autoCookList)
+				for(ItemStack drop : drops)
 				{
-					 if(drop.isItemEqual(info.getInput()))
-					 {
-						 ItemStack stack = info.getResult();
-						 stack.setCount(stack.getCount() * drop.getCount());
-						 
-						 float xpAmount = info.getExperience() * drop.getCount();
-						 while (xpAmount > 0)
+					for(AutoCookInfo info : CookList.autoCookList)
+					{
+						 if(drop.isItemEqual(info.getInput()))
 						 {
-							 int i = EntityXPOrb.getXPSplit((int) xpAmount);
-							 xpAmount -= i;
-							 EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i);
-							 world.spawnEntity(exp);
+							 ItemStack stack = info.getResult();
+							 stack.setCount(stack.getCount() * drop.getCount());
+							 
+							 float xpAmount = info.getExperience() * drop.getCount();
+							 while (xpAmount > 0)
+							 {
+								 int i = EntityXPOrb.getXPSplit((int) xpAmount);
+								 xpAmount -= i;
+								 EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i);
+								 world.spawnEntity(exp);
+							 }
+							 	
+							 drops.remove(drop);
+							 drops.add(stack);
 						 }
-						 	
-						 drops.remove(drop);
-						 drops.add(stack);
-					 }
+					}
 				}
 			}
 		}
@@ -62,32 +65,35 @@ public class AutoCookHandler {
 		BlockPos pos = event.getEntity().getPosition();
 		Random rand = world.rand;
 		List<EntityItem> drops = event.getDrops();
-		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-
-		if(saveData.isAutoCook() && !world.isRemote)
+		if(DimensionManager.getWorld(0) != null)
 		{
-			for(EntityItem drop : drops)
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+
+			if(saveData.isAutoCook() && !world.isRemote)
 			{
-				for(AutoCookInfo info : CookList.autoCookList)
+				for(EntityItem drop : drops)
 				{
-					if(drop.getItem().isItemEqual(info.getInput()))
+					for(AutoCookInfo info : CookList.autoCookList)
 					{
-						ItemStack stack = drop.getItem();
-						ItemStack newStack = info.getResult().copy();
-						newStack.setCount(stack.getCount() * info.getResult().copy().getCount());
-						drop.setItem(newStack);
-						 
-						float xpAmount = info.getExperience() * stack.getCount();
-						while (xpAmount > 0)
+						if(drop.getItem().isItemEqual(info.getInput()))
 						{
-							int i = EntityXPOrb.getXPSplit((int) xpAmount);
-							xpAmount -= i;
-							EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i);
-							world.spawnEntity(exp);
+							ItemStack stack = drop.getItem();
+							ItemStack newStack = info.getResult().copy();
+							newStack.setCount(stack.getCount() * info.getResult().copy().getCount());
+							drop.setItem(newStack);
+							 
+							float xpAmount = info.getExperience() * stack.getCount();
+							while (xpAmount > 0)
+							{
+								int i = EntityXPOrb.getXPSplit((int) xpAmount);
+								xpAmount -= i;
+								EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i);
+								world.spawnEntity(exp);
+							}
 						}
 					}
-				}
-			}	
+				}	
+			}
 		}
 	}
 	
@@ -97,26 +103,29 @@ public class AutoCookHandler {
 		BlockPos pos = event.getEntity().getPosition();
 		Random rand = world.rand;
 		EntityItem item = event.getEntityItem();
-		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-
-		if(saveData.isAutoCook() && !world.isRemote)
+		if(DimensionManager.getWorld(0) != null)
 		{
-			for(AutoCookInfo info : CookList.autoCookList)
-			{
-				if(item.getItem().isItemEqual(info.getInput()))
-				{
-					ItemStack stack = item.getItem();
-					ItemStack newStack = info.getResult().copy();
-					newStack.setCount(stack.getCount() * info.getResult().copy().getCount());
-					item.setItem(newStack);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
-					float xpAmount = info.getExperience() * stack.getCount();
-					while (xpAmount > 0)
+			if(saveData.isAutoCook() && !world.isRemote)
+			{
+				for(AutoCookInfo info : CookList.autoCookList)
+				{
+					if(item.getItem().isItemEqual(info.getInput()))
 					{
-						int i = EntityXPOrb.getXPSplit((int) xpAmount);
-						xpAmount -= i;
-						EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i);
-						world.spawnEntity(exp);
+						ItemStack stack = item.getItem();
+						ItemStack newStack = info.getResult().copy();
+						newStack.setCount(stack.getCount() * info.getResult().copy().getCount());
+						item.setItem(newStack);
+	
+						float xpAmount = info.getExperience() * stack.getCount();
+						while (xpAmount > 0)
+						{
+							int i = EntityXPOrb.getXPSplit((int) xpAmount);
+							xpAmount -= i;
+							EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, i);
+							world.spawnEntity(exp);
+						}
 					}
 				}
 			}

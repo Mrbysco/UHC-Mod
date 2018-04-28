@@ -48,54 +48,57 @@ public class UHCPacketTeamRandomizer implements IMessage
 		
 		private void handle(UHCPacketTeamRandomizer message, MessageContext ctx) {
 			EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			World world = serverPlayer.getServerWorld();
-			WorldBorder border = world.getWorldBorder();
-			MinecraftServer server = world.getMinecraftServer();
-			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-			Scoreboard scoreboard = world.getScoreboard();
-			WorldInfo info = world.getWorldInfo();
-			NBTTagCompound playerData = serverPlayer.getEntityData();
-			
-			if(playerData.getBoolean("canEditUHC") == true)
+			if(DimensionManager.getWorld(0) != null)
 			{
-				ArrayList<EntityPlayerMP>teamPlayers = (ArrayList<EntityPlayerMP>) playerList.clone();
-
-				for (EntityPlayer player : playerList)
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				World world = serverPlayer.getServerWorld();
+				WorldBorder border = world.getWorldBorder();
+				MinecraftServer server = world.getMinecraftServer();
+				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+				Scoreboard scoreboard = world.getScoreboard();
+				WorldInfo info = world.getWorldInfo();
+				NBTTagCompound playerData = serverPlayer.getEntityData();
+				
+				if(playerData.getBoolean("canEditUHC") == true)
 				{
-					if(player.getTeam() == scoreboard.getTeam("spectator"))
-						teamPlayers.remove(player);
-					else
-						scoreboard.removePlayerFromTeams(player.getName());
-				}
-			
-				int randomTeams = saveData.getRandomTeamSize();
-				Collections.shuffle(playerList);
-				ArrayList<EntityPlayerMP>tempList = (ArrayList<EntityPlayerMP>) teamPlayers.clone();
+					ArrayList<EntityPlayerMP>teamPlayers = (ArrayList<EntityPlayerMP>) playerList.clone();
 
-				int playerAmount = playerList.size();
-				int amountPerTeam = (int)Math.ceil((double)playerAmount / (double)randomTeams);
-				for(int i = 0; i < randomTeams; i++)
-				{
-					for(int j = 0; j < amountPerTeam; j++)
+					for (EntityPlayer player : playerList)
 					{
-						if(tempList.size() != 0)
+						if(player.getTeam() == scoreboard.getTeam("spectator"))
+							teamPlayers.remove(player);
+						else
+							scoreboard.removePlayerFromTeams(player.getName());
+					}
+				
+					int randomTeams = saveData.getRandomTeamSize();
+					Collections.shuffle(playerList);
+					ArrayList<EntityPlayerMP>tempList = (ArrayList<EntityPlayerMP>) teamPlayers.clone();
+
+					int playerAmount = playerList.size();
+					int amountPerTeam = (int)Math.ceil((double)playerAmount / (double)randomTeams);
+					for(int i = 0; i < randomTeams; i++)
+					{
+						for(int j = 0; j < amountPerTeam; j++)
 						{
-							EntityPlayer player = tempList.get(0);
-							scoreboard.addPlayerToTeam(player.getName(), TeamUtil.getTeamNameFromInt(i+1));
-							
-							for(EntityPlayerMP players : playerList)
+							if(tempList.size() != 0)
 							{
-								players.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), TeamUtil.getTeamNameFromInt(i+1).replaceAll("_", " ")}));
+								EntityPlayer player = tempList.get(0);
+								scoreboard.addPlayerToTeam(player.getName(), TeamUtil.getTeamNameFromInt(i+1));
+								
+								for(EntityPlayerMP players : playerList)
+								{
+									players.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), TeamUtil.getTeamNameFromInt(i+1).replaceAll("_", " ")}));
+								}
+								tempList.remove(0);
 							}
-							tempList.remove(0);
 						}
 					}
 				}
-			}
-			else
-			{
-				serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to randomize the teams."));
+				else
+				{
+					serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to randomize the teams."));
+				}
 			}
 		}
 	}

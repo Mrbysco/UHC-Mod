@@ -23,61 +23,64 @@ public class UHCPage1PacketHandler implements IMessageHandler<UHCPage1Packet, IM
 	public IMessage onMessage(UHCPage1Packet message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
 		World world = serverPlayer.getServerWorld();
-		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-		NBTTagCompound playerData = serverPlayer.getEntityData();
-		WorldInfo wInfo = world.getWorldInfo();
-		Scoreboard scoreboard = world.getScoreboard();
-		
-		if(playerData.getBoolean("canEditUHC"))
+		if(DimensionManager.getWorld(0) != null)
 		{
-			for (ScorePlayerTeam team : scoreboard.getTeams())
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			NBTTagCompound playerData = serverPlayer.getEntityData();
+			WorldInfo wInfo = world.getWorldInfo();
+			Scoreboard scoreboard = world.getScoreboard();
+			
+			if(playerData.getBoolean("canEditUHC"))
 			{
-				if(message.teamDamage)
+				for (ScorePlayerTeam team : scoreboard.getTeams())
 				{
-					if (team.getAllowFriendlyFire() != true)
+					if(message.teamDamage)
 					{
-						team.setAllowFriendlyFire(true);
+						if (team.getAllowFriendlyFire() != true)
+						{
+							team.setAllowFriendlyFire(true);
+						}
 					}
-				}
-				else
-				{
-					if (team.getAllowFriendlyFire() != false)
+					else
 					{
-						team.setAllowFriendlyFire(false);
+						if (team.getAllowFriendlyFire() != false)
+						{
+							team.setAllowFriendlyFire(false);
+						}
+					}
+					
+					if(message.teamCollision)
+					{
+						if (team.getCollisionRule() != CollisionRule.ALWAYS)
+						{
+							team.setCollisionRule(CollisionRule.ALWAYS);
+						}
+					}
+					else
+					{
+						if (team.getCollisionRule() != CollisionRule.HIDE_FOR_OTHER_TEAMS)
+						{
+							team.setCollisionRule(CollisionRule.HIDE_FOR_OTHER_TEAMS);
+						}
 					}
 				}
 				
-				if(message.teamCollision)
-				{
-					if (team.getCollisionRule() != CollisionRule.ALWAYS)
-					{
-						team.setCollisionRule(CollisionRule.ALWAYS);
-					}
-				}
-				else
-				{
-					if (team.getCollisionRule() != CollisionRule.HIDE_FOR_OTHER_TEAMS)
-					{
-						team.setCollisionRule(CollisionRule.HIDE_FOR_OTHER_TEAMS);
-					}
-				}
+				if(wInfo.getDifficulty() != EnumDifficulty.getDifficultyEnum(message.difficulty))
+					wInfo.setDifficulty(EnumDifficulty.getDifficultyEnum(message.difficulty));
+				
+				saveData.setRandomTeamSize(message.randomTeams);
+				saveData.setMaxTeamSize(message.maxTeams);
+				saveData.setTeamCollision(message.teamCollision);
+				saveData.setFriendlyFire(message.teamDamage);
+				saveData.setDifficulty(message.difficulty);
+				saveData.markDirty();
+				
+				ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
 			}
-			
-			if(wInfo.getDifficulty() != EnumDifficulty.getDifficultyEnum(message.difficulty))
-				wInfo.setDifficulty(EnumDifficulty.getDifficultyEnum(message.difficulty));
-			
-			saveData.setRandomTeamSize(message.randomTeams);
-			saveData.setMaxTeamSize(message.maxTeams);
-			saveData.setTeamCollision(message.teamCollision);
-			saveData.setFriendlyFire(message.teamDamage);
-			saveData.setDifficulty(message.difficulty);
-			saveData.markDirty();
-			
-			ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
-		}
-		else
-		{
-			serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to edit the UHC book."));
+			else
+			{
+				serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to edit the UHC book."));
+			}
 		}
 		
 		return null;

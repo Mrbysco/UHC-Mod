@@ -29,75 +29,78 @@ public class ScoreboardHandler {
 		{
 			World world = event.world;
 			Scoreboard scoreboard = world.getScoreboard();
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			MinecraftServer server = world.getMinecraftServer();
-			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-			WorldServer wServer = server.getWorld(0);
-			GameRules rules = wServer.getGameRules();
-			
-			for (TextFormatting color : TextFormatting.values())
+			if(DimensionManager.getWorld(0) != null)
 			{
-				boolean flag = !color.equals(TextFormatting.OBFUSCATED) && !color.equals(TextFormatting.BOLD) && 
-						!color.equals(TextFormatting.STRIKETHROUGH) && !color.equals(TextFormatting.UNDERLINE) && 
-						!color.equals(TextFormatting.ITALIC) && !color.equals(TextFormatting.RESET);
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				MinecraftServer server = world.getMinecraftServer();
+				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+				WorldServer wServer = server.getWorld(0);
+				GameRules rules = wServer.getGameRules();
 				
-				if(color.getColorIndex() != 0 && color.getColorIndex() <= 14 && flag)
+				for (TextFormatting color : TextFormatting.values())
 				{
-					String colorString = color.getFriendlyName();
+					boolean flag = !color.equals(TextFormatting.OBFUSCATED) && !color.equals(TextFormatting.BOLD) && 
+							!color.equals(TextFormatting.STRIKETHROUGH) && !color.equals(TextFormatting.UNDERLINE) && 
+							!color.equals(TextFormatting.ITALIC) && !color.equals(TextFormatting.RESET);
 					
-					if(scoreboard.getTeam(colorString) == null)
+					if(color.getColorIndex() != 0 && color.getColorIndex() <= 14 && flag)
 					{
-						makeTeam(scoreboard, color.getFriendlyName(), color);
+						String colorString = color.getFriendlyName();
+						
+						if(scoreboard.getTeam(colorString) == null)
+						{
+							makeTeam(scoreboard, color.getFriendlyName(), color);
+						}
 					}
 				}
-			}
-			
-			if(scoreboard.getTeam("solo") == null)
-			{
-				makeTeam(scoreboard, "solo", TextFormatting.WHITE);
-			}
-			
-			if(scoreboard.getTeam("spectator") == null)
-			{
-				makeTeam(scoreboard, "spectator", TextFormatting.BLACK);
-			}
-			
-			if(scoreboard.getObjective("health") == null)
-			{
-				scoreboard.addScoreObjective("health", IScoreCriteria.HEALTH);
-			}
-			
-			boolean healthExists = scoreboard.getObjective("health") != null;
-			
-			if(saveData.isHealthInTab() && healthExists)
-			{
-				ScoreObjective score = scoreboard.getObjective("health");
-				if(scoreboard.getObjectiveInDisplaySlot(0) != score)
+				
+				if(scoreboard.getTeam("solo") == null)
 				{
-					scoreboard.setObjectiveInDisplaySlot(0, score);
-					scoreboard.setObjectiveInDisplaySlot(1, null);
-					scoreboard.setObjectiveInDisplaySlot(2, null);
+					makeTeam(scoreboard, "solo", TextFormatting.WHITE);
 				}
-			}
-			
-			if(saveData.isHealthOnSide() && healthExists)
-			{
-				ScoreObjective score = scoreboard.getObjective("health");
-				if(scoreboard.getObjectiveInDisplaySlot(1) != score)
+				
+				if(scoreboard.getTeam("spectator") == null)
 				{
-					scoreboard.setObjectiveInDisplaySlot(0, null);
-					scoreboard.setObjectiveInDisplaySlot(1, score);
-					scoreboard.setObjectiveInDisplaySlot(2, null);
+					makeTeam(scoreboard, "spectator", TextFormatting.BLACK);
 				}
-			}
-			if(saveData.isHealthUnderName() && healthExists)
-			{
-				ScoreObjective score = scoreboard.getObjective("health");
-				if(scoreboard.getObjectiveInDisplaySlot(2) != score)
+				
+				if(scoreboard.getObjective("health") == null)
 				{
-					scoreboard.setObjectiveInDisplaySlot(0, null);
-					scoreboard.setObjectiveInDisplaySlot(1, null);
-					scoreboard.setObjectiveInDisplaySlot(2, score);
+					scoreboard.addScoreObjective("health", IScoreCriteria.HEALTH);
+				}
+				
+				boolean healthExists = scoreboard.getObjective("health") != null;
+				
+				if(saveData.isHealthInTab() && healthExists)
+				{
+					ScoreObjective score = scoreboard.getObjective("health");
+					if(scoreboard.getObjectiveInDisplaySlot(0) != score)
+					{
+						scoreboard.setObjectiveInDisplaySlot(0, score);
+						scoreboard.setObjectiveInDisplaySlot(1, null);
+						scoreboard.setObjectiveInDisplaySlot(2, null);
+					}
+				}
+				
+				if(saveData.isHealthOnSide() && healthExists)
+				{
+					ScoreObjective score = scoreboard.getObjective("health");
+					if(scoreboard.getObjectiveInDisplaySlot(1) != score)
+					{
+						scoreboard.setObjectiveInDisplaySlot(0, null);
+						scoreboard.setObjectiveInDisplaySlot(1, score);
+						scoreboard.setObjectiveInDisplaySlot(2, null);
+					}
+				}
+				if(saveData.isHealthUnderName() && healthExists)
+				{
+					ScoreObjective score = scoreboard.getObjective("health");
+					if(scoreboard.getObjectiveInDisplaySlot(2) != score)
+					{
+						scoreboard.setObjectiveInDisplaySlot(0, null);
+						scoreboard.setObjectiveInDisplaySlot(1, null);
+						scoreboard.setObjectiveInDisplaySlot(2, score);
+					}
 				}
 			}
 		}

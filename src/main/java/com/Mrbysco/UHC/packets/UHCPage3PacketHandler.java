@@ -16,29 +16,31 @@ public class UHCPage3PacketHandler implements IMessageHandler<UHCPage3Packet, IM
 	@Override
 	public IMessage onMessage(UHCPage3Packet message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
-		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-		NBTTagCompound playerData = serverPlayer.getEntityData();
-		
-		if(playerData.getBoolean("canEditUHC") == true)
+		if(DimensionManager.getWorld(0) != null)
 		{
-			saveData.setTimeLock(message.timeLock);
-			saveData.setTimeLockTimer(message.timeLockUntil);
-			saveData.setTimeMode(message.timeLockMode);
-			saveData.setMinuteMark(message.minuteMark);
-			saveData.setMinuteMarkTime(message.minuteEvery);
-			saveData.setTimedNames(message.timedNames);
-			saveData.setNameTimer(message.timedNamesAfter);
-			saveData.setTimedGlow(message.timedGlow);
-			saveData.setGlowTime(message.timedGlowAfter);
-			saveData.markDirty();
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			NBTTagCompound playerData = serverPlayer.getEntityData();
 			
-			ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
+			if(playerData.getBoolean("canEditUHC") == true)
+			{
+				saveData.setTimeLock(message.timeLock);
+				saveData.setTimeLockTimer(message.timeLockUntil);
+				saveData.setTimeMode(message.timeLockMode);
+				saveData.setMinuteMark(message.minuteMark);
+				saveData.setMinuteMarkTime(message.minuteEvery);
+				saveData.setTimedNames(message.timedNames);
+				saveData.setNameTimer(message.timedNamesAfter);
+				saveData.setTimedGlow(message.timedGlow);
+				saveData.setGlowTime(message.timedGlowAfter);
+				saveData.markDirty();
+				
+				ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
+			}
+			else
+			{
+				serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to edit the UHC book."));
+			}
 		}
-		else
-		{
-			serverPlayer.sendMessage(new TextComponentString(TextFormatting.RED + "You don't have permissions to edit the UHC book."));
-		}
-		
 		return null;
 	}
 }

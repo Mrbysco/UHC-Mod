@@ -8,6 +8,7 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -17,7 +18,7 @@ public class UHCPage4PacketHandler implements IMessageHandler<UHCPage4Packet, IM
 	@Override
 	public IMessage onMessage(UHCPage4Packet message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
-		UHCSaveData saveData = UHCSaveData.getForWorld(serverPlayer.getServerWorld());
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 		NBTTagCompound playerData = serverPlayer.getEntityData();
 		
 		if(playerData.getBoolean("canEditUHC") == true)

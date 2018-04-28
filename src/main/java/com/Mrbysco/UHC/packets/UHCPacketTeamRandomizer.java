@@ -18,6 +18,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -47,7 +48,7 @@ public class UHCPacketTeamRandomizer implements IMessage
 		
 		private void handle(UHCPacketTeamRandomizer message, MessageContext ctx) {
 			EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
-			UHCSaveData saveData = UHCSaveData.getForWorld(serverPlayer.getServerWorld());
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			World world = serverPlayer.getServerWorld();
 			WorldBorder border = world.getWorldBorder();
 			MinecraftServer server = world.getMinecraftServer();

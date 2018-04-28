@@ -17,6 +17,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class CommandDimension extends CommandBase
 {
@@ -52,7 +53,7 @@ public class CommandDimension extends CommandBase
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         World world = (World)(sender instanceof EntityPlayer ? ((EntityPlayer)sender).world : server.getWorld(0));      
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 		
 		if ("reset".equalsIgnoreCase(args[0]))
         {

@@ -18,6 +18,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -28,7 +29,7 @@ public class ScoreboardHandler {
 		{
 			World world = event.world;
 			Scoreboard scoreboard = world.getScoreboard();
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			WorldServer wServer = server.getWorld(0);
@@ -78,6 +79,7 @@ public class ScoreboardHandler {
 					scoreboard.setObjectiveInDisplaySlot(2, null);
 				}
 			}
+			
 			if(saveData.isHealthOnSide() && healthExists)
 			{
 				ScoreObjective score = scoreboard.getObjective("health");
@@ -98,22 +100,31 @@ public class ScoreboardHandler {
 					scoreboard.setObjectiveInDisplaySlot(2, score);
 				}
 			}
-			
-			for(EntityPlayer player : playerList)
+		}
+	}
+	
+	@SubscribeEvent
+	public void scoreboardPlayer(TickEvent.PlayerTickEvent event){
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		{
+			EntityPlayer player = event.player;
+			World world = player.world;
+			Scoreboard scoreboard = world.getScoreboard();
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+
+			if (!saveData.isUhcOnGoing() && !saveData.isUhcStarting())
 			{
-				if (!saveData.isUhcOnGoing())
-				{
-					if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
-						player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));
-				}
-				
-				if(scoreboard.getPlayersTeam(player.getName()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing())
-				{
-					if(player.isCreative())
-						return;
-					else
-						player.setGameType(GameType.SPECTATOR);
-				}
+				System.out.println("hi");
+				if(player.getActivePotionEffect(MobEffects.GLOWING) == null)
+					player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 32767 * 20, 10, true, false));
+			}
+			
+			if(scoreboard.getPlayersTeam(player.getName()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing())
+			{
+				if(player.isCreative())
+					return;
+				else
+					player.setGameType(GameType.SPECTATOR);
 			}
 		}
 	}

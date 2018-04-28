@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -15,7 +16,7 @@ public class UHCPage3PacketHandler implements IMessageHandler<UHCPage3Packet, IM
 	@Override
 	public IMessage onMessage(UHCPage3Packet message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
-		UHCSaveData saveData = UHCSaveData.getForWorld(serverPlayer.getServerWorld());
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 		NBTTagCompound playerData = serverPlayer.getEntityData();
 		
 		if(playerData.getBoolean("canEditUHC") == true)

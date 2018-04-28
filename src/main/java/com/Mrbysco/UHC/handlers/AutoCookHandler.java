@@ -12,6 +12,7 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -25,7 +26,7 @@ public class AutoCookHandler {
 		BlockPos pos = event.getPos();
 		Random rand = world.rand;
 		List<ItemStack> drops = event.getDrops();
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
 		if(saveData.isAutoCook() && !world.isRemote)
 		{
@@ -49,28 +50,6 @@ public class AutoCookHandler {
 						 	
 						 drops.remove(drop);
 						 drops.add(stack);
-						 	
-						/*
-						 * if(xpAmount != 0)
-						{
-							int xp = 0;
-							for (int i = 0; i < stack.getCount(); i++) {
-								float random = rand.nextFloat();
-								if(random <= xpAmount)
-								{
-									xp = xp + (int)Math.ceil(xpAmount);
-								}
-							}
-							
-							
-							
-							if(xp != 0)
-							{
-								EntityXPOrb exp = new EntityXPOrb(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, xp);
-								world.spawnEntity(exp);
-							}
-						}
-						 */
 					 }
 				}
 			}
@@ -83,7 +62,7 @@ public class AutoCookHandler {
 		BlockPos pos = event.getEntity().getPosition();
 		Random rand = world.rand;
 		List<EntityItem> drops = event.getDrops();
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
 		if(saveData.isAutoCook() && !world.isRemote)
 		{
@@ -118,7 +97,7 @@ public class AutoCookHandler {
 		BlockPos pos = event.getEntity().getPosition();
 		Random rand = world.rand;
 		EntityItem item = event.getEntityItem();
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
 		if(saveData.isAutoCook() && !world.isRemote)
 		{

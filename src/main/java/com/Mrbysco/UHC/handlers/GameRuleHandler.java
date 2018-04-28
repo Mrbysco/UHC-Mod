@@ -6,6 +6,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -14,7 +15,7 @@ public class GameRuleHandler {
 	public void GameRules(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
-			UHCSaveData saveData = UHCSaveData.getForWorld(event.world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			MinecraftServer server = event.world.getMinecraftServer();
 			WorldServer wServer = server.getWorld(0);
 			GameRules rules = wServer.getGameRules();

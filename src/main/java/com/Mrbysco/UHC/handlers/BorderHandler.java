@@ -18,6 +18,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -34,8 +35,8 @@ public class BorderHandler {
 			ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 			
 			Scoreboard scoreboard = world.getScoreboard();
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			UHCTimerData timerData = UHCTimerData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
     		WorldBorder border = world.getWorldBorder();
     		
     		if(saveData.getOriginalBorderCenterX() == -1)
@@ -110,8 +111,6 @@ public class BorderHandler {
 					
 					if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
 					{
-						
-						System.out.println("hi");
 						border.setTransition(oldSize, newSize, shrinkTimeSec);
 						for(EntityPlayerMP player : playerList)
 						{

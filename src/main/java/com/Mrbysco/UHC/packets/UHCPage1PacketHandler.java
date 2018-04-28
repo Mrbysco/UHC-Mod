@@ -12,6 +12,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -22,7 +23,7 @@ public class UHCPage1PacketHandler implements IMessageHandler<UHCPage1Packet, IM
 	public IMessage onMessage(UHCPage1Packet message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
 		World world = serverPlayer.getServerWorld();
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 		NBTTagCompound playerData = serverPlayer.getEntityData();
 		WorldInfo wInfo = world.getWorldInfo();
 		Scoreboard scoreboard = world.getScoreboard();

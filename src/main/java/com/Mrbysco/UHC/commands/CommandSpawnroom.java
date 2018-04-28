@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.DimensionManager;
 
 public class CommandSpawnroom extends CommandBase
 {
@@ -56,7 +57,7 @@ public class CommandSpawnroom extends CommandBase
         World world = (World)(sender instanceof EntityPlayer ? ((EntityPlayer)sender).world : server.getWorld(0));
         WorldInfo info = world.getWorldInfo();
         
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 		double centerX = saveData.getBorderCenterX();
 		double centerZ = saveData.getBorderCenterZ();
 		

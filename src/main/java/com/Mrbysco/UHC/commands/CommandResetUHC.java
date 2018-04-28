@@ -20,6 +20,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class CommandResetUHC extends CommandBase
 {
@@ -59,13 +60,15 @@ public class CommandResetUHC extends CommandBase
 
         if(!world.isRemote)
         {
-        	UHCSaveData saveData = UHCSaveData.getForWorld(world);
-    		UHCTimerData timerData = UHCTimerData.getForWorld(world);
+        	UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+    		UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
     		
 			Scoreboard scoreboard = world.getScoreboard();
 
 			for(EntityPlayerMP player : playerList)
 			{
+				player.inventory.clear();
+				
 				if(player.getTeam() != null)
 					scoreboard.removePlayerFromTeams(player.getName());		
 			}

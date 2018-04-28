@@ -29,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
+import net.minecraftforge.common.DimensionManager;
 
 public class CommandRespawnUHC extends CommandBase
 {
@@ -152,7 +153,7 @@ public class CommandRespawnUHC extends CommandBase
             EntityPlayer player = server.getWorld(0).getPlayerEntityByName(getEntityName(server, sender, playerName));
 			final NBTTagCompound entityData = player.getEntityData();
             World world = server.getWorld(0);
-            UHCSaveData uhcData = UHCSaveData.getForWorld(world);
+            UHCSaveData uhcData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			WorldBorder border = world.getWorldBorder();
 
 			border.setSize(30000000);

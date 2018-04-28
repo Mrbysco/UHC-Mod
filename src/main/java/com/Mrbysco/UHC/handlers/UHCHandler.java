@@ -18,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
-import net.minecraft.item.ItemMapBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
@@ -35,11 +34,13 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
@@ -51,17 +52,17 @@ public class UHCHandler {
 	public int uhcStartTimer;
 
 	@SubscribeEvent
-	public void UHCStartEvent(TickEvent.WorldTickEvent event) {
+	public void UHCStartEventWorld(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			UHCTimerData timerData = UHCTimerData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			
 			if(!playerList.isEmpty())
-			{	
+			{
 				if(saveData.isUhcStarting())
 				{
 					if(timerData.getUhcStartTimer() != this.uhcStartTimer)
@@ -110,33 +111,9 @@ public class UHCHandler {
 						else if(timerData.getUhcStartTimer() == 140)
 						{
 							sendMessage(playerList, new TextComponentTranslation("uhc.start"));
-							this.uhcStartTimer = 0;
-							
-							for(EntityPlayerMP player : playerList)
-							{	
-								player.inventory.clearMatchingItems(ModItems.uhc_book, -1, 0, null);
-								player.inventory.clearMatchingItems(Items.LEAD, -1, 0, null);
-								player.clearActivePotions();
-								
-								if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
-								{
-									for(SpawnItemInfo info : SpawnItemList.spawnItemList)
-									{
-										giveResult(player, info.getstack1().copy());
-										giveResult(player, info.getstack2().copy());
-										giveResult(player, info.getstack3().copy());
-										giveResult(player, info.getstack4().copy());
-										giveResult(player, info.getstack5().copy());
-										giveResult(player, info.getstack6().copy());
-										giveResult(player, info.getstack7().copy());
-										giveResult(player, info.getstack8().copy());
-										giveResult(player, info.getstack9().copy());
-									}
-								}
-							}
-							
+
 							saveData.setUhcStarting(false);
-							timerData.setUhcStartTimer(this.uhcStartTimer);
+							timerData.setUhcStartTimer(0);
 							saveData.setUhcOnGoing(true);
 							saveData.markDirty();
 						}
@@ -146,15 +123,6 @@ public class UHCHandler {
 						++this.uhcStartTimer;
 						timerData.setUhcStartTimer(this.uhcStartTimer);
 						timerData.markDirty();
-						
-						for(EntityPlayerMP player : playerList)
-						{							
-							if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
-								player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
-							
-							if(player.getActivePotionEffect(MobEffects.SLOWNESS) == null)
-								player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 32767 * 20, 10, true, false));
-						}	
 					}
 				}
 				else
@@ -164,6 +132,59 @@ public class UHCHandler {
 						timerData.setUhcStartTimer(0);
 						timerData.markDirty();
 					}
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void UHCStartEventPlayer(TickEvent.PlayerTickEvent event) {
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		{
+			EntityPlayer player = event.player;
+			World world = player.world;
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
+			
+			if(saveData.isUhcStarting())
+			{
+				if(this.uhcStartTimer == 140)
+				{
+					if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
+					{
+						for(SpawnItemInfo info : SpawnItemList.spawnItemList)
+						{
+							giveResult(player, info.getstack1().copy());
+							giveResult(player, info.getstack2().copy());
+							giveResult(player, info.getstack3().copy());
+							giveResult(player, info.getstack4().copy());
+							giveResult(player, info.getstack5().copy());
+							giveResult(player, info.getstack6().copy());
+							giveResult(player, info.getstack7().copy());
+							giveResult(player, info.getstack8().copy());
+							giveResult(player, info.getstack9().copy());
+						}
+					}
+					
+					player.clearActivePotions();
+				}
+				else
+				{
+					if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
+						player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
+					
+					if(player.getActivePotionEffect(MobEffects.SLOWNESS) == null)
+						player.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 32767 * 20, 10, true, false));
+					
+					if(player.inventory.hasItemStack(new ItemStack(ModItems.uhc_book)))
+					{
+						int bookSlot = player.inventory.getSlotFor(new ItemStack(ModItems.uhc_book));
+						if(bookSlot != -1)
+							player.inventory.removeStackFromSlot(bookSlot);
+					}
+					
+					if (!player.inventory.getStackInSlot(39).isEmpty())
+						player.inventory.removeStackFromSlot(39);
 				}
 			}
 		}
@@ -185,61 +206,63 @@ public class UHCHandler {
 		}
 	}
 	
+	public ItemStack editorLead()
+	{
+		ItemStack editStack = new ItemStack(Items.LEAD);
+		editStack.addEnchantment(Enchantments.BINDING_CURSE, 1);;
+		editStack.addEnchantment(Enchantments.VANISHING_CURSE, 1);;
+		editStack.setStackDisplayName("Editors Monocle");
+		NBTTagCompound nbt = editStack.getTagCompound();
+		nbt.setInteger("HideFlags", 1);
+		editStack.setTagCompound(nbt);
+		editStack.setTagInfo("lore", new NBTTagString("You have the power to edit the main UHC settings"));
+		
+		return editStack;
+	}
+	
 	@SubscribeEvent
-	public void UhcEvents(TickEvent.WorldTickEvent event) {
+	public void UhcEvents(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
-			World world = event.world;
+			EntityPlayer player = event.player;
+			World world = player.world;
 			ItemStack bookStack = new ItemStack(ModItems.uhc_book);
-			ItemStack editStack = new ItemStack(Items.LEAD);
-			editStack.addEnchantment(Enchantments.BINDING_CURSE, 1);;
-			editStack.addEnchantment(Enchantments.VANISHING_CURSE, 1);;
-			editStack.setStackDisplayName("Editors Monocle");
-			NBTTagCompound nbt = editStack.getTagCompound();
-			nbt.setInteger("HideFlags", 1);
-			editStack.setTagCompound(nbt);
-			editStack.setTagInfo("lore", new NBTTagString("You have the power to edit the main UHC settings"));
 
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			List<Entity> entityList = world.loadedEntityList;
 			
 			if(!saveData.isUhcOnGoing() && !saveData.isUhcStarting())
 			{
 				MinecraftServer server = world.getMinecraftServer();
-				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-				
-				for(EntityPlayerMP player : playerList)
-				{
-					NBTTagCompound entityData = player.getEntityData();
-					
-					if (entityData.getBoolean("canEditUHC") == true)
-					{
-						if (player.inventory.getStackInSlot(39) == editStack)
-							return;
-						
-						if (player.inventory.getStackInSlot(39).isEmpty())
-							player.inventory.setInventorySlotContents(39, editStack);
-					}
-					
-					if(!player.inventory.getItemStack().isItemEqual(bookStack))
-					{
-						if (!player.inventory.hasItemStack(bookStack))
-							player.inventory.addItemStackToInventory(bookStack);
-					}
-					
-					if(player.getActivePotionEffect(MobEffects.SATURATION) == null)
-						player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 32767 * 20, 10, true, false));
 
-					if(player.getActivePotionEffect(MobEffects.RESISTANCE) == null)
-						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 32767 * 20, 10, true, false));
+				NBTTagCompound entityData = player.getEntityData();
+				
+				if (entityData.getBoolean("canEditUHC") == true)
+				{
+					if (player.inventory.getStackInSlot(39) == editorLead())
+						return;
+					
+					if (player.inventory.getStackInSlot(39).isEmpty())
+						player.inventory.setInventorySlotContents(39, editorLead());
 				}
+				
+				if(!player.inventory.getItemStack().isItemEqual(bookStack))
+				{
+					if (!player.inventory.hasItemStack(bookStack))
+						player.inventory.addItemStackToInventory(bookStack);
+				}
+				
+				if(player.getActivePotionEffect(MobEffects.SATURATION) == null)
+					player.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 32767 * 20, 10, true, false));
+
+				if(player.getActivePotionEffect(MobEffects.RESISTANCE) == null)
+					player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 32767 * 20, 10, true, false));
 			}
 			
 			if(saveData.isUhcOnGoing() && !saveData.isUhcIsFinished())
 			{
 				Scoreboard scoreboard = world.getScoreboard();
 				MinecraftServer server = world.getMinecraftServer();
-				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 				
 				ArrayList<ScorePlayerTeam> teamsAlive = new ArrayList<>();
 				for(ScorePlayerTeam team : scoreboard.getTeams())
@@ -296,25 +319,15 @@ public class UHCHandler {
 		Entity entity = event.getEntity();
 		World world = entity.world;
 		ItemStack stack = event.getEntityItem().getItem();
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
-		
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+
 		if(!saveData.isUhcOnGoing())
 		{
-			if(stack.getItem() == ModItems.uhc_book)
+			if(stack.isItemEqual(new ItemStack(ModItems.uhc_book)))
+			{
 				event.setCanceled(true);
-		}
-	}
-	
-	public void stopThrowing(ItemTossEvent event, ItemStack stack, ItemStack stack2) {
-		if(stack2.getItem() instanceof ItemMapBase)
-		{
-			if(stack.getItem() instanceof ItemMapBase)
-				event.setCanceled(true);
-		}
-		else
-		{
-			if(stack.isItemEqualIgnoreDurability(stack2))
-				event.setCanceled(true);
+				event.setResult(Result.DENY);
+			}
 		}
 	}
 	
@@ -323,35 +336,14 @@ public class UHCHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
 			if(saveData.isSpawnRoom() && !saveData.isUhcOnGoing()) {
 				double centerX1 = saveData.getBorderCenterX() -7;
 				double centerX2 = saveData.getBorderCenterX() +7;
 				double centerZ1 = saveData.getBorderCenterZ() -7;
 				double centerZ2 = saveData.getBorderCenterZ() +7;
-				
-				AxisAlignedBB hitbox = new AxisAlignedBB(centerX1 - 0.5f, 248 - 0.5f, centerZ1 - 0.5f, centerX2 + 0.5f, 260 + 0.5f, centerZ2 + 0.5f);
-				ArrayList<EntityPlayer> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayer.class, hitbox));
-
-				MinecraftServer server = world.getMinecraftServer();
-				ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
-				
-				for(EntityPlayerMP player : playerList)
-				{
-					if(!collidingList.contains(player) && !player.isCreative() && !player.isSpectator())
-					{
-						if(player.dimension == saveData.getSpawnRoomDimension())
-						{
-				            ((EntityPlayerMP)player).connection.setPlayerLocation(saveData.getBorderCenterX(), 252, saveData.getBorderCenterZ(), player.rotationYaw, player.rotationPitch);
-						}
-						else if(player.dimension != saveData.getSpawnRoomDimension())
-						{
-							player.changeDimension(saveData.getSpawnRoomDimension(), new UHCTeleporter(player.getPosition()));
-						}
-					}
-				}
-				
+								
 				for(double i = centerX1; i <= centerX2; i++)
 				{
 					double d0 = world.rand.nextGaussian() * 0.02D;
@@ -389,13 +381,45 @@ public class UHCHandler {
 	}
 	
 	@SubscribeEvent
+	public void SpawnRoomPlayerEvent(TickEvent.PlayerTickEvent event){
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		{
+			EntityPlayer player = event.player;
+			World world = player.world;
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			
+			if(saveData.isSpawnRoom() && !saveData.isUhcOnGoing()) {
+				double centerX1 = saveData.getBorderCenterX() -7;
+				double centerX2 = saveData.getBorderCenterX() +7;
+				double centerZ1 = saveData.getBorderCenterZ() -7;
+				double centerZ2 = saveData.getBorderCenterZ() +7;
+				
+				AxisAlignedBB hitbox = new AxisAlignedBB(centerX1 - 0.5f, 248 - 0.5f, centerZ1 - 0.5f, centerX2 + 0.5f, 260 + 0.5f, centerZ2 + 0.5f);
+				ArrayList<EntityPlayer> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayer.class, hitbox));
+				
+				if(!collidingList.contains(player) && !player.isCreative() && !player.isSpectator())
+				{
+					if(player.dimension == saveData.getSpawnRoomDimension())
+					{
+			            ((EntityPlayerMP)player).connection.setPlayerLocation(saveData.getBorderCenterX(), 252, saveData.getBorderCenterZ(), player.rotationYaw, player.rotationPitch);
+					}
+					else if(player.dimension != saveData.getSpawnRoomDimension())
+					{
+						player.changeDimension(saveData.getSpawnRoomDimension(), new UHCTeleporter(player.getPosition()));
+					}
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
     public void playerEditUHCEvent(PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			EntityPlayer player = event.player;
 			NBTTagCompound entityData = player.getEntityData();
 			World world = player.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
 			if(!world.isRemote)
 			{
@@ -436,7 +460,7 @@ public class UHCHandler {
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			World world = player.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			if(!world.isRemote)
 			{
 				if(saveData.isUhcOnGoing())
@@ -516,7 +540,7 @@ public class UHCHandler {
 			MinecraftServer server = world.getMinecraftServer();
 			Scoreboard scoreboard = world.getScoreboard();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			
 			if(saveData.isUhcOnGoing())
 			{
@@ -529,7 +553,7 @@ public class UHCHandler {
 	{
 		if(!world.isRemote)
 		{
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			String teamName = team.getDisplayName();
 			for(EntityPlayer player : playerList)
 			{
@@ -542,7 +566,7 @@ public class UHCHandler {
 	{
 		if(!world.isRemote)
 		{
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			for(EntityPlayer player : playerList)
 			{
 				player.sendMessage(new TextComponentTranslation("uhc.team.won", new Object[] {TextFormatting.YELLOW + user}));
@@ -557,7 +581,7 @@ public class UHCHandler {
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			World world = event.getWorld();
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
 			ModPackethandler.INSTANCE.sendTo(new UHCPacketMessage(saveData), (EntityPlayerMP) player);
 		}

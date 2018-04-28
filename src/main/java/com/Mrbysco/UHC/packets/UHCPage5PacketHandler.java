@@ -11,6 +11,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -21,7 +22,7 @@ public class UHCPage5PacketHandler implements IMessageHandler<UHCPage5Packet, IM
 	public IMessage onMessage(UHCPage5Packet message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
 		World world = serverPlayer.getServerWorld();
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 		NBTTagCompound playerData = serverPlayer.getEntityData();
 		MinecraftServer server = world.getMinecraftServer();
 		WorldServer wServer = server.getWorld(0);

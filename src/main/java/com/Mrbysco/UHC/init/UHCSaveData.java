@@ -685,6 +685,7 @@ public class UHCSaveData extends WorldSavedData{
 	public void setUHCDimension(int uHCDimension) {
 		UHCDimension = uHCDimension;
 	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcStarting = nbt.getBoolean("uhcStarting");

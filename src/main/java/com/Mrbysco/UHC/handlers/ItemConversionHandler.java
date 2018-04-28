@@ -16,6 +16,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -25,34 +26,13 @@ public class ItemConversionHandler {
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
-		{			
+		{
 			EntityPlayer player = (EntityPlayer) event.player;
 			World world = player.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			ArrayList<Entity> entityList = new ArrayList<>(world.getLoadedEntityList());
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			
 			if (!saveData.isNotchApples())
 			{
-				for (Entity entity : entityList)
-				{
-					if(entity instanceof EntityItem)
-					{
-						EntityItem item = (EntityItem)entity;
-						ItemStack dropStack = item.getItem();
-						
-						if(!dropStack.isEmpty() && dropStack.getItem() == Items.GOLDEN_APPLE && dropStack.getMetadata() == 1)
-			            {
-			                ItemStack gold_block = new ItemStack(Blocks.GOLD_BLOCK, (8 * dropStack.getCount()));
-			                ItemStack apple = new ItemStack(Items.APPLE, (1 * dropStack.getCount()));
-			                
-			                EntityItem item1 = new EntityItem(world, item.posX, item.posY, item.posZ, gold_block);
-			                EntityItem item2 = new EntityItem(world, item.posX, item.posY, item.posZ, apple);
-			                world.removeEntity(item);
-			                world.spawnEntity(item1);
-							world.spawnEntity(item2);
-			            }   
-					}
-				}
 				for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
 		        {
 					ItemStack findStack = player.inventory.getStackInSlot(i);
@@ -75,23 +55,6 @@ public class ItemConversionHandler {
 			
 			if (!saveData.isLevel2Potions())
 			{
-				for (Entity entity : entityList)
-				{
-					if(entity instanceof EntityItem)
-					{
-						EntityItem item = (EntityItem)entity;
-						ItemStack dropStack = item.getItem();
-						
-						if(!dropStack.isEmpty() && dropStack.getItem() == Items.GLOWSTONE_DUST)
-			            {
-			                ItemStack glowstoneBlock = new ItemStack(Blocks.GLOWSTONE, (1 * dropStack.getCount()));
-			                
-			                EntityItem item1 = new EntityItem(world, item.posX, item.posY, item.posZ, glowstoneBlock);
-			                world.removeEntity(item);
-			                world.spawnEntity(item1);
-			            }   
-					}
-				}
 				for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
 		        {
 					ItemStack findStack = player.inventory.getStackInSlot(i);
@@ -112,23 +75,6 @@ public class ItemConversionHandler {
 			
 			if (!saveData.isRegenPotions())
 			{
-				for (Entity entity : entityList)
-				{
-					if(entity instanceof EntityItem)
-					{
-						EntityItem item = (EntityItem)entity;
-						ItemStack dropStack = item.getItem();
-						
-						if(!dropStack.isEmpty() && dropStack.getItem() == Items.GHAST_TEAR)
-			            {
-			                ItemStack goldIngot = new ItemStack(Items.GOLD_INGOT, (1 * dropStack.getCount()));
-			                
-			                EntityItem item1 = new EntityItem(world, item.posX, item.posY, item.posZ, goldIngot);
-			                world.removeEntity(item);
-			                world.spawnEntity(item1);
-			            }   
-					}
-				}
 				for (int i = 0; i < player.inventory.getSizeInventory()-4; ++i)
 				{
 					ItemStack findStack = player.inventory.getStackInSlot(i);
@@ -171,7 +117,89 @@ public class ItemConversionHandler {
 							player.inventory.removeStackFromSlot(i);
 			            }
 			        }
-					
+				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void onWorldTick(TickEvent.WorldTickEvent event) {
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		{			
+			World world = event.world;
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			ArrayList<Entity> entityList = new ArrayList<>(world.getLoadedEntityList());
+			
+			if (!saveData.isNotchApples())
+			{
+				for (Entity entity : entityList)
+				{
+					if(entity instanceof EntityItem)
+					{
+						EntityItem item = (EntityItem)entity;
+						ItemStack dropStack = item.getItem();
+						
+						if(!dropStack.isEmpty() && dropStack.getItem() == Items.GOLDEN_APPLE && dropStack.getMetadata() == 1)
+			            {
+			                ItemStack gold_block = new ItemStack(Blocks.GOLD_BLOCK, (8 * dropStack.getCount()));
+			                ItemStack apple = new ItemStack(Items.APPLE, (1 * dropStack.getCount()));
+			                
+			                EntityItem item1 = new EntityItem(world, item.posX, item.posY, item.posZ, gold_block);
+			                EntityItem item2 = new EntityItem(world, item.posX, item.posY, item.posZ, apple);
+			                world.removeEntity(item);
+			                world.spawnEntity(item1);
+							world.spawnEntity(item2);
+			            }   
+					}
+				}
+			}
+			
+			if (!saveData.isLevel2Potions())
+			{
+				for (Entity entity : entityList)
+				{
+					if(entity instanceof EntityItem)
+					{
+						EntityItem item = (EntityItem)entity;
+						ItemStack dropStack = item.getItem();
+						
+						if(!dropStack.isEmpty() && dropStack.getItem() == Items.GLOWSTONE_DUST)
+			            {
+			                ItemStack glowstoneBlock = new ItemStack(Blocks.GLOWSTONE, (1 * dropStack.getCount()));
+			                
+			                EntityItem item1 = new EntityItem(world, item.posX, item.posY, item.posZ, glowstoneBlock);
+			                world.removeEntity(item);
+			                world.spawnEntity(item1);
+			            }   
+					}
+				}
+			}
+			
+			if (!saveData.isRegenPotions())
+			{
+				for (Entity entity : entityList)
+				{
+					if(entity instanceof EntityItem)
+					{
+						EntityItem item = (EntityItem)entity;
+						ItemStack dropStack = item.getItem();
+						
+						if(!dropStack.isEmpty() && dropStack.getItem() == Items.GHAST_TEAR)
+			            {
+			                ItemStack goldIngot = new ItemStack(Items.GOLD_INGOT, (1 * dropStack.getCount()));
+			                
+			                EntityItem item1 = new EntityItem(world, item.posX, item.posY, item.posZ, goldIngot);
+			                world.removeEntity(item);
+			                world.spawnEntity(item1);
+			            }   
+					}
+				}
+			}
+			
+			if (saveData.isItemConversion())
+			{
+				for (ItemConversionInfo info : ConversionList.conversionList)
+				{
 					for (Entity entity : entityList)
 					{
 						if(entity instanceof EntityItem)
@@ -225,7 +253,7 @@ public class ItemConversionHandler {
 		BlockPos pos = event.getEntity().getPosition();
 		Random rand = world.rand;
 		List<EntityItem> drops = event.getDrops();
-		UHCSaveData saveData = UHCSaveData.getForWorld(world);
+		UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
 		if(saveData.isAutoCook() && !world.isRemote)
 		{

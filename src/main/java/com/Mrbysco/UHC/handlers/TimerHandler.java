@@ -8,6 +8,7 @@ import com.Mrbysco.UHC.init.UHCTimerData;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -23,8 +24,8 @@ public class TimerHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(world);
-			UHCTimerData timerData = UHCTimerData.getForWorld(world);
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
 			MinecraftServer server = world.getMinecraftServer();
 			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			

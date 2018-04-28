@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -25,6 +24,7 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -52,7 +52,7 @@ public class UHCStartPacket implements IMessage{
 		
 		private void handle(UHCStartPacket message, MessageContext ctx) {
 			EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
-			UHCSaveData saveData = UHCSaveData.getForWorld(serverPlayer.getServerWorld());
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 			WorldServer world = serverPlayer.getServerWorld();
 			WorldBorder border = world.getWorldBorder();
 			MinecraftServer server = world.getMinecraftServer();
@@ -93,7 +93,6 @@ public class UHCStartPacket implements IMessage{
 				
 				if(saveData.isRandomSpawns())
 				{
-					System.out.println(soloPlayers.toString());
 					try {
 						SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
 					} catch (CommandException e) {
@@ -135,6 +134,9 @@ public class UHCStartPacket implements IMessage{
 					
 					if(player.isCreative())
 						player.setGameType(GameType.SURVIVAL);
+					
+					if (player.getActivePotionEffect(MobEffects.GLOWING) != null)
+						player.removeActivePotionEffect(MobEffects.GLOWING);
 				}
 				
 				if(saveData.isSpawnRoom())
@@ -159,18 +161,6 @@ public class UHCStartPacket implements IMessage{
 					saveData.markDirty();
 				}
 				
-				for(EntityPlayerMP player : playerList)
-				{							
-					player.inventory.clear();
-					
-					if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
-						player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
-					
-					if(player.isGlowing())
-						player.setGlowing(false);
-				}
-				
-				saveData.setUHCDimension(serverPlayer.world.provider.getDimension());
 				saveData.setUhcStarting(true);
 				saveData.markDirty();
 			}

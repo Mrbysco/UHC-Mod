@@ -38,8 +38,8 @@ public class AutoCookHandler {
 					{
 						 if(drop.isItemEqual(info.getInput()))
 						 {
-							 ItemStack stack = info.getResult();
-							 stack.setCount(stack.getCount() * drop.getCount());
+							 ItemStack stack = info.getResult().copy();
+							 stack.setCount(stack.getCount() * info.getResult().copy().getCount());
 							 
 							 float xpAmount = info.getExperience() * drop.getCount();
 							 while (xpAmount > 0)

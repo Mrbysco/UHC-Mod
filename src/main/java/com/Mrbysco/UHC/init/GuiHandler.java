@@ -7,6 +7,7 @@ import com.Mrbysco.UHC.packets.UHCPacketMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
@@ -17,7 +18,10 @@ public class GuiHandler implements IGuiHandler {
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if(ID == GUI_UHC_BOOK)
 		{
-			ModPackethandler.INSTANCE.sendTo(new UHCPacketMessage(UHCSaveData.getForWorld(world)), (EntityPlayerMP) player);
+			if(DimensionManager.getWorld(0) != null)
+			{
+				ModPackethandler.INSTANCE.sendTo(new UHCPacketMessage(UHCSaveData.getForWorld(DimensionManager.getWorld(0))), (EntityPlayerMP) player);
+			}
 		}
 		
 		return null;

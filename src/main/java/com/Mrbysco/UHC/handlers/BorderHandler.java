@@ -41,22 +41,22 @@ public class BorderHandler {
 				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
 	    		WorldBorder border = world.getWorldBorder();
 	    		
-	    		if(saveData.getOriginalBorderCenterX() == -1)
+	    		if(saveData.getOriginalBorderCenterX() == Integer.MAX_VALUE)
 				{
 					double originalX = border.getCenterX();
 					saveData.setOriginalBorderCenterX(originalX);
 					saveData.markDirty();
 				}
-				if(saveData.getOriginalBorderCenterZ() == -1)
+				if(saveData.getOriginalBorderCenterZ() == Integer.MAX_VALUE)
 				{
 					double originalZ = border.getCenterZ();
 					saveData.setOriginalBorderCenterZ(originalZ);
 					saveData.markDirty();
 				}
 				
-				if(saveData.getBorderCenterX() == -1)
+				if(saveData.getBorderCenterX() == Integer.MAX_VALUE)
 				{
-					if(saveData.getOriginalBorderCenterX() != -1)
+					if(saveData.getOriginalBorderCenterX() != Integer.MAX_VALUE)
 					{
 						double originalX = saveData.getOriginalBorderCenterX();
 						saveData.setBorderCenterX(originalX);
@@ -69,9 +69,9 @@ public class BorderHandler {
 						saveData.markDirty();
 					}
 				}
-				if(saveData.getBorderCenterZ() == -1)
+				if(saveData.getBorderCenterZ() == Integer.MAX_VALUE)
 				{
-					if(saveData.getOriginalBorderCenterX() != -1)
+					if(saveData.getOriginalBorderCenterX() != Integer.MAX_VALUE)
 					{
 						double originalZ = saveData.getOriginalBorderCenterZ();
 						saveData.setBorderCenterZ(originalZ);

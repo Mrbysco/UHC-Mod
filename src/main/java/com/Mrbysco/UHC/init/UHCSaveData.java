@@ -98,10 +98,10 @@ public class UHCSaveData extends WorldSavedData{
 		this.difficulty = 3;
 		
 		this.borderSize = 2048;
-		this.borderCenterX = -1;
-		this.borderCenterZ = -1;
-		this.originalBorderCenterX = -1;
-		this.originalBorderCenterZ = -1;
+		this.borderCenterX = Integer.MAX_VALUE;
+		this.borderCenterZ = Integer.MAX_VALUE;
+		this.originalBorderCenterX = Integer.MAX_VALUE;
+		this.originalBorderCenterZ = Integer.MAX_VALUE;
 		
 		this.shrinkEnabled = false;
 		this.shrinkTimer = 60;
@@ -165,10 +165,10 @@ public class UHCSaveData extends WorldSavedData{
 		this.difficulty = 3;
 		
 		this.borderSize = 2048;
-		this.borderCenterX = -1;
-		this.borderCenterZ = -1;
-		this.originalBorderCenterX = -1;
-		this.originalBorderCenterZ = -1;
+		this.borderCenterX = Integer.MAX_VALUE;
+		this.borderCenterZ = Integer.MAX_VALUE;
+		this.originalBorderCenterX = Integer.MAX_VALUE;
+		this.originalBorderCenterZ = Integer.MAX_VALUE;
 		
 		this.shrinkEnabled = false;
 		this.shrinkTimer = 60;
@@ -230,8 +230,8 @@ public class UHCSaveData extends WorldSavedData{
 		this.difficulty = 3;
 		
 		this.borderSize = 2048;
-		this.borderCenterX = -1;
-		this.borderCenterZ = -1;
+		this.borderCenterX = Integer.MAX_VALUE;
+		this.borderCenterZ = Integer.MAX_VALUE;
 		
 		this.shrinkEnabled = false;
 		this.shrinkTimer = 60;

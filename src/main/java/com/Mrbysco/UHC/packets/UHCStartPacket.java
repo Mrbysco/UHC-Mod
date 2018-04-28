@@ -88,7 +88,7 @@ public class UHCStartPacket implements IMessage{
 					double spreadMaxRange = saveData.getSpreadMaxRange();
 					
 					if(spreadMaxRange >= (BorderSize / 2))
-						spreadMaxRange = (spreadMaxRange / 2);
+						spreadMaxRange = (BorderSize / 2);
 					
 					world.setWorldTime(0);
 					info.setRaining(false);

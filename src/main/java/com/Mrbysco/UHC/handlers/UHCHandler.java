@@ -181,7 +181,7 @@ public class UHCHandler {
 						
 						if(player.inventory.hasItemStack(new ItemStack(ModItems.uhc_book)))
 						{
-							int bookSlot = player.inventory.getSlotFor(new ItemStack(ModItems.uhc_book));
+							int bookSlot = player.inventory.findSlotMatchingUnusedItem(new ItemStack(ModItems.uhc_book));
 							if(bookSlot != -1)
 								player.inventory.removeStackFromSlot(bookSlot);
 						}

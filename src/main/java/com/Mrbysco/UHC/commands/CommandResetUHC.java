@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -67,13 +68,24 @@ public class CommandResetUHC extends CommandBase
 
 			Scoreboard scoreboard = world.getScoreboard();
 			
+			for(ScorePlayerTeam team : scoreboard.getTeams())
+			{
+				if(team.getMembershipCollection().size() > 0 && team != scoreboard.getTeam("spectator"))
+				{
+					for(String players : team.getMembershipCollection())
+					{
+						scoreboard.removePlayerFromTeam(players, team);
+					}
+				}
+			}
+			
 			for(EntityPlayerMP player : playerList)
 			{
 				player.inventory.clear();
 				player.heal(100);
 				
 				if(player.getTeam() != null)
-					scoreboard.removePlayerFromTeams(player.getName());		
+					scoreboard.addPlayerToTeam(player.getName(), "spectator");
 			}
 			
 			double centerX = saveData.getBorderCenterX();

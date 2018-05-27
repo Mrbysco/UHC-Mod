@@ -70,6 +70,8 @@ public class UHCStartPacket implements IMessage{
 					
 					for (EntityPlayer player : playerList)
 					{
+						if(player.getTeam() == scoreboard.getTeam("spectator"))
+							player.setGameType(GameType.SPECTATOR);
 						if(player.getTeam() == null)
 							scoreboard.addPlayerToTeam(player.getName(), "solo");
 						if(player.getTeam() != scoreboard.getTeam("solo"))
@@ -84,7 +86,8 @@ public class UHCStartPacket implements IMessage{
 						border.setCenter(centerX, centerZ);
 					
 					int BorderSize = saveData.getBorderSize();
-					border.setTransition(BorderSize);
+					server.commandManager.executeCommand(ctx.getServerHandler().player, "/worldborder set " + BorderSize);
+					//border.setTransition(BorderSize);
 					
 					double spreadDistance = saveData.getSpreadDistance();
 					double spreadMaxRange = saveData.getSpreadMaxRange();

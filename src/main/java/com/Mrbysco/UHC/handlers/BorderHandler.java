@@ -112,7 +112,9 @@ public class BorderHandler {
 						
 						if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
 						{
-							border.setTransition(oldSize, newSize, shrinkTimeSec);
+							server.commandManager.executeCommand(server, "/worldborder set " + newSize + " " + shrinkTimeSec);
+
+							//border.setTransition(oldSize, newSize, shrinkTimeSec);
 							for(EntityPlayerMP player : playerList)
 							{
 								SPacketTitle spackettitle1 = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentTranslation("message.border.moving"));
@@ -131,8 +133,9 @@ public class BorderHandler {
 								e.printStackTrace();
 							}
 							
-							border.setSize(newSize);
-							
+							//border.setSize(newSize);
+							server.commandManager.executeCommand(server, "/worldborder set " + newSize);
+
 							saveData.setShrinkApplied(true);
 							saveData.markDirty();
 						}
@@ -185,8 +188,9 @@ public class BorderHandler {
 											players.sendStatusMessage(new TextComponentTranslation("book.uhc.shrink.control", new Object[] {player.getName()}), true);
 									}
 									
-									int size = border.getSize();
-									border.setSize(size - 1);
+									int controlSize = border.getSize() - 1;
+									//border.setSize(controlSize);
+									server.commandManager.executeCommand(server, "/worldborder set " + controlSize);
 									
 									controlTimer = 0;
 								}

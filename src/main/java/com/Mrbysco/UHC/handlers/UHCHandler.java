@@ -11,6 +11,7 @@ import com.Mrbysco.UHC.lists.SpawnItemList;
 import com.Mrbysco.UHC.lists.info.SpawnItemInfo;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.packets.UHCPacketMessage;
+import com.Mrbysco.UHC.utils.TimerThing;
 import com.Mrbysco.UHC.utils.UHCTeleporter;
 
 import net.minecraft.entity.Entity;
@@ -43,7 +44,6 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -55,7 +55,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 public class UHCHandler {
 	
 	public int uhcStartTimer;
-
+	public TimerThing milliTime;
+	
+	public UHCHandler() {
+		milliTime = new TimerThing();
+	}
+	
 	@SubscribeEvent
 	public void UHCStartEventWorld(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
@@ -71,64 +76,67 @@ public class UHCHandler {
 				{
 					if(saveData.isUhcStarting())
 					{
-						if(timerData.getUhcStartTimer() != this.uhcStartTimer)
+						if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
 						{
-							this.uhcStartTimer = timerData.getUhcStartTimer();
-						}
-						
-						if(timerData.getUhcStartTimer() == 40 || timerData.getUhcStartTimer() == 60 || timerData.getUhcStartTimer() == 80 || 
-							timerData.getUhcStartTimer() == 100 || timerData.getUhcStartTimer() == 120 || timerData.getUhcStartTimer() == 140)
-						{
-							if(timerData.getUhcStartTimer() == 40)
+							milliTime.setMilliTimeToCurrent();
+							
+							if(timerData.getUhcStartTimer() != this.uhcStartTimer)
 							{
-								sendMessage(playerList, new TextComponentTranslation("uhc.start.5"));
-								++this.uhcStartTimer;
-								timerData.setUhcStartTimer(this.uhcStartTimer);
-								timerData.markDirty();
+								this.uhcStartTimer = timerData.getUhcStartTimer();
 							}
-							else if(timerData.getUhcStartTimer() == 60)
+							
+							if(timerData.getUhcStartTimer() == 2 || timerData.getUhcStartTimer() == 3 || timerData.getUhcStartTimer() == 4 || 
+								timerData.getUhcStartTimer() == 5 || timerData.getUhcStartTimer() == 6 || timerData.getUhcStartTimer() == 7)
 							{
-								sendMessage(playerList, new TextComponentTranslation("uhc.start.4"));
-								++this.uhcStartTimer;
-								timerData.setUhcStartTimer(this.uhcStartTimer);
-								timerData.markDirty();
-							}
-							else if(timerData.getUhcStartTimer() == 80)
-							{
-								sendMessage(playerList, new TextComponentTranslation("uhc.start.3"));
-								++this.uhcStartTimer;
-								timerData.setUhcStartTimer(this.uhcStartTimer);
-								timerData.markDirty();
-							}
-							else if(timerData.getUhcStartTimer() == 100)
-							{
-								sendMessage(playerList, new TextComponentTranslation("uhc.start.2"));
-								++this.uhcStartTimer;
-								timerData.setUhcStartTimer(this.uhcStartTimer);
-								timerData.markDirty();
-							}
-							else if(timerData.getUhcStartTimer() == 120)
-							{
-								sendMessage(playerList, new TextComponentTranslation("uhc.start.1"));
-								++this.uhcStartTimer;
-								timerData.setUhcStartTimer(this.uhcStartTimer);
-								timerData.markDirty();
-							}
-							else if(timerData.getUhcStartTimer() == 140)
-							{
-								sendMessage(playerList, new TextComponentTranslation("uhc.start"));
+								if(timerData.getUhcStartTimer() == 2)
+								{
+									sendMessage(playerList, new TextComponentTranslation("uhc.start.5"));
+									++this.uhcStartTimer;
+									timerData.setUhcStartTimer(this.uhcStartTimer);
+									timerData.markDirty();
+								}
+								else if(timerData.getUhcStartTimer() == 3)
+								{
+									sendMessage(playerList, new TextComponentTranslation("uhc.start.4"));
+									++this.uhcStartTimer;
+									timerData.setUhcStartTimer(this.uhcStartTimer);
+									timerData.markDirty();
+								}
+								else if(timerData.getUhcStartTimer() == 4)
+								{
+									sendMessage(playerList, new TextComponentTranslation("uhc.start.3"));
+									++this.uhcStartTimer;
+									timerData.setUhcStartTimer(this.uhcStartTimer);
+									timerData.markDirty();
+								}
+								else if(timerData.getUhcStartTimer() == 5)
+								{
+									sendMessage(playerList, new TextComponentTranslation("uhc.start.2"));
+									++this.uhcStartTimer;
+									timerData.setUhcStartTimer(this.uhcStartTimer);
+									timerData.markDirty();
+								}
+								else if(timerData.getUhcStartTimer() == 6)
+								{
+									sendMessage(playerList, new TextComponentTranslation("uhc.start.1"));
+									++this.uhcStartTimer;
+									timerData.setUhcStartTimer(this.uhcStartTimer);
+									timerData.markDirty();
+								}
+								else if(timerData.getUhcStartTimer() == 7)
+								{
+									sendMessage(playerList, new TextComponentTranslation("uhc.start"));
 
-								saveData.setUhcStarting(false);
-								timerData.setUhcStartTimer(0);
-								saveData.setUhcOnGoing(true);
-								saveData.markDirty();
+									timerData.setUhcStartTimer(0);
+									saveData.markDirty();
+								}
 							}
-						}
-						else
-						{
-							++this.uhcStartTimer;
-							timerData.setUhcStartTimer(this.uhcStartTimer);
-							timerData.markDirty();
+							else
+							{
+								++this.uhcStartTimer;
+								timerData.setUhcStartTimer(this.uhcStartTimer);
+								timerData.markDirty();
+							}
 						}
 					}
 					else
@@ -138,6 +146,8 @@ public class UHCHandler {
 							timerData.setUhcStartTimer(0);
 							timerData.markDirty();
 						}
+
+						milliTime.setMilliTimeToCurrent();
 					}
 				}
 			}
@@ -153,10 +163,14 @@ public class UHCHandler {
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-				
+				NBTTagCompound entityData = player.getEntityData();
+
 				if(saveData.isUhcStarting())
-				{
-					if(this.uhcStartTimer == 140)
+				{					
+					if (!entityData.hasKey("startFatigue"))
+						entityData.setBoolean("startFatigue", true);
+					
+					if(this.uhcStartTimer == 7)
 					{
 						if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)
 						{
@@ -175,6 +189,13 @@ public class UHCHandler {
 						}
 						
 						player.clearActivePotions();
+						entityData.setBoolean("startFatigue", false);
+
+						if(player.getActivePotionEffects().size() > 0)
+							player.clearActivePotions();
+
+						saveData.setUhcStarting(false);
+						saveData.setUhcOnGoing(true);
 					}
 					else
 					{
@@ -193,6 +214,18 @@ public class UHCHandler {
 						
 						if (!player.inventory.getStackInSlot(39).isEmpty())
 							player.inventory.removeStackFromSlot(39);
+					}
+				}
+				if(saveData.isUhcOnGoing())
+				{
+					if(entityData.getBoolean("startFatigue") == true)
+					{
+						player.clearActivePotions();
+
+						if(player.getActivePotionEffects().size() > 0)
+							player.clearActivePotions();
+
+						entityData.setBoolean("startFatigue", false);
 					}
 				}
 			}
@@ -269,6 +302,20 @@ public class UHCHandler {
 					if(player.getActivePotionEffect(MobEffects.RESISTANCE) == null)
 						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 32767 * 20, 10, true, false));
 				}
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void checkWinner(TickEvent.WorldTickEvent event) 
+	{
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		{
+			World world = event.world;
+		
+			if(DimensionManager.getWorld(0) != null)
+			{
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				
 				if(saveData.isUhcOnGoing() && !saveData.isUhcIsFinished())
 				{
@@ -291,7 +338,7 @@ public class UHCHandler {
 					{
 						for(ScorePlayerTeam team : teamsAlive)
 						{
-							if(team.getMembershipCollection().size() < 1 && team != null)
+							if(team.getMembershipCollection().size() == 0 && team != null)
 							{
 								teamsAlive.remove(team);
 							}
@@ -326,8 +373,8 @@ public class UHCHandler {
 										for(String players : teamsAlive.get(0).getMembershipCollection())
 										{
 											EntityPlayer teamPlayer = world.getPlayerEntityByName(players);
-											EntityFireworkRocket rocket = new EntityFireworkRocket(world, player.posX, player.posY + 3, player.posZ, getFirework(world.rand));
-											player.world.spawnEntity(rocket);
+											EntityFireworkRocket rocket = new EntityFireworkRocket(world, teamPlayer.posX, teamPlayer.posY + 3, teamPlayer.posZ, getFirework(world.rand));
+											world.spawnEntity(rocket);
 										}
 									}
 									saveData.setUhcIsFinished(true);
@@ -339,7 +386,6 @@ public class UHCHandler {
 			}
 		}
 	}
-	
 	@SubscribeEvent
 	public void throwEvent(ItemTossEvent event)
 	{
@@ -465,11 +511,11 @@ public class UHCHandler {
 				if (!entityData.hasKey("canEditUHC"))
 					entityData.setBoolean("canEditUHC", false);
 				
-				if(entityData.getBoolean("canEditUHC") == false)
-				{
-					if (player.canUseCommand(2, ""))
-						entityData.setBoolean("canEditUHC", true);
-				}
+				if(entityData.getBoolean("canEditUHC") == false && player.canUseCommand(2, ""))
+					entityData.setBoolean("canEditUHC", true);
+				
+				if(entityData.getBoolean("canEditUHC") == true && !player.canUseCommand(2, ""))
+					entityData.setBoolean("canEditUHC", false);
 			}
 		}
 	}	
@@ -508,30 +554,6 @@ public class UHCHandler {
 					{
 						if(event.getDimension() == -1)
 							event.setCanceled(true);
-					}
-				}
-			}
-		}
-	}
-	
-	@SubscribeEvent
-	public void onPlayerGivePermission(LivingHurtEvent event) {
-		if (event.getEntityLiving() instanceof EntityPlayer) {
-			Entity source = event.getSource().getTrueSource();
-			EntityPlayer player = (EntityPlayer) event.getEntityLiving();
-			World world = player.world;
-			NBTTagCompound entityData = player.getEntityData();
-			
-			if(source instanceof EntityPlayer && !world.isRemote)
-			{
-				EntityPlayer sourcePlayer = (EntityPlayer) source;
-				if (sourcePlayer.canUseCommand(2, "")) {
-					if(!player.canUseCommand(2, ""))
-					{
-						if(entityData.getBoolean("canEditUHC"))
-							entityData.setBoolean("canEditUHC", false);
-						else
-							entityData.setBoolean("canEditUHC", true);
 					}
 				}
 			}

@@ -177,5 +177,5 @@ uhc.start.2=§e2§r
 uhc.start.1=§e1§r
 uhc.start=§eGO!§r
 
-uhc.player.won=§6Team §r%s§6 has won the UHC!§r
-uhc.team.won=§6Player §r%s§6 has won the UHC on their own!§r
+uhc.team.won=§6Team §r%s§6 has won the UHC!§r
+uhc.player.won=%s§6 has won the UHC on their own!§r

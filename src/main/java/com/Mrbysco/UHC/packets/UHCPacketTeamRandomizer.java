@@ -85,12 +85,14 @@ public class UHCPacketTeamRandomizer implements IMessage
 							if(tempList.size() != 0)
 							{
 								EntityPlayer player = tempList.get(0);
+								System.out.println(TeamUtil.getTeamNameFromInt(i+1));
+
 								scoreboard.addPlayerToTeam(player.getName(), TeamUtil.getTeamNameFromInt(i+1));
-								
 								for(EntityPlayerMP players : playerList)
 								{
-									ScorePlayerTeam team = scoreboard.getTeam(TeamUtil.getTeamNameFromInt(i+1).replaceAll("_", " "));
-									players.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), team.getColor() + team.getName()}));
+									ScorePlayerTeam team = scoreboard.getTeam(TeamUtil.getTeamNameFromInt(i+1));
+									if(team != null)
+										players.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), team.getColor() + team.getName().replaceAll("_", " ")}));
 								}
 								tempList.remove(0);
 							}

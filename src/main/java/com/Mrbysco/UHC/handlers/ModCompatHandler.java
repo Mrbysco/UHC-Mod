@@ -7,6 +7,7 @@ import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
 import com.Mrbysco.UHC.lists.RespawnList;
 import com.Mrbysco.UHC.lists.info.RespawnInfo;
+import com.Mrbysco.UHC.utils.TimerThing;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -27,6 +28,11 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import twilightforest.block.BlockTFBossSpawner;
 
 public class ModCompatHandler {
+	public TimerThing milliTime;
+	
+	public ModCompatHandler() {
+		milliTime = new TimerThing();
+	}
 	
 	@Optional.Method(modid = "twilightforest")
 	@SubscribeEvent
@@ -104,8 +110,13 @@ public class ModCompatHandler {
 									}
 								}
 							}
-							if(info.timer > 0)
-							       info.timer--;
+							if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
+							{
+								milliTime.setMilliTimeToCurrent();
+								
+								if(info.timer > 0)
+								       info.timer--;
+							}
 						}
 					}
 				}

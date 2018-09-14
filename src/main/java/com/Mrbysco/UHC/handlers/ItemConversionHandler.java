@@ -263,7 +263,7 @@ public class ItemConversionHandler {
 		{
 			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
-			if(saveData.isAutoCook() && !world.isRemote)
+			if(saveData.isItemConversion() && !world.isRemote)
 			{
 				for(EntityItem drop : drops)
 				{

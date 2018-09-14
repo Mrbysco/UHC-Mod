@@ -1,10 +1,13 @@
 package com.Mrbysco.UHC.handlers;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
+import com.Mrbysco.UHC.UltraHardCoremod;
 import com.Mrbysco.UHC.config.UltraHardCoremodConfigGen;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
+import com.Mrbysco.UHC.lists.EntityDataChangeList;
 import com.Mrbysco.UHC.lists.RespawnList;
 import com.Mrbysco.UHC.lists.info.RespawnInfo;
 import com.Mrbysco.UHC.utils.TimerThing;
@@ -13,15 +16,20 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -98,29 +106,89 @@ public class ModCompatHandler {
 											return;
 										else
 										{
-											if(info.timer == 0 && !info.isBossExists() && !info.isSpawnerExists())
+											if(info.getTimer() == 0 && !info.isBossExists() && !info.isSpawnerExists())
 											{
 												info.teamsReached.add(team);
 												
 												world.setBlockState(pos, state);
 												info.setBossExists(true);
-												info.timer = respawnTime;
+												info.setTimer(respawnTime);
 											}
 										}
 									}
 								}
 							}
-							if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
+						}
+						
+						if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
+						{
+							milliTime.setMilliTimeToCurrent();
+
+							for (RespawnInfo info : RespawnList.respawnList)
 							{
-								milliTime.setMilliTimeToCurrent();
-								
-								if(info.timer > 0)
-								       info.timer--;
+								if(info.getTimer() > 0)
+								{
+									int timer = info.getTimer();
+									info.setTimer(timer--);
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	@SubscribeEvent
+	public void mobDataChanger(EntityJoinWorldEvent event)
+	{
+		World world = event.getWorld();
+		if(!world.isRemote)
+		{
+			Entity entity = event.getEntity();
+			if(EntityDataChangeList.dataMap != null && !EntityDataChangeList.dataMap.isEmpty())
+			{
+				if(EntityDataChangeList.dataMap.containsKey(entity.getClass()))
+				{
+					NBTTagCompound nbttagcompound = entity.writeToNBT(new NBTTagCompound());
+			        NBTTagCompound nbttagcompound1 = nbttagcompound.copy();
+		            NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+		            
+		            try
+		            {
+		            	String data = EntityDataChangeList.dataMap.get(entity.getClass());
+		            	if(data.startsWith("{") && data.endsWith("}"))
+		            	{
+			                nbttagcompound2 = JsonToNBT.getTagFromJson(data);
+		            	}
+		            	else
+		            	{
+			                nbttagcompound2 = JsonToNBT.getTagFromJson("{" + data + "}");
+		            	}
+		            }
+		            catch (NBTException nbtexception)
+		            {
+		            	UltraHardCoremod.logger.error("nope... " +  nbtexception);
+		            }
+
+		            if(!nbttagcompound2.hasNoTags())
+		            {
+		            	UUID uuid = entity.getUniqueID();
+		                nbttagcompound.merge(nbttagcompound2);
+		                entity.setUniqueId(uuid);
+	                    entity.readFromNBT(nbttagcompound);
+		            }
+				}
+			}
+		}
+	}
+	
+	public ResourceLocation getEntityLocation(String name)
+	{
+		String[] splitResource = name.split(":");
+		if (splitResource.length != 2)
+			return null;
+		else
+			return new ResourceLocation(splitResource[0], splitResource[1]);
 	}
 }

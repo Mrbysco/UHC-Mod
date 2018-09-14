@@ -18,6 +18,7 @@ import com.Mrbysco.UHC.handlers.UHCHandler;
 import com.Mrbysco.UHC.init.GuiHandler;
 import com.Mrbysco.UHC.lists.ConversionList;
 import com.Mrbysco.UHC.lists.CookList;
+import com.Mrbysco.UHC.lists.EntityDataChangeList;
 import com.Mrbysco.UHC.lists.RespawnList;
 import com.Mrbysco.UHC.lists.SpawnItemList;
 import com.Mrbysco.UHC.packets.ModPackethandler;
@@ -89,6 +90,7 @@ public class UltraHardCoremod {
 		SpawnItemList.initializeSpawnItems();
 		
 		RespawnList.initializeRespawnList();
+		EntityDataChangeList.initializeDataChanges();
 		
 		proxy.Init();
     }

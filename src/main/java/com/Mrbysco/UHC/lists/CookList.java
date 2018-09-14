@@ -32,7 +32,7 @@ public class CookList {
 	public static void addAutoCookInfo(ItemStack stack, ItemStack stack2, float experienceAmount)
 	{
 		// Check if the info doesn't already exist
-		autoCook_Info = new AutoCookInfo(stack2, stack2, experienceAmount);
+		autoCook_Info = new AutoCookInfo(stack, stack2, experienceAmount);
 		if(autoCookList.contains(autoCook_Info))
 			return;
 		else

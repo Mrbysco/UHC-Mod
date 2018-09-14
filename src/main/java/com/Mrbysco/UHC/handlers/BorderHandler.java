@@ -8,7 +8,6 @@ import com.Mrbysco.UHC.utils.SpreadPosition;
 import com.Mrbysco.UHC.utils.SpreadUtil;
 
 import net.minecraft.command.CommandException;
-import net.minecraft.command.NumberInvalidException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketTitle;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -104,11 +103,7 @@ public class BorderHandler {
 						int newSize = saveData.getShrinkSize();
 		                long shrinkTimeSec = 0L;
 		                
-						try {
-							shrinkTimeSec = saveData.getShrinkOvertime() > 0 ? parseLong(saveData.getShrinkOvertime(), 0L, 9223372036854775L) * 60 * 1000L : 0L;
-						} catch (NumberInvalidException e1) {
-							e1.printStackTrace();
-						}
+						shrinkTimeSec = saveData.getShrinkOvertime() > 0 ? saveData.getShrinkOvertime() * 60 : 0L;
 						
 						if(shrinkMode.equals("Shrink") && shrinkFlag && !shrinkApplied)
 						{
@@ -205,34 +200,4 @@ public class BorderHandler {
 			}
 		}
 	}
-	
-	public static long parseLong(String input) throws NumberInvalidException
-    {
-        try
-        {
-            return Long.parseLong(input);
-        }
-        catch (NumberFormatException var2)
-        {
-            throw new NumberInvalidException("commands.generic.num.invalid", new Object[] {input});
-        }
-    }
-	
-	public static long parseLong(int input, long min, long max) throws NumberInvalidException
-    {
-        long i = parseLong(String.valueOf(input));
-
-        if (i < min)
-        {
-            throw new NumberInvalidException("commands.generic.num.tooSmall", new Object[] {i, min});
-        }
-        else if (i > max)
-        {
-            throw new NumberInvalidException("commands.generic.num.tooBig", new Object[] {i, max});
-        }
-        else
-        {
-            return i;
-        }
-    }
 }

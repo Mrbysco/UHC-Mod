@@ -168,6 +168,7 @@ public class UHCStartPacket implements IMessage{
 						saveData.markDirty();
 					}
 					
+					saveData.setUHCDimension(serverPlayer.dimension);
 					saveData.setUhcStarting(true);
 					saveData.markDirty();
 				}

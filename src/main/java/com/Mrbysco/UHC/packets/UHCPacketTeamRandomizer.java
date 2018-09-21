@@ -2,9 +2,9 @@ package com.Mrbysco.UHC.packets;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import com.Mrbysco.UHC.init.UHCSaveData;
-import com.Mrbysco.UHC.utils.TeamUtil;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,30 +71,60 @@ public class UHCPacketTeamRandomizer implements IMessage
 						else
 							scoreboard.removePlayerFromTeams(player.getName());
 					}
+					
+					List<ScorePlayerTeam> foundTeams = new ArrayList<ScorePlayerTeam>();
+					for (ScorePlayerTeam team : scoreboard.getTeams())
+					{
+						if(team != scoreboard.getTeam("spectator"))
+						{
+							foundTeams.add(team);
+						}
+					}
+					
+					for(ScorePlayerTeam team : foundTeams)
+					{
+						if(!team.getMembershipCollection().isEmpty())
+						{
+							team.getMembershipCollection().clear();
+							foundTeams.remove(team);
+						}
+					}
 				
 					int randomTeams = saveData.getRandomTeamSize();
+					if(randomTeams > 14)
+					{
+						saveData.setRandomTeamSize(14);
+						saveData.markDirty();
+						randomTeams = 14;
+					}
+					
 					Collections.shuffle(playerList);
 					ArrayList<EntityPlayerMP>tempList = (ArrayList<EntityPlayerMP>) teamPlayers.clone();
 
 					int playerAmount = playerList.size();
 					int amountPerTeam = (int)Math.ceil((double)playerAmount / (double)randomTeams);
+					
+					ArrayList<String> possibleTeams = getTeams();
+					
 					for(int i = 0; i < randomTeams; i++)
 					{
+						String teamName = possibleTeams.get(possibleTeams.size() > 1 ? world.rand.nextInt(possibleTeams.size()) : 0);
+						possibleTeams.remove(teamName);
+						ScorePlayerTeam team = scoreboard.getTeam(teamName);
+
 						for(int j = 0; j < amountPerTeam; j++)
 						{
-							if(tempList.size() != 0)
+							if(!tempList.isEmpty())
 							{
 								EntityPlayer player = tempList.get(0);
-								//System.out.println(TeamUtil.getTeamNameFromInt(i+1));
 
-								scoreboard.addPlayerToTeam(player.getName(), TeamUtil.getTeamNameFromInt(i+1));
+								scoreboard.addPlayerToTeam(player.getName(), teamName);
 								for(EntityPlayerMP players : playerList)
 								{
-									ScorePlayerTeam team = scoreboard.getTeam(TeamUtil.getTeamNameFromInt(i+1));
 									if(team != null)
 										players.sendMessage(new TextComponentTranslation("book.uhc.team.randomized", new Object[] {player.getName(), team.getColor() + team.getName().replaceAll("_", " ")}));
 								}
-								tempList.remove(0);
+								tempList.remove(player);
 							}
 						}
 					}
@@ -105,5 +135,27 @@ public class UHCPacketTeamRandomizer implements IMessage
 				}
 			}
 		}
+	}
+	
+	private static ArrayList<String> getTeams()
+	{
+		ArrayList<String> teams = new ArrayList<>();
+		
+		teams.add(TextFormatting.DARK_RED.getFriendlyName());
+		teams.add(TextFormatting.GOLD.getFriendlyName());
+		teams.add(TextFormatting.DARK_GREEN.getFriendlyName());
+		teams.add(TextFormatting.DARK_AQUA.getFriendlyName());
+		teams.add(TextFormatting.DARK_BLUE.getFriendlyName());
+		teams.add(TextFormatting.DARK_PURPLE.getFriendlyName());
+		teams.add(TextFormatting.DARK_GRAY.getFriendlyName());
+		teams.add(TextFormatting.RED.getFriendlyName());
+		teams.add(TextFormatting.YELLOW.getFriendlyName());
+		teams.add(TextFormatting.GREEN.getFriendlyName());
+		teams.add(TextFormatting.AQUA.getFriendlyName());
+		teams.add(TextFormatting.BLUE.getFriendlyName());
+		teams.add(TextFormatting.LIGHT_PURPLE.getFriendlyName());
+		teams.add(TextFormatting.GRAY.getFriendlyName());
+		
+		return teams;
 	}
 }

@@ -231,7 +231,7 @@ public class UHCHandler {
 			}
 		}
 	}
-	
+
 	public void giveResult(EntityPlayer player, ItemStack stack)
 	{
 		if(stack == ItemStack.EMPTY || stack == null)
@@ -572,20 +572,11 @@ public class UHCHandler {
 		
 		if(!newPlayer.world.isRemote)
 		{
-			if(originalData.hasKey("canEditUHC"))
-			{
-				if(originalData.getBoolean("canEditUHC"))
-					newData.setBoolean("canEditUHC", true);
-				else
-					newData.setBoolean("canEditUHC", false);
-			}
+			originalData.setBoolean("canEditUHC", newData.getBoolean("canEditUHC"));
 			
 			BlockPos deathPos = originalPlayer.getPosition();
-			newData.setInteger("deathX", deathPos.getX());
-			newData.setInteger("deathY", deathPos.getY());
-			newData.setInteger("deathZ", deathPos.getZ());
+			newData.setLong("deathPos", deathPos.toLong());
 			newData.setInteger("deathDim", originalPlayer.dimension);
-			newData.setBoolean("dead", true);
 			newPlayer.setSpawnPoint(deathPos, true);
 		}
 	}
@@ -598,7 +589,6 @@ public class UHCHandler {
 		{
 			MinecraftServer server = world.getMinecraftServer();
 			Scoreboard scoreboard = world.getScoreboard();
-			ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 			if(DimensionManager.getWorld(0) != null)
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));

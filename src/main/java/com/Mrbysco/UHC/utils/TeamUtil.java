@@ -107,33 +107,33 @@ public class TeamUtil {
 	public static String getTeamNameFromInt(int value)
 	{		
 		switch (value) {
-		case 1:
+		case 0:
 			return TextFormatting.DARK_RED.getFriendlyName();
-		case 2:
+		case 1:
 			return TextFormatting.GOLD.getFriendlyName();
-		case 3:
+		case 2:
 			return TextFormatting.DARK_GREEN.getFriendlyName();
-		case 4:
+		case 3:
 			return TextFormatting.DARK_AQUA.getFriendlyName();
-		case 5:
+		case 4:
 			return TextFormatting.DARK_BLUE.getFriendlyName();
-		case 6:
+		case 5:
 			return TextFormatting.DARK_PURPLE.getFriendlyName();
-		case 7:
+		case 6:
 			return TextFormatting.DARK_GRAY.getFriendlyName();
-		case 8:
+		case 7:
 			return TextFormatting.RED.getFriendlyName();
-		case 9:
+		case 8:
 			return TextFormatting.YELLOW.getFriendlyName();
-		case 10:
+		case 9:
 			return TextFormatting.GREEN.getFriendlyName();
-		case 11:
+		case 10:
 			return TextFormatting.AQUA.getFriendlyName();
-		case 12:
+		case 11:
 			return TextFormatting.BLUE.getFriendlyName();
-		case 13:
+		case 12:
 			return TextFormatting.LIGHT_PURPLE.getFriendlyName();
-		case 14:
+		case 13:
 			return TextFormatting.GRAY.getFriendlyName();
 
 		default:

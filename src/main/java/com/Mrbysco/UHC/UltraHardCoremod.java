@@ -8,10 +8,12 @@ import com.Mrbysco.UHC.config.UltraHardCoremodConfigGen;
 import com.Mrbysco.UHC.handlers.AutoCookHandler;
 import com.Mrbysco.UHC.handlers.BorderHandler;
 import com.Mrbysco.UHC.handlers.GameRuleHandler;
+import com.Mrbysco.UHC.handlers.GraceHandler;
 import com.Mrbysco.UHC.handlers.ItemConversionHandler;
 import com.Mrbysco.UHC.handlers.ModCompatHandler;
 import com.Mrbysco.UHC.handlers.PlayerHealthHandler;
 import com.Mrbysco.UHC.handlers.ScoreboardHandler;
+import com.Mrbysco.UHC.handlers.TeamSpamHandler;
 import com.Mrbysco.UHC.handlers.TimedActionHandler;
 import com.Mrbysco.UHC.handlers.TimerHandler;
 import com.Mrbysco.UHC.handlers.UHCHandler;
@@ -77,6 +79,8 @@ public class UltraHardCoremod {
 		MinecraftForge.EVENT_BUS.register(new AutoCookHandler());
 		MinecraftForge.EVENT_BUS.register(new ItemConversionHandler());
 		MinecraftForge.EVENT_BUS.register(new ModCompatHandler());
+		MinecraftForge.EVENT_BUS.register(new GraceHandler());
+		MinecraftForge.EVENT_BUS.register(new TeamSpamHandler());
 		
 		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
 		

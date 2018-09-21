@@ -25,19 +25,18 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import twilightforest.block.BlockTFBossSpawner;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 public class ModCompatHandler {
+	public int twilightBossGraceTimer;
 	public TimerThing milliTime;
-	
+
 	public ModCompatHandler() {
 		milliTime = new TimerThing();
 	}
@@ -49,20 +48,52 @@ public class ModCompatHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
-			MinecraftServer server = world.getMinecraftServer();
-			ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 			
 			Scoreboard scoreboard = world.getScoreboard();
 			if(DimensionManager.getWorld(0) != null)
 			{
+				MinecraftServer server = world.getMinecraftServer();
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-	    		WorldBorder border = world.getWorldBorder();
-				GameRules rules = world.getGameRules();
+				ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 				
 				ArrayList<Entity> entityList = new ArrayList<>(world.loadedEntityList);
+
+				if(!playerList.isEmpty() && saveData.isUhcOnGoing() && !RespawnList.respawnList.isEmpty())
+				{
+					if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
+					{
+						milliTime.setMilliTimeToCurrent();
+						
+						if(!saveData.getTwilightRespawn())
+						{
+							if(timerData.getTwilightBossGraceTimer() != this.twilightBossGraceTimer)
+							{
+								this.twilightBossGraceTimer = timerData.getTwilightBossGraceTimer();
+								if(saveData.getTwilightRespawn())
+								{
+									saveData.setTwilightRespawn(false);
+									saveData.markDirty();
+								}
+							}
+							
+							if(timerData.getTwilightBossGraceTimer() >= TimerHandler.tickTime(UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime))
+							{
+								this.twilightBossGraceTimer = TimerHandler.tickTime(UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime);
+								saveData.setTwilightRespawn(true);
+								saveData.markDirty();
+							}
+							else
+							{
+								++this.twilightBossGraceTimer;
+								timerData.setTwilightBossGraceTimer(this.twilightBossGraceTimer);
+								timerData.markDirty();
+							}
+						}
+					}
+				}
 				
-				if(saveData.isUhcOnGoing() && !saveData.isUhcIsFinished())
+				if(saveData.isUhcOnGoing() && !saveData.isUhcIsFinished() && saveData.getTwilightRespawn())
 				{
 					if(!RespawnList.respawnList.isEmpty())
 					{
@@ -77,7 +108,7 @@ public class ModCompatHandler {
 							ArrayList<EntityMob> collidingBossMobs = new ArrayList<>(world.getEntitiesWithinAABB(EntityMob.class, hitbox));
 							int respawnTime = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 1200);
 
-							if(world.getBlockState(info.getPos()).getBlock() instanceof BlockTFBossSpawner)
+							if(world.getBlockState(info.getPos()).getBlock() instanceof twilightforest.block.BlockTFBossSpawner)
 							{
 								if(!info.isSpawnerExists())
 									info.setSpawnerExists(true);
@@ -87,7 +118,7 @@ public class ModCompatHandler {
 							{
 								for (EntityMob mob : collidingBossMobs)
 								{
-									if(!mob.isNonBoss())
+									if(!mob.isNonBoss() && EntityRegistry.getEntry(mob.getClass()).getRegistryName().getResourcePath().equals("twilightforest"))
 									{
 										info.setBossExists(true);
 									}
@@ -106,30 +137,15 @@ public class ModCompatHandler {
 											return;
 										else
 										{
-											if(info.getTimer() == 0 && !info.isBossExists() && !info.isSpawnerExists())
+											if(!info.isBossExists() && !info.isSpawnerExists())
 											{
 												info.teamsReached.add(team);
 												
 												world.setBlockState(pos, state);
 												info.setBossExists(true);
-												info.setTimer(respawnTime);
 											}
 										}
 									}
-								}
-							}
-						}
-						
-						if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
-						{
-							milliTime.setMilliTimeToCurrent();
-
-							for (RespawnInfo info : RespawnList.respawnList)
-							{
-								if(info.getTimer() > 0)
-								{
-									int timer = info.getTimer();
-									info.setTimer(timer--);
 								}
 							}
 						}
@@ -138,6 +154,8 @@ public class ModCompatHandler {
 			}
 		}
 	}
+	
+	
 	
 	@SubscribeEvent
 	public void mobDataChanger(EntityJoinWorldEvent event)

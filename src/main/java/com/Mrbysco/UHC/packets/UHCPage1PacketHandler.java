@@ -69,6 +69,7 @@ public class UHCPage1PacketHandler implements IMessageHandler<UHCPage1Packet, IM
 					wInfo.setDifficulty(EnumDifficulty.getDifficultyEnum(message.difficulty));
 				
 				saveData.setRandomTeamSize(message.randomTeams);
+				saveData.setTeamsLocked(message.teamsLocked);
 				saveData.setMaxTeamSize(message.maxTeams);
 				saveData.setTeamCollision(message.teamCollision);
 				saveData.setFriendlyFire(message.teamDamage);

@@ -17,6 +17,7 @@ import com.Mrbysco.UHC.packets.UHCPage2Packet;
 import com.Mrbysco.UHC.packets.UHCPage3Packet;
 import com.Mrbysco.UHC.packets.UHCPage4Packet;
 import com.Mrbysco.UHC.packets.UHCPage5Packet;
+import com.Mrbysco.UHC.packets.UHCPage6Packet;
 import com.Mrbysco.UHC.packets.UHCStartPacket;
 
 import net.minecraft.client.Minecraft;
@@ -80,15 +81,17 @@ public class GuiUHCBook extends GuiScreen{
     private GuiTextField spreadDistanceField;
     private GuiTextField spreadMaxRangeField;
     
+    private GuiTextField graceTimeField;
+    
     private ResetButton resetRandButton;
     private ResetButton resetTeamSizeButton;
     
-    private booleanButton collisionButton;
-    private booleanButton damageButton;
+    private BooleanButton collisionButton;
+    private BooleanButton damageButton;
     
-    private booleanButton healthTabButton;
-    private booleanButton healthSideButton;
-    private booleanButton healthNameButton;
+    private BooleanButton healthTabButton;
+    private BooleanButton healthSideButton;
+    private BooleanButton healthNameButton;
     
     private ResetButton resetBorderSizeButton;
     private ResetButton resetBorderCenterXButton;
@@ -100,32 +103,35 @@ public class GuiUHCBook extends GuiScreen{
     private ResetButton resetShrinkOverTimeButton;
     private TextButton ShrinkModeButton;
     
-    private booleanButton shrinkButton;
-    private booleanButton timeLockButton;
+    private BooleanButton shrinkButton;
+    private BooleanButton timeLockButton;
     private TextButton timeModeButton;
     private ResetButton resetTimeLockTimerButton;
-    private booleanButton minuteMarkButton;
+    private BooleanButton minuteMarkButton;
     private ResetButton resetMinuteMarkTimerButton;
-    private booleanButton nameButton;
+    private BooleanButton nameButton;
     private ResetButton resetNameTimerButton;
-    private booleanButton glowButton;
+    private BooleanButton glowButton;
     private ResetButton resetGlowTimerButton;
     
-    private booleanButton autoCookButton;
-    private booleanButton itemConvertButton;
+    private BooleanButton autoCookButton;
+    private BooleanButton itemConvertButton;
     
-    private booleanButton netherButton;
-    private booleanButton regenPotionsButton;
-    private booleanButton level2PotionsButton;
-    private booleanButton notchApplesButton;
+    private BooleanButton netherButton;
+    private BooleanButton regenPotionsButton;
+    private BooleanButton level2PotionsButton;
+    private BooleanButton notchApplesButton;
     
-    private booleanButton weatherButton;
-    private booleanButton mobGriefingButton;
+    private BooleanButton weatherButton;
+    private BooleanButton mobGriefingButton;
     
-    private booleanButton customHealthButton;
-    private booleanButton randomSpawnButton;
-    private booleanButton spreadRespectTeamButton;
+    private BooleanButton customHealthButton;
+    private BooleanButton randomSpawnButton;
+    private BooleanButton spreadRespectTeamButton;
     
+    private BooleanButton graceTimeButton;
+    private LockButton teamsLockedButton;
+
     private StartButton UHCStartButton;
 
     /** UHC save data */
@@ -133,6 +139,7 @@ public class GuiUHCBook extends GuiScreen{
     
 	private boolean uhcStarting;
 	private boolean uhcOnGoing;
+	private boolean teamsLocked;
 	
 	private boolean friendlyFire;
 	private boolean teamCollision;
@@ -187,6 +194,10 @@ public class GuiUHCBook extends GuiScreen{
 	private int spreadMaxRange;
 	private boolean spreadRespectTeam;
 	
+	private boolean graceEnabled;
+	private int graceTime;
+	private boolean graceFinished;
+	
 	private NBTTagCompound playerData;
 
 	
@@ -228,17 +239,17 @@ public class GuiUHCBook extends GuiScreen{
     	
     	this.buttonBlack = (GuiUHCBook.GuiButtonColor)this.addButton(new GuiUHCBook.GuiButtonColor(17, i + 43, j + 70, 10, 10, i + 92, j + 28,  0xFF000000, I18n.format("color.black.name")));
     	this.buttonSolo = (GuiUHCBook.GuiButtonColor)this.addButton(new GuiUHCBook.GuiButtonColor(18, i + 43 + 90, j + 70, 10, 10, i + 92, j + 28,  0xFFFFFFFF, I18n.format("color.white.name"), true));
-    	this.buttonRandomize = (GuiUHCBook.GuiButtonColor)this.addButton(new GuiUHCBook.GuiButtonColor(19, i + 43 + 15, j + 70, 70, 10, i + 92, j + 71,  0xFFAAAAAA, I18n.format("color.random.name"), false, true));
+    	this.buttonRandomize = (GuiUHCBook.GuiButtonColor)this.addButton(new GuiUHCBook.GuiButtonColor(19, i + 43 + 15, j + 70, 56, 10, i + 92, j + 71,  0xFFAAAAAA, I18n.format("color.random.name"), false, true));
     	
     	this.resetRandButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(20, i + 43 + 94, j + 85, fontRenderer));
     	this.resetTeamSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(21, i + 43 + 94, j + 99, fontRenderer));
     	
-    	this.collisionButton = (booleanButton)this.addButton(new booleanButton(22, i + 43 + 74, j + 113, fontRenderer, saveData.isTeamCollision()));
-    	this.damageButton = (booleanButton)this.addButton(new booleanButton(23, i + 43 + 74, j + 127, fontRenderer, saveData.isFriendlyFire()));
+    	this.collisionButton = (BooleanButton)this.addButton(new BooleanButton(22, i + 43 + 74, j + 113, fontRenderer, saveData.isTeamCollision()));
+    	this.damageButton = (BooleanButton)this.addButton(new BooleanButton(23, i + 43 + 74, j + 127, fontRenderer, saveData.isFriendlyFire()));
 
-    	this.healthTabButton = (booleanButton)this.addButton(new booleanButton(24, i + 43 + 90, j + 109, fontRenderer, saveData.isHealthInTab()));
-    	this.healthSideButton = (booleanButton)this.addButton(new booleanButton(25, i + 43 + 90, j + 122, fontRenderer, saveData.isHealthOnSide()));
-    	this.healthNameButton = (booleanButton)this.addButton(new booleanButton(26, i + 43 + 90, j + 135, fontRenderer, saveData.isHealthUnderName()));
+    	this.healthTabButton = (BooleanButton)this.addButton(new BooleanButton(24, i + 43 + 90, j + 109, fontRenderer, saveData.isHealthInTab()));
+    	this.healthSideButton = (BooleanButton)this.addButton(new BooleanButton(25, i + 43 + 90, j + 122, fontRenderer, saveData.isHealthOnSide()));
+    	this.healthNameButton = (BooleanButton)this.addButton(new BooleanButton(26, i + 43 + 90, j + 135, fontRenderer, saveData.isHealthUnderName()));
     	
     	this.resetBorderSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(27, i + 43 + 68, j + 36, fontRenderer));
     	this.resetBorderCenterXButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(28, i + 43 + 92, j + 60, fontRenderer));
@@ -246,37 +257,41 @@ public class GuiUHCBook extends GuiScreen{
     	this.centerCurrentXButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(30, i + 43 + 76, j + 60, fontRenderer));
     	this.centerCurrentZButton = (GuiUHCBook.LocationButton)this.addButton(new GuiUHCBook.LocationButton(31, i + 43 + 76, j + 74, fontRenderer));
     	
-    	this.shrinkButton = (booleanButton)this.addButton(new booleanButton(32, i + 43 + 70, j + 90, fontRenderer, saveData.isShrinkEnabled()));  
+    	this.shrinkButton = (BooleanButton)this.addButton(new BooleanButton(32, i + 43 + 70, j + 90, fontRenderer, saveData.isShrinkEnabled()));  
     	this.resetShrinkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(33, i + 43 + 92, j + 104, fontRenderer));
     	this.resetShrinkSizeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(34, i + 43 + 92, j + 116, fontRenderer));
     	this.resetShrinkOverTimeButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(35, i + 43 + 92, j + 128, fontRenderer));   	
     	this.ShrinkModeButton = (TextButton)this.addButton(new TextButton(36, i + 43 + 31, j + 140, saveData.getShrinkMode(), mc));
     	
-    	this.timeLockButton = (booleanButton)this.addButton(new booleanButton(37, i + 43 + 60, j + 25, fontRenderer, saveData.isTimeLock()));  
+    	this.timeLockButton = (BooleanButton)this.addButton(new BooleanButton(37, i + 43 + 60, j + 25, fontRenderer, saveData.isTimeLock()));  
     	this.timeModeButton = (TextButton)this.addButton(new TextButton(38, i + 43 + 32, j + 52, saveData.getTimeMode(), mc));  
     	this.resetTimeLockTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(39, i + 43 + 80, j + 38, fontRenderer));
     	this.resetMinuteMarkTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(40, i + 43 + 80, j + 77, fontRenderer));
-    	this.minuteMarkButton = (booleanButton)this.addButton(new booleanButton(41, i + 43 + 60, j + 64, fontRenderer, saveData.isMinuteMark()));  
+    	this.minuteMarkButton = (BooleanButton)this.addButton(new BooleanButton(41, i + 43 + 60, j + 64, fontRenderer, saveData.isMinuteMark()));  
     	
-    	this.netherButton = (booleanButton)this.addButton(new booleanButton(42, i + 43 + 90, j + 94, fontRenderer, saveData.isNetherEnabled()));  
-    	this.regenPotionsButton = (booleanButton)this.addButton(new booleanButton(43, i + 43 + 90, j + 23, fontRenderer, saveData.isRegenPotions()));  
-    	this.level2PotionsButton = (booleanButton)this.addButton(new booleanButton(44, i + 43 + 90, j + 35, fontRenderer, saveData.isLevel2Potions()));  
-    	this.notchApplesButton = (booleanButton)this.addButton(new booleanButton(45, i + 43 + 90, j + 48, fontRenderer, saveData.isNotchApples())); 
+    	this.netherButton = (BooleanButton)this.addButton(new BooleanButton(42, i + 43 + 90, j + 94, fontRenderer, saveData.isNetherEnabled()));  
+    	this.regenPotionsButton = (BooleanButton)this.addButton(new BooleanButton(43, i + 43 + 90, j + 23, fontRenderer, saveData.isRegenPotions()));  
+    	this.level2PotionsButton = (BooleanButton)this.addButton(new BooleanButton(44, i + 43 + 90, j + 35, fontRenderer, saveData.isLevel2Potions()));  
+    	this.notchApplesButton = (BooleanButton)this.addButton(new BooleanButton(45, i + 43 + 90, j + 48, fontRenderer, saveData.isNotchApples())); 
     	
-    	this.nameButton = (booleanButton)this.addButton(new booleanButton(46, i + 43 + 60, j + 91, fontRenderer, saveData.isTimedNames()));  
+    	this.nameButton = (BooleanButton)this.addButton(new BooleanButton(46, i + 43 + 60, j + 91, fontRenderer, saveData.isTimedNames()));  
     	this.resetNameTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(47, i + 43 + 80, j + 103, fontRenderer));
-    	this.glowButton = (booleanButton)this.addButton(new booleanButton(48, i + 43 + 60, j + 119, fontRenderer, saveData.isTimedGlow()));  
+    	this.glowButton = (BooleanButton)this.addButton(new BooleanButton(48, i + 43 + 60, j + 119, fontRenderer, saveData.isTimedGlow()));  
     	this.resetGlowTimerButton = (GuiUHCBook.ResetButton)this.addButton(new GuiUHCBook.ResetButton(49, i + 43 + 80, j + 131, fontRenderer));
-    	this.autoCookButton = (booleanButton)this.addButton(new booleanButton(50, i + 43 + 90, j + 63, fontRenderer, saveData.isAutoCook()));  
-    	this.itemConvertButton = (booleanButton)this.addButton(new booleanButton(51, i + 43 + 90, j + 77, fontRenderer, saveData.isItemConversion()));  
+    	this.autoCookButton = (BooleanButton)this.addButton(new BooleanButton(50, i + 43 + 90, j + 63, fontRenderer, saveData.isAutoCook()));  
+    	this.itemConvertButton = (BooleanButton)this.addButton(new BooleanButton(51, i + 43 + 90, j + 77, fontRenderer, saveData.isItemConversion()));  
     	
-    	this.weatherButton = (booleanButton)this.addButton(new booleanButton(52, i + 43 + 80, j + 23, fontRenderer, saveData.isWeatherEnabled()));  
-    	this.mobGriefingButton = (booleanButton)this.addButton(new booleanButton(53, i + 43 + 80, j + 35, fontRenderer, saveData.isMobGriefing()));  
+    	this.weatherButton = (BooleanButton)this.addButton(new BooleanButton(52, i + 43 + 80, j + 23, fontRenderer, saveData.isWeatherEnabled()));  
+    	this.mobGriefingButton = (BooleanButton)this.addButton(new BooleanButton(53, i + 43 + 80, j + 35, fontRenderer, saveData.isMobGriefing()));  
     	
-    	this.customHealthButton = (booleanButton)this.addButton(new booleanButton(55, i + 43 + 80, j + 54, fontRenderer, saveData.isMobGriefing()));  
-    	this.randomSpawnButton = (booleanButton)this.addButton(new booleanButton(56, i + 43 + 80, j + 81, fontRenderer, saveData.isRandomSpawns()));  
-    	this.spreadRespectTeamButton = (booleanButton)this.addButton(new booleanButton(57, i + 43 + 80, j + 118, fontRenderer, saveData.isSpreadRespectTeam()));  
+    	this.customHealthButton = (BooleanButton)this.addButton(new BooleanButton(55, i + 43 + 80, j + 54, fontRenderer, saveData.isMobGriefing()));  
+    	this.randomSpawnButton = (BooleanButton)this.addButton(new BooleanButton(56, i + 43 + 80, j + 81, fontRenderer, saveData.isRandomSpawns()));  
+    	this.spreadRespectTeamButton = (BooleanButton)this.addButton(new BooleanButton(57, i + 43 + 80, j + 118, fontRenderer, saveData.isSpreadRespectTeam()));  
     	
+    	this.graceTimeButton = (BooleanButton)this.addButton(new BooleanButton(58, i + 43 + 64, j + 25, fontRenderer, saveData.isGraceEnabled()));  
+    	
+    	this.teamsLockedButton = (LockButton)this.addButton(new LockButton(59, i + 43 + 73, j + 68, fontRenderer, saveData.areTeamsLocked()));  
+    			
     	this.UHCStartButton = (GuiUHCBook.StartButton)this.addButton(new GuiUHCBook.StartButton(54, i + 43 + 7, j + 132, fontRenderer));  
 
     	randSizeField = new GuiTextField(0, fontRenderer, i + 43 + 75, j + 89, 20, 8);
@@ -321,11 +336,14 @@ public class GuiUHCBook extends GuiScreen{
 		maxHealthField = new GuiTextField(13, fontRenderer, i + 43 + 60, j + 69, 32, 8);
 		setupField(maxHealthField, 4, 0xFFFFAA00, String.valueOf(saveData.getMaxHealth()));
 		
-		spreadDistanceField = new GuiTextField(13, fontRenderer, i + 43 + 60, j + 98, 32, 8);
+		spreadDistanceField = new GuiTextField(14, fontRenderer, i + 43 + 60, j + 98, 32, 8);
 		setupField(spreadDistanceField, 4, 0xFFFFAA00, String.valueOf(saveData.getSpreadDistance()));
 		
-		spreadMaxRangeField = new GuiTextField(13, fontRenderer, i + 43 + 60, j + 110, 32, 8);
+		spreadMaxRangeField = new GuiTextField(15, fontRenderer, i + 43 + 60, j + 110, 32, 8);
 		setupField(spreadMaxRangeField, 4, 0xFFFFAA00, String.valueOf(saveData.getSpreadMaxRange()));
+		
+		graceTimeField = new GuiTextField(16, fontRenderer, i + 43 + 60, j + 41, 32, 8);
+		setupField(graceTimeField, 4, 0xFFFFAA00, String.valueOf(saveData.getGraceTime()));
 		
         this.updateButtons();
 	}
@@ -336,6 +354,7 @@ public class GuiUHCBook extends GuiScreen{
 		
 		this.uhcStarting = saveData.isUhcStarting();
         this.uhcOnGoing = saveData.isUhcOnGoing();
+        this.teamsLocked = saveData.areTeamsLocked();
         	
         this.friendlyFire = saveData.isFriendlyFire();
         this.teamCollision = saveData.isTeamCollision();
@@ -389,6 +408,9 @@ public class GuiUHCBook extends GuiScreen{
 		this.spreadDistance = saveData.getSpreadDistance();
 		this.spreadMaxRange = saveData.getSpreadMaxRange();
 		this.spreadRespectTeam = saveData.isSpreadRespectTeam();
+		
+		this.graceEnabled = saveData.isGraceEnabled();
+		this.graceTime = saveData.getGraceTime();
 	}
 	
 	public void setupField(GuiTextField field, int maxLength, int color, String text)
@@ -451,6 +473,12 @@ public class GuiUHCBook extends GuiScreen{
 			if(spreadMaxRangeField != null)
 				spreadMaxRangeField.updateCursorCounter();
 		}
+		
+		if(this.currPage == 5)
+		{
+			if(graceTimeField != null)
+				graceTimeField.updateCursorCounter();
+		}
 
 		syncData();
 
@@ -474,6 +502,9 @@ public class GuiUHCBook extends GuiScreen{
 			
 			if(damageButton.getBoolean() != saveData.isFriendlyFire())
 				damageButton.setBoolean(saveData.isFriendlyFire());
+			
+			if(teamsLockedButton.getBoolean() != saveData.areTeamsLocked())
+				teamsLockedButton.setBoolean(saveData.areTeamsLocked());
 		}
 		
 		if(this.currPage == 1)
@@ -589,6 +620,15 @@ public class GuiUHCBook extends GuiScreen{
 			if(spreadRespectTeamButton.getBoolean() != saveData.isSpreadRespectTeam())
 				spreadRespectTeamButton.setBoolean(saveData.isSpreadRespectTeam());
 		}
+		
+		if(this.currPage == 5)
+		{
+			if(graceTimeButton.getBoolean() != saveData.isGraceEnabled())
+				graceTimeButton.setBoolean(saveData.isGraceEnabled());
+			
+			if(graceTimeField.getText() != String.valueOf(saveData.getGraceTime()) && graceTimeField.isFocused() == false)
+				graceTimeField.setText(String.valueOf(saveData.getGraceTime()));
+		}
 	}
 	
 	/**
@@ -631,6 +671,7 @@ public class GuiUHCBook extends GuiScreen{
     	
     	this.collisionButton.visible = this.currPage == 0;
     	this.damageButton.visible = this.currPage == 0;
+    	this.teamsLockedButton.visible = this.currPage == 0;
     	    	
     	this.randSizeField.setVisible(this.currPage == 0);
     	this.maxTeamSizeField.setVisible(this.currPage == 0);
@@ -702,6 +743,9 @@ public class GuiUHCBook extends GuiScreen{
     	this.maxHealthField.setVisible(this.currPage == 4);
     	this.maxHealthField.setEnabled(this.currPage == 4);
     	
+    	this.graceTimeButton.visible = this.currPage == 5;
+    	this.graceTimeField.setVisible(this.currPage == 5);
+    	this.graceTimeField.setEnabled(this.currPage == 5);
     	this.UHCStartButton.visible = this.currPage == 5;
     }
     
@@ -719,8 +763,6 @@ public class GuiUHCBook extends GuiScreen{
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-    	//System.out.println(friendlyFire);
-
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(BOOK_TEXTURE);
         int i = (this.width - 192) / 2;
@@ -765,6 +807,8 @@ public class GuiUHCBook extends GuiScreen{
 		String spreadDistanceString = I18n.format("book.uhc.option.spreaddistance");
 		String spreadMaxRangeString = I18n.format("book.uhc.option.spreadrange");
 		String spreadRespectTeamString = I18n.format("book.uhc.option.spreadteams");
+		
+		String graceString = I18n.format("book.uhc.option.grace");
 
 		super.drawScreen(mouseX, mouseY, partialTicks);
 	    if(this.currPage == 0)
@@ -783,12 +827,17 @@ public class GuiUHCBook extends GuiScreen{
 			boolean flag = hoverBoolean(mouseX, mouseY, maxTeamSizeField.x, maxTeamSizeField.y, maxTeamSizeField.width, maxTeamSizeField.height);
 			String infinityString = I18n.format("book.uhc.option.infinite");
 			
-			if(isColorNotHovered() && !flag)
+			if(isColorNotHovered() && !flag && !teamsLockedButton.isMouseOver())
     	        this.fontRenderer.drawString(teamSelect, i + 65, j + 28, 0xFF555555);
 			
 			if(flag && maxTeamSizeField.isFocused() == false)
 		        this.drawCenteredString(fontRenderer, infinityString, i + 91, j + 28, 0xFFFF5555);
 			
+			String lockButton = I18n.format("book.uhc.option.locked");
+
+			if(teamsLockedButton.isMouseOver())
+		        this.drawCenteredString(fontRenderer, lockButton, i + 93, j + 27, 0xFFFF5555);
+
 			String teamCollisionString = I18n.format("book.uhc.option.collision");
 	        this.fontRenderer.drawString(teamCollisionString, i + 43, j + 118, 0xFF555555);
 
@@ -928,6 +977,20 @@ public class GuiUHCBook extends GuiScreen{
 			if(flag2 && maxHealthField.isFocused() == false)
 		        this.drawCenteredString(fontRenderer, healthExplain, mouseX, mouseY + 5, 0xFFFF5555);
 		}
+	    
+	    if(this.currPage == 5)
+	    {
+	    	this.fontRenderer.drawString(graceString, i+38, j+28, 0xFF555555);
+
+	    	drawField(graceTimeField);
+	    	
+	    	String GraceTimerString = I18n.format("book.uhc.option.gracetimer");
+	    	this.fontRenderer.drawString(GraceTimerString, i + 44, j + 41, 0xFF555555);
+	    	
+	    	boolean flag = hoverBoolean(mouseX, mouseY, graceTimeField.x, graceTimeField.y, graceTimeField.width, graceTimeField.height);
+			if(flag && timeLockTimerField.isFocused() == false)
+		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
+	    }
 	    
 	    for(GuiButton button : buttonList)
 		{
@@ -1086,6 +1149,13 @@ public class GuiUHCBook extends GuiScreen{
 	    if(this.currPage == 4 && hoverBoolean(mouseX, mouseY, i+44, j+122, fontRenderer.getStringWidth(spreadRespectTeamString), fontRenderer.FONT_HEIGHT))
 	    {
 	    	this.drawInfoTooltip(spreadRespectTeamExplain, mouseX, mouseY);
+	    }
+	    List<String> gracePeriodExplain = new ArrayList<>();
+	    gracePeriodExplain.add(I18n.format("book.uhc.explain.graceperiod"));
+	    gracePeriodExplain.add(I18n.format("book.uhc.explain.graceperiod2"));
+	    if(this.currPage == 5 && hoverBoolean(mouseX, mouseY, i+38, j+28, fontRenderer.getStringWidth(graceString), fontRenderer.FONT_HEIGHT))
+	    {
+	    	this.drawInfoTooltip(gracePeriodExplain, mouseX, mouseY);
 	    }
     }
     
@@ -1509,6 +1579,18 @@ public class GuiUHCBook extends GuiScreen{
             	spreadRespectTeam = !flag;
             	sendPage5Packet();
             }
+            else if(button.id == 58)
+            {
+            	boolean flag = saveData.isGraceEnabled();
+            	graceEnabled = !flag;
+            	sendPage6Packet();
+            }
+            else if(button.id == 59)
+            {
+            	boolean flag = saveData.areTeamsLocked();
+            	teamsLocked = !flag;
+            	sendPage1Packet();
+            }
             this.updateButtons();
         }
     }
@@ -1523,7 +1605,7 @@ public class GuiUHCBook extends GuiScreen{
     
     public void sendPage1Packet()
     {
-    	ModPackethandler.INSTANCE.sendToServer(new UHCPage1Packet(randomTeamSize, maxTeamSize, teamCollision, friendlyFire, difficulty));
+    	ModPackethandler.INSTANCE.sendToServer(new UHCPage1Packet(randomTeamSize, maxTeamSize, teamCollision, friendlyFire, difficulty, teamsLocked));
     }
     
     public void sendPage2Packet()
@@ -1544,6 +1626,11 @@ public class GuiUHCBook extends GuiScreen{
     public void sendPage5Packet()
     {
     	ModPackethandler.INSTANCE.sendToServer(new UHCPage5Packet(weatherEnabled, mobGriefing, applyCustomHealth, maxHealth, randomSpawns, spreadDistance, spreadMaxRange, spreadRespectTeam));
+    }
+    
+    public void sendPage6Packet()
+    {
+    	ModPackethandler.INSTANCE.sendToServer(new UHCPage6Packet(graceEnabled, graceTime));
     }
     
     public void startPacket()
@@ -1645,6 +1732,15 @@ public class GuiUHCBook extends GuiScreen{
         			spreadDistanceField.setText(String.valueOf(saveData.getSpreadDistance()));
         		if(spreadMaxRangeField.isFocused() == false)
         			spreadMaxRangeField.setText(String.valueOf(saveData.getSpreadMaxRange()));
+        	}
+        	
+        	if(this.currPage == 5)
+        	{
+        		if(graceTimeField.mouseClicked(mouseX, mouseY, mouseButton))
+        			graceTimeField.setText("");
+        		
+        		if(graceTimeField.isFocused() == false)
+        			graceTimeField.setText(String.valueOf(saveData.getGraceTime()));
         	}
         }
         
@@ -1989,13 +2085,39 @@ public class GuiUHCBook extends GuiScreen{
 				}
 			}
     	}
+    	if (this.currPage == 5)
+    	{
+    		if(graceTimeField.isFocused() && (charNumeric(typedChar) || keyCode == Keyboard.KEY_BACK))
+    		{
+    			graceTimeField.textboxKeyTyped(typedChar, keyCode);
+    		}
+    		
+    		if(keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER)
+			{
+				/* Grace Timer Field */
+				if(graceTimeField.isFocused())
+				{
+					String graceTimeText = graceTimeField.getText();
+					
+					if(graceTimeText.isEmpty())
+						graceTimeField.setText(String.valueOf(graceTime));
+					else
+					{
+						graceTime = Integer.parseInt(graceTimeText);
+						sendPage6Packet();
+					}
+					
+					graceTimeField.setFocused(false);
+				}
+			}
+    	}
     }
     
     public boolean charNumeric(char typedChar)
     {
     	return (typedChar >= '0' && typedChar <= '9');
     }
-    
+
     public boolean isColorNotHovered()
     {
     	return !buttonDarkRed.isMouseOver() && !buttonGold.isMouseOver() && !buttonDarkGreen.isMouseOver() && !buttonDarkAqua.isMouseOver() && 
@@ -2003,6 +2125,11 @@ public class GuiUHCBook extends GuiScreen{
     			 !buttonYellow.isMouseOver() && !buttonGreen.isMouseOver() && !buttonAqua.isMouseOver() && !buttonBlue.isMouseOver() &&
     			 !buttonLightPurple.isMouseOver() && !buttonGray.isMouseOver() && !buttonBlack.isMouseOver() && !buttonSolo.isMouseOver() &&
     			 !buttonRandomize.isMouseOver();
+    }
+    
+    public boolean isLockHovered()
+    {
+    	return !teamsLockedButton.isMouseOver();
     }
     
 	@SideOnly(Side.CLIENT)
@@ -2193,7 +2320,7 @@ public class GuiUHCBook extends GuiScreen{
 					drawRect(this.x + 1, this.y + 1, this.x + width - 1, this.y + height - 1 , color);
 					
 					if(this.randomize)
-						this.drawCenteredString(fontrenderer, randomizeMessage, textX, textY, 0xFFFFFF55);
+						this.drawCenteredString(fontrenderer, randomizeMessage, textX - 6, textY, 0xFFFFFF55);
 				}
 				
 				String joinMessage = I18n.format("book.uhc.team.hover", name);

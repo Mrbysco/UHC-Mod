@@ -14,6 +14,7 @@ public class UHCSaveData extends WorldSavedData{
 	private boolean uhcStarting;
 	private boolean uhcOnGoing;
 	private boolean uhcIsFinished;
+	private boolean teamsLocked;
 	private int UHCDimension;
 
 	private boolean friendlyFire;
@@ -75,6 +76,11 @@ public class UHCSaveData extends WorldSavedData{
 
 	private boolean spawnRoom;
 	private int spawnRoomDimension;
+	
+	private boolean graceEnabled;
+	private int graceTime;
+	private boolean graceFinished;
+	private boolean twilightRespawn;
 
 	public UHCSaveData(String name) {
 		super(name);
@@ -137,9 +143,14 @@ public class UHCSaveData extends WorldSavedData{
 		this.spreadMaxRange = 2048;
 		this.spreadRespectTeam = true;
 		
-		///this.UHCDimension = 0;
 		this.spawnRoom = false;
 		this.spawnRoomDimension = 0;
+		
+		this.graceEnabled = false;
+		this.graceTime = 20;
+		this.graceFinished = false;
+		this.twilightRespawn = false;
+		this.teamsLocked = false;
 	}
 
 	public UHCSaveData() {
@@ -204,9 +215,14 @@ public class UHCSaveData extends WorldSavedData{
 		this.spreadMaxRange = 2048;
 		this.spreadRespectTeam = true;
 		
-		///this.UHCDimension = 0;
 		this.spawnRoom = false;
 		this.spawnRoomDimension = 0;
+		
+		this.graceEnabled = false;
+		this.graceTime = 20;
+		this.graceFinished = false;
+		this.twilightRespawn = false;
+		this.teamsLocked = false;
 	}
 	
 	public void resetAll() {
@@ -267,7 +283,11 @@ public class UHCSaveData extends WorldSavedData{
 		this.spreadMaxRange = 2048;
 		this.spreadRespectTeam = true;
 		
-		///this.UHCDimension = 0;
+		this.graceEnabled = false;
+		this.graceTime = 20;
+		this.graceFinished = false;
+		this.twilightRespawn = false;
+		this.teamsLocked = false;
 	}
 	
 	public boolean isUhcStarting() {
@@ -686,6 +706,46 @@ public class UHCSaveData extends WorldSavedData{
 		UHCDimension = uHCDimension;
 	}
 	
+	public boolean getTwilightRespawn() {
+		return twilightRespawn;
+	}
+	
+	public void setTwilightRespawn(boolean twilightRespawn) {
+		this.twilightRespawn = twilightRespawn;
+	}
+	
+	public boolean isGraceEnabled() {
+		return graceEnabled;
+	}
+	
+	public void setGraceEnabled(boolean graceEnabled) {
+		this.graceEnabled = graceEnabled;
+	}
+	
+	public int getGraceTime() {
+		return graceTime;
+	}
+	
+	public void setGraceTime(int graceTime) {
+		this.graceTime = graceTime;
+	}
+	
+	public boolean isGraceFinished() {
+		return graceFinished;
+	}
+	
+	public void setGraceFinished(boolean graceFinished) {
+		this.graceFinished = graceFinished;
+	}
+	
+	public boolean areTeamsLocked() {
+		return teamsLocked;
+	}
+	
+	public void setTeamsLocked(boolean teamsLocked) {
+		this.teamsLocked = teamsLocked;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		uhcStarting = nbt.getBoolean("uhcStarting");
@@ -750,6 +810,12 @@ public class UHCSaveData extends WorldSavedData{
 		spawnRoomDimension = nbt.getInteger("spawnRoomDimension");
 		
 		UHCDimension = nbt.getInteger("UHCDimension");
+		
+		graceEnabled = nbt.getBoolean("graceEnabled");
+		graceTime = nbt.getInteger("graceTime");
+		graceFinished = nbt.getBoolean("graceFinished");
+		twilightRespawn = nbt.getBoolean("twilightRespawn");
+		teamsLocked = nbt.getBoolean("teamsLocked");
 	}
 	
 	@Override
@@ -816,6 +882,13 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setInteger("spawnRoomDimension", spawnRoomDimension);
 
 		compound.setInteger("UHCDimension", UHCDimension);
+		
+		compound.setBoolean("graceEnabled", graceEnabled);
+		compound.setInteger("graceTime", graceTime);
+		compound.setBoolean("graceFinished", graceFinished);
+		compound.setBoolean("twilightRespawn", twilightRespawn);
+		compound.setBoolean("teamsLocked", teamsLocked);
+		
 		return compound;
 	}
 	

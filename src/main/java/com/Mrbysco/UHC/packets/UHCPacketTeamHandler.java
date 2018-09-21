@@ -1,8 +1,10 @@
 package com.Mrbysco.UHC.packets;
 
+import com.Mrbysco.UHC.Reference;
 import com.Mrbysco.UHC.init.UHCSaveData;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -22,36 +24,81 @@ public class UHCPacketTeamHandler implements IMessageHandler<UHCPacketTeam, IMes
 	
 	private void handle(UHCPacketTeam message, MessageContext ctx) {
 		EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
+
 		if(DimensionManager.getWorld(0) != null)
 		{
 			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-			
-			Scoreboard scoreboard = serverPlayer.getServerWorld().getScoreboard();
-			if(message.team.equals("solo"))
-				scoreboard.addPlayerToTeam(message.playerName, message.team);
+			NBTTagCompound playerData = serverPlayer.getEntityData();
+			if(playerData.getBoolean(teamAntiSpam))
+			{
+				serverPlayer.sendMessage(new TextComponentTranslation("book.uhc.team.antispam"));
+			}
 			else
 			{
-				int maxTeamSize = saveData.getMaxTeamSize();
-				
-				if(maxTeamSize == -1)
-					scoreboard.addPlayerToTeam(message.playerName, message.team);
+				if(saveData.areTeamsLocked())
+				{
+					if(playerData.getBoolean("canEditUHC") == true)
+					{
+						switchTeams(serverPlayer, message, saveData.getMaxTeamSize());
+					}
+					else
+					{
+						serverPlayer.sendMessage(new TextComponentTranslation("book.uhc.team.locked"));
+					}
+				}
 				else
 				{
-					if(scoreboard.getTeam(message.team).getMembershipCollection().size() < maxTeamSize)
-						scoreboard.addPlayerToTeam(message.playerName, message.team);
-					else
-						serverPlayer.sendMessage(new TextComponentTranslation("book.uhc.team.maxed", new Object[] {message.team}));
+					switchTeams(serverPlayer, message, saveData.getMaxTeamSize());
 				}
 			}
-			
-			
-			for(EntityPlayerMP players : serverPlayer.getServer().getPlayerList().getPlayers())
+		}
+	}
+	
+	private final String teamAntiSpam = Reference.MOD_PREFIX + "team_anti_spam";
+	
+	private void switchTeams(EntityPlayerMP serverPlayer, UHCPacketTeam message, int maxTeamSize)
+	{
+		Scoreboard scoreboard = serverPlayer.getServerWorld().getScoreboard();
+		NBTTagCompound playerData = serverPlayer.getEntityData();
+
+		if(message.team.equals("solo"))
+		{
+			scoreboard.addPlayerToTeam(message.playerName, message.team);
+			playerData.setBoolean(teamAntiSpam, true);
+			sendTeamSwitchMessage(serverPlayer, message);
+		}
+		else
+		{			
+			if(maxTeamSize == -1)
 			{
-				if(message.team.equals("solo"))
-					players.sendMessage(new TextComponentTranslation("book.uhc.team.solo", new Object[] {message.playerName, TextFormatting.fromColorIndex(message.colorIndex) + message.teamName}));
-				else
-					players.sendMessage(new TextComponentTranslation("book.uhc.team.selected", new Object[] {message.playerName, TextFormatting.fromColorIndex(message.colorIndex) + message.teamName}));
+				scoreboard.addPlayerToTeam(message.playerName, message.team);
+				playerData.setBoolean(teamAntiSpam, true);
+				sendTeamSwitchMessage(serverPlayer, message);
 			}
+			else
+			{
+				if(scoreboard.getTeam(message.team).getMembershipCollection().size() < maxTeamSize) 
+				{
+					scoreboard.addPlayerToTeam(message.playerName, message.team);
+					playerData.setBoolean(teamAntiSpam, true);
+					sendTeamSwitchMessage(serverPlayer, message);
+				}
+				else
+				{
+					serverPlayer.sendMessage(new TextComponentTranslation("book.uhc.team.maxed", new Object[] {message.team}));
+				}
+			}
+		}
+	}
+	
+	private void sendTeamSwitchMessage(EntityPlayerMP serverPlayer, UHCPacketTeam message)
+	{
+		for(EntityPlayerMP players : serverPlayer.getServer().getPlayerList().getPlayers())
+		{
+			if(message.team.equals("solo"))
+				players.sendMessage(new TextComponentTranslation("book.uhc.team.solo", new Object[] {message.playerName, TextFormatting.fromColorIndex(message.colorIndex) + message.teamName}));
+			else
+				players.sendMessage(new TextComponentTranslation("book.uhc.team.selected", new Object[] {message.playerName, TextFormatting.fromColorIndex(message.colorIndex) + message.teamName}));
 		}
 	}
 }

@@ -19,6 +19,8 @@ public class UHCTimerData extends WorldSavedData{
 	private int glowTimer;
 	private boolean controlled;
 	private int uhcStartTimer;
+	private int graceTimer;
+	private int twilightBossGraceTimer;
 	
 	public UHCTimerData(String name) {
 		super(name);
@@ -31,6 +33,8 @@ public class UHCTimerData extends WorldSavedData{
 		this.glowTimer = 0;
 		this.controlled = false;
 		this.uhcStartTimer = 0;
+		this.graceTimer = 0;
+		this.twilightBossGraceTimer = 0;
 	}
 
 	public UHCTimerData() {
@@ -44,6 +48,8 @@ public class UHCTimerData extends WorldSavedData{
 		this.glowTimer = 0;
 		this.controlled = false;
 		this.uhcStartTimer = 0;
+		this.graceTimer = 0;
+		this.twilightBossGraceTimer = 0;
 	}
 	
 	public void resetAll() {
@@ -55,6 +61,8 @@ public class UHCTimerData extends WorldSavedData{
 		this.glowTimer = 0;
 		this.controlled = false;
 		this.uhcStartTimer = 0;
+		this.graceTimer = 0;
+		this.twilightBossGraceTimer = 0;
 	}
 	
 	public int getShrinkTimeUntil() {
@@ -121,6 +129,22 @@ public class UHCTimerData extends WorldSavedData{
 		this.minuteMarkAmount = minuteMarkAmount;
 	}
 	
+	public int getGraceTimer() {
+		return graceTimer;
+	}
+	
+	public void setGraceTimer(int graceTimer) {
+		this.graceTimer = graceTimer;
+	}
+	
+	public int getTwilightBossGraceTimer() {
+		return twilightBossGraceTimer;
+	}
+	
+	public void setTwilightBossGraceTimer(int twilightBossGraceTimer) {
+		this.twilightBossGraceTimer = twilightBossGraceTimer;
+	}
+	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		shrinkTimeUntil = nbt.getInteger("shrinkTimeUntil");
@@ -131,6 +155,8 @@ public class UHCTimerData extends WorldSavedData{
 		glowTimer = nbt.getInteger("glowTimer");
 		controlled = nbt.getBoolean("pointControlled");
 		uhcStartTimer = nbt.getInteger("uhcStartTimer");
+		graceTimer = nbt.getInteger("graceTimer");
+		twilightBossGraceTimer = nbt.getInteger("twilightBossGraceTimer");
 	}
 	
 	@Override
@@ -143,6 +169,8 @@ public class UHCTimerData extends WorldSavedData{
 		compound.setInteger("glowTimer", glowTimer);
 		compound.setBoolean("pointControlled", controlled);
 		compound.setInteger("uhcStartTimer", uhcStartTimer);
+		compound.setInteger("graceTimer", graceTimer);
+		compound.setInteger("twilightBossGraceTimer", twilightBossGraceTimer);
 		return compound;
 	}
 	

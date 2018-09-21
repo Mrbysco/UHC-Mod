@@ -8,8 +8,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class RespawnInfo {
 	private BlockPos pos;
-	private IBlockState state;
-	private int timer;
+	private final IBlockState state;
 	public ArrayList<Team> teamsReached;
 	public boolean spawnerExists;
 	public boolean bossExists;
@@ -17,7 +16,6 @@ public class RespawnInfo {
 	public RespawnInfo(BlockPos pos, IBlockState state) {
 		this.pos = pos;
 		this.state = state;
-		this.timer = 0;
 		this.teamsReached = new ArrayList<>();
 		this.spawnerExists = false;
 		this.bossExists = false;
@@ -45,13 +43,5 @@ public class RespawnInfo {
 	
 	public void setSpawnerExists(boolean spawnerExists) {
 		this.spawnerExists = spawnerExists;
-	}
-	
-	public void setTimer(int timer) {
-		this.timer = timer;
-	}
-	
-	public int getTimer() {
-		return this.timer;
 	}
 }

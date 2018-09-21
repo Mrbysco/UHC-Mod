@@ -1,6 +1,5 @@
 package com.Mrbysco.UHC.lists;
 
-import java.util.Collections;
 import java.util.HashMap;
 
 import net.minecraft.entity.Entity;

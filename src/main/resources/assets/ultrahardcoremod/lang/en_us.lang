@@ -10,7 +10,10 @@ commands.uhc.reset.usage=/uhc reset
 commands.uhc.reset.success=UHC settings has been reset.
 commands.uhc.respawn.usage=/uhc respawn <team> [player]
 commands.uhc.respawn.success=Respawned %s player(s) to team %s: %s.
-commands.uhc.respawn.failure=Could not respawn %s because %s is not online.
+commands.uhc.respawn.failure=Could not respawn %s player(s) to team %s: %s
+commands.uhc.forceteam.usage=/uhc forceteam <team> [player]
+commands.uhc.forceteam.success=Forcefully put %s player(s) in team %s: %s.
+commands.uhc.forceteam.failure=Could not force team of %s because %s is not online.
 commands.uhc.spawnroom.usage=/uhc spawnroom [place/remove]
 commands.uhc.spawnroom.success=UHC Spawn room has been placed.
 commands.uhc.spawnroom.success1=UHC Spawn room has been removed.
@@ -38,6 +41,8 @@ book.uhc.team.solo=%s is now playing %s
 book.uhc.team.randomize=Randomize Players
 book.uhc.team.randomizer=Randomize
 book.uhc.team.maxed=Can not join team %s, team has max amount of players.
+book.uhc.team.antispam=Please wait a few seconds before changing team.
+book.uhc.team.locked=You can not change teams, teams have been locked.
 
 book.uhc.shrink.control=%s is at the control point. Shrinking the border by 1 block every second.
 
@@ -46,6 +51,7 @@ book.uhc.option.location=Current Location
 book.uhc.option.randsize=Random Teams:
 book.uhc.option.maxteams=Max Team Size:
 book.uhc.option.infinite=-1 = Infinite
+book.uhc.option.locked=Lock Teams
 book.uhc.option.minutes=In Minutes
 
 book.uhc.option.collision=Team Collision:
@@ -96,6 +102,9 @@ book.uhc.option.spreaddistance=Distance:
 book.uhc.option.spreadrange=Max Range:
 book.uhc.option.spreadteams=Respect Teams:
 
+book.uhc.option.grace=Grace Period:
+book.uhc.option.gracetimer=Grace for:
+
 book.uhc.explain.shrinkmodeshrink=Shrink the border
 book.uhc.explain.shrinkmodeshrink2=over the amount of minutes.
 book.uhc.explain.shrinkmodearena=Instantly shrink
@@ -140,6 +149,9 @@ book.uhc.explain.randomspawns2=When disabled it uses the spawns from config.
 book.uhc.explain.spreaddistance=Amount of blocks between teams.
 book.uhc.explain.spreadrange=The range in which it teleports players.
 book.uhc.explain.spreadteams=When enabled it teleports teams together.
+
+book.uhc.explain.graceperiod=When enabled the specified amount of minutes players
+book.uhc.explain.graceperiod2=won't be able to fight eachother.
 
 # Team Names
 color.darkred.name=Dark Red

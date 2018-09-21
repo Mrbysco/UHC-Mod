@@ -10,15 +10,17 @@ public class UHCPage1Packet implements IMessage
 	public boolean teamCollision;
 	public boolean teamDamage;
 	public int difficulty;
+	public boolean teamsLocked;
 	
 	public UHCPage1Packet() {}
 	
-	public UHCPage1Packet(int randomTeam, int maxTeam, boolean collision, boolean teamDamage, int difficulty) {
+	public UHCPage1Packet(int randomTeam, int maxTeam, boolean collision, boolean teamDamage, int difficulty, boolean teamsLocked) {
 		this.randomTeams = randomTeam;
 		this.maxTeams = maxTeam;
 		this.teamCollision = collision;
 		this.teamDamage = teamDamage;
 		this.difficulty = difficulty;
+		this.teamsLocked = teamsLocked;
 	}
 	
 	@Override
@@ -28,6 +30,7 @@ public class UHCPage1Packet implements IMessage
 		teamCollision = buf.readBoolean();
 		teamDamage = buf.readBoolean();
 		difficulty = buf.readInt();
+		teamsLocked = buf.readBoolean();
 
 	}
 
@@ -38,5 +41,6 @@ public class UHCPage1Packet implements IMessage
 		buf.writeBoolean(teamCollision);
 		buf.writeBoolean(teamDamage);
 		buf.writeInt(difficulty);
+		buf.writeBoolean(teamsLocked);
 	}
 }

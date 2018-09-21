@@ -67,7 +67,7 @@ public class UltraHardCoremodConfigGen {
 		public final TwilightForest twilightforest = new TwilightForest();
 
 		public static class TwilightForest{
-			@Config.Comment("The amount of minutes it takes before the boss can be respawned [default: 20]")
+			@Config.Comment("The amount of minutes it takes before bosses can be spawned after the start of the UHC [default: 20]")
 			public int twilightRespawnTime = 20;
 		}
 	}

@@ -26,7 +26,7 @@ public class TimerHandler {
 	}
 	
 	@SubscribeEvent
-	public void UHCBookEvent(TickEvent.WorldTickEvent event) {
+	public void timerEvent(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			World world = event.world;
@@ -65,8 +65,11 @@ public class TimerHandler {
 							}
 							else
 							{
-								timerData.setShrinkTimeUntil(0);
-								timerData.markDirty();
+								if(timerData.getShrinkTimeUntil() != 0)
+								{
+									timerData.setShrinkTimeUntil(0);
+									timerData.markDirty();
+								}
 							}
 						}
 						
@@ -90,8 +93,11 @@ public class TimerHandler {
 							}
 							else
 							{
-								timerData.setTimeLockTimer(0);
-								timerData.markDirty();
+								if(timerData.getTimeLockTimer() != 0)
+								{
+									timerData.setTimeLockTimer(0);
+									timerData.markDirty();
+								}
 							}
 						}
 						
@@ -115,8 +121,11 @@ public class TimerHandler {
 						}
 						else
 						{
-							timerData.setMinuteMarkTimer(0);
-							timerData.markDirty();
+							if(timerData.getMinuteMarkTimer() != 0)
+							{
+								timerData.setMinuteMarkTimer(0);
+								timerData.markDirty();
+							}
 						}
 						
 						if(!saveData.isTimedNamesApplied())
@@ -139,8 +148,11 @@ public class TimerHandler {
 							}
 							else
 							{
-								timerData.setNameTimer(0);
-								timerData.markDirty();
+								if(timerData.getNameTimer() != 0)
+								{
+									timerData.setNameTimer(0);
+									timerData.markDirty();
+								}
 							}
 						}
 						
@@ -164,8 +176,11 @@ public class TimerHandler {
 							}
 							else
 							{
-								timerData.setGlowTimer(0);
-								timerData.markDirty();
+								if(timerData.getGlowTimer() != 0)
+								{
+									timerData.setGlowTimer(0);
+									timerData.markDirty();
+								}
 							}
 						}
 					}

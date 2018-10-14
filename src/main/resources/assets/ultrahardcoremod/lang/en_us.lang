@@ -191,3 +191,4 @@ uhc.start=§eGO!§r
 
 uhc.team.won=§6Team §r%s§6 has won the UHC!§r
 uhc.player.won=%s§6 has won the UHC on their own!§r
+uhc.player.showdown.won=%s§6 has won the final showdown!§r

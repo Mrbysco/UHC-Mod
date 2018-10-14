@@ -2,6 +2,7 @@ package com.Mrbysco.UHC.config;
 
 import com.Mrbysco.UHC.Reference;
 
+import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -11,12 +12,23 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Config(modid = Reference.MOD_ID)
 @Config.LangKey("ultrahardcoremod.config.title")
 public class UltraHardCoremodConfigGen {
+	
+	@Config.Comment({"General"})
+	public static General general = new General();
 
 	@Config.Comment({"Team Spawns"})
 	public static teamSpawns teamSpawns = new teamSpawns();
 	
 	@Config.Comment({"Mod Compat"})
 	public static modCompat modCompat = new modCompat();
+	
+	public static class General{
+		@Config.Comment("Configures the spawn room block placed by the /uhc spawnroom command")
+		public String roomBlock = Blocks.BARRIER.getRegistryName().toString();
+		
+		@Config.Comment("Configures the spawn room block placed for the showdown")
+		public String showdownBlock = Blocks.STONEBRICK.getRegistryName().toString();
+	}
 	
 	public static class teamSpawns{
 		@Config.Comment("Team 1 Spawn")

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.Mrbysco.UHC.config.UltraHardCoremodConfigGen;
 import com.Mrbysco.UHC.init.ModItems;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
@@ -14,10 +15,12 @@ import com.Mrbysco.UHC.packets.UHCPacketMessage;
 import com.Mrbysco.UHC.utils.TimerThing;
 import com.Mrbysco.UHC.utils.UHCTeleporter;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -45,6 +48,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -301,6 +305,9 @@ public class UHCHandler {
 	
 					if(player.getActivePotionEffect(MobEffects.RESISTANCE) == null)
 						player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 32767 * 20, 10, true, false));
+					
+					if(player.getActivePotionEffect(MobEffects.MINING_FATIGUE) == null)
+						player.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 32767 * 20, 10, true, false));
 				}
 			}
 		}
@@ -352,33 +359,49 @@ public class UHCHandler {
 						ScorePlayerTeam team = teamsAlive.get(0);
 						if(teamsAlive.get(0) != null)
 						{
+							if(team == scoreboard.getTeam("solo"))
 							{
-								if(team == scoreboard.getTeam("solo"))
+								if(team.getMembershipCollection().size() == 1)
 								{
-									if(team.getMembershipCollection().size() == 1)
+									for (String s : team.getMembershipCollection())
+						            {
+										EntityPlayer winningPlayer = world.getPlayerEntityByName(s);
+										SoloWonTheUHC(winningPlayer, playerList, world);
+										saveData.setUhcIsFinished(true);
+						            }
+								}
+							}
+							else
+							{
+								YouWonTheUHC(teamsAlive.get(0), playerList, world);
+								for(int i = 0; i > 7; i++)
+								{
+									for(String players : teamsAlive.get(0).getMembershipCollection())
 									{
-										for (String s : team.getMembershipCollection())
-							            {
-											EntityPlayer winningPlayer = world.getPlayerEntityByName(s);
-											SoloWonTheUHC(winningPlayer, playerList, world);
-											saveData.setUhcIsFinished(true);
-							            }
+										EntityPlayer teamPlayer = world.getPlayerEntityByName(players);
+										EntityFireworkRocket rocket = new EntityFireworkRocket(world, teamPlayer.posX, teamPlayer.posY + 3, teamPlayer.posZ, getFirework(world.rand));
+										world.spawnEntity(rocket);
 									}
 								}
-								else
+								
+								if(!teamsAlive.get(0).getMembershipCollection().isEmpty() && teamsAlive.get(0).getMembershipCollection().size() > 1)
 								{
-									YouWonTheUHC(teamsAlive.get(0), playerList, world);
-									for(int i = 0; i > 7; i++)
+									ArrayList<String> teamPlayers = new ArrayList<>(teamsAlive.get(0).getMembershipCollection());
+									ArrayList<EntityPlayerMP> playersAlive = new ArrayList<>();
+									
+									for(String playerName : teamPlayers)
 									{
-										for(String players : teamsAlive.get(0).getMembershipCollection())
-										{
-											EntityPlayer teamPlayer = world.getPlayerEntityByName(players);
-											EntityFireworkRocket rocket = new EntityFireworkRocket(world, teamPlayer.posX, teamPlayer.posY + 3, teamPlayer.posZ, getFirework(world.rand));
-											world.spawnEntity(rocket);
-										}
+										scoreboard.removePlayerFromTeams(playerName);
+										EntityPlayer player = world.getPlayerEntityByName(playerName);
+										playersAlive.add((EntityPlayerMP)player);
 									}
-									saveData.setUhcIsFinished(true);
+									
+									setupShowdownAndTeleport(world, playersAlive);
+
+									saveData.setUhcShowdown(true);
 								}
+								
+								saveData.setUhcIsFinished(true);
 							}
 						}
 					}
@@ -386,6 +409,155 @@ public class UHCHandler {
 			}
 		}
 	}
+	
+	@SubscribeEvent
+	public void testingEvent(PlayerInteractEvent.RightClickItem event)
+	{
+		World world = event.getWorld();
+		EntityPlayer player = event.getEntityPlayer();
+		
+		if(!world.isRemote)
+		{
+			if(event.getItemStack().getItem() == Items.FEATHER)
+			{
+				ArrayList<EntityPlayerMP> players = new ArrayList<>();
+				players.add((EntityPlayerMP)player);
+				setupShowdownAndTeleport(world, players);
+			}
+		}
+	}
+	
+	public void setupShowdownAndTeleport(World world, ArrayList<EntityPlayerMP> players)
+	{
+		double centerX = 0;
+		double centerZ = 0;
+		
+		double centerX1 = centerX -21;
+		double centerX2 = centerX +21;
+		double centerZ1 = centerZ -21;
+		double centerZ2 = centerZ +21;
+		
+		Block showdownBlock = Block.getBlockFromName(UltraHardCoremodConfigGen.general.showdownBlock);
+		
+		if(showdownBlock == null)
+		{
+			showdownBlock = Blocks.STONEBRICK;
+		}
+		
+		for(double i = centerX1; i <= centerX2; i++)
+		{
+			for(double j = centerZ1; j <= centerZ2; j++)
+			{
+				world.setBlockState(new BlockPos(i, 250, j), showdownBlock.getDefaultState());
+				if(j == centerZ1 || j == centerZ2)
+				{
+					for(double k = 250; k <= 253; k++)
+					{
+						world.setBlockState(new BlockPos(i, k, j), showdownBlock.getDefaultState());
+					}
+				}
+			}
+			
+			if(i == centerX1 || i == centerX2)
+			{
+				for(double j = centerZ1; j <= centerZ2; j++)
+				{
+					for(double k = 250; k <= 253; k++)
+					{
+						world.setBlockState(new BlockPos(i, k, j), showdownBlock.getDefaultState());
+					}
+				}
+			}
+		}
+		
+		int TeleportChoosing = 0;
+		for(EntityPlayerMP player : players)
+		{
+			TeleportChoosing++;
+			if(TeleportChoosing > 8)
+			{
+				TeleportChoosing = 0;
+				TeleportChoosing++;
+			}
+			switch (TeleportChoosing) {
+			case 1:
+				player.setPositionAndUpdate(centerX2 -1.5, 251, centerZ2 -1.5);
+				break;
+			case 2:
+				player.setPositionAndUpdate(centerX1 +2.5, 251, centerZ1 +2.5);
+				break;
+			case 3:
+				player.setPositionAndUpdate(centerX2 -1.5, 251, centerZ1 +2.5);
+				break;
+			case 4:
+				player.setPositionAndUpdate(centerX1 +2.5, 251, centerZ2 -1.5);
+				break;
+			case 5:
+				player.setPositionAndUpdate(centerX2 -1.5, 251, centerZ);
+				break;
+			case 6:
+				player.setPositionAndUpdate(centerX1 +2.5, 251, centerZ);
+				break;
+			case 7:
+				player.setPositionAndUpdate(centerX, 251, centerZ1 +2.5);
+				break;
+			case 8:
+				player.setPositionAndUpdate(centerX, 251, centerZ2 -1.5);
+				break;
+
+			default:
+				player.setPositionAndUpdate(centerX2-1.5, 251, centerZ2 -1.5);
+				break;
+			}
+		}
+	}
+	
+	@SubscribeEvent
+	public void checkShowDownWinner(TickEvent.WorldTickEvent event) //Only really does anything if there's a showdown
+	{
+		World world = event.world;
+		
+		if(DimensionManager.getWorld(0) != null)
+		{
+			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+			
+			if(saveData.isUhcOnGoing() && saveData.isUhcIsFinished() && saveData.isUhcShowdown() && !saveData.isUhcShowdownFinished())
+			{
+				Scoreboard scoreboard = world.getScoreboard();
+				MinecraftServer server = world.getMinecraftServer();
+				
+				ArrayList<EntityPlayerMP> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+				ArrayList<EntityPlayerMP> playersAlive = new ArrayList<>();
+
+				for(EntityPlayerMP player : playerList)
+				{
+					if(player.interactionManager.getGameType() == GameType.SURVIVAL && player.getTeam() != scoreboard.getTeam("spectator"))
+					{
+						playersAlive.add(player);
+					}
+				}
+				
+				if(!playersAlive.isEmpty() && playersAlive != null)
+				{
+					for(EntityPlayerMP player : playersAlive)
+					{
+						if(player.interactionManager.getGameType() != GameType.SURVIVAL)
+						{
+							playersAlive.remove(player);
+						}
+					}
+				}
+				
+				if(!playersAlive.isEmpty() && playersAlive.size() == 1)
+				{
+					EntityPlayer showdownWinner = playersAlive.get(0);
+					WonTheShowdown(showdownWinner, playerList, world);
+					saveData.setUhcShowdownFinished(true);
+				}
+			}
+		}
+	}
+	
 	@SubscribeEvent
 	public void throwEvent(ItemTossEvent event)
 	{
@@ -419,6 +591,7 @@ public class UHCHandler {
 					if(DimensionManager.getWorld(saveData.getSpawnRoomDimension()) != null)
 					{
 						World world = DimensionManager.getWorld(saveData.getSpawnRoomDimension());
+						
 						double centerX1 = saveData.getBorderCenterX() -7;
 						double centerX2 = saveData.getBorderCenterX() +7;
 						double centerZ1 = saveData.getBorderCenterZ() -7;
@@ -431,14 +604,14 @@ public class UHCHandler {
 				            double d2 = world.rand.nextGaussian() * 0.02D;
 							for(double j = centerZ1; j <= centerZ2; j++)
 							{
-								if (world.rand.nextInt(10000) <= 4)
+								if (world.rand.nextInt(10000) <= 4 && world.getBlockState(new BlockPos(i, 250, j)).isTranslucent())
 									((WorldServer) world).spawnParticle(EnumParticleTypes.CRIT, i, 250 - 0.5, j, 3, d0, d1, d2, 0.0D);
 								
 								if(j == centerZ1 || j == centerZ2)
 								{
 									for(double k = 250; k <= 253; k++)
 									{
-										if (world.rand.nextInt(1000) <= 3)
+										if (world.rand.nextInt(1000) <= 3 && world.getBlockState(new BlockPos(i, k, j)).isTranslucent())
 											((WorldServer) world).spawnParticle(EnumParticleTypes.TOTEM, i, k + 1.0D, j, 3, d0, d1, d2, 0.0D);
 									}
 								}
@@ -450,7 +623,7 @@ public class UHCHandler {
 								{
 									for(double k = 250; k <= 253; k++)
 									{
-										if (world.rand.nextInt(1000) <= 3)
+										if (world.rand.nextInt(1000) <= 3 && world.getBlockState(new BlockPos(i, k, j)).isTranslucent())
 											((WorldServer) world).spawnParticle(EnumParticleTypes.TOTEM, i, k + 1.0D, j, 3, d0, d1, d2, 0.0D);
 									}
 								}
@@ -576,7 +749,7 @@ public class UHCHandler {
 			
 			BlockPos deathPos = originalPlayer.getPosition();
 			newData.setLong("deathPos", deathPos.toLong());
-			newData.setInteger("deathDim", originalPlayer.dimension);
+			newData.setString("deathDim", String.valueOf(originalPlayer.dimension));
 			newPlayer.setSpawnPoint(deathPos, true);
 		}
 	}
@@ -652,6 +825,33 @@ public class UHCHandler {
 						}
 					}
 					SPacketTitle spackettitle1 = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentTranslation("uhc.player.won", new Object[] {TextFormatting.DARK_RED + winningPlayer.getName()}));
+					player.connection.sendPacket(spackettitle1);
+				}
+			}
+		}
+	}
+	
+	public void WonTheShowdown(EntityPlayer winningPlayer, ArrayList<EntityPlayerMP> playerList, World world)
+	{
+		if(!world.isRemote)
+		{
+			if(DimensionManager.getWorld(0) != null)
+			{
+				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+				for(EntityPlayerMP player : playerList)
+				{
+					if(player.getName() == winningPlayer.getName())
+					{
+						for(int i = 0; i < 10; i++)
+						{
+							if(world.rand.nextInt(10) < 3)
+							{
+								EntityFireworkRocket rocket = new EntityFireworkRocket(world, winningPlayer.posX, winningPlayer.posY + 3, winningPlayer.posZ, getFirework(world.rand));
+								player.world.spawnEntity(rocket);
+							}
+						}
+					}
+					SPacketTitle spackettitle1 = new SPacketTitle(SPacketTitle.Type.TITLE, new TextComponentTranslation("uhc.player.showdown.won", new Object[] {TextFormatting.DARK_RED + winningPlayer.getName()}));
 					player.connection.sendPacket(spackettitle1);
 				}
 			}

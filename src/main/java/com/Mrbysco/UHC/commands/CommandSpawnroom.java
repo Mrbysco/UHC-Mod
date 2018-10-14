@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.Mrbysco.UHC.config.UltraHardCoremodConfigGen;
 import com.Mrbysco.UHC.init.UHCSaveData;
 
+import net.minecraft.block.Block;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,6 +44,12 @@ public class CommandSpawnroom extends CommandUhcBase
 		double centerX2 = centerX +7;
 		double centerZ1 = centerZ -7;
 		double centerZ2 = centerZ +7;
+		Block roomBlock = Block.getBlockFromName(UltraHardCoremodConfigGen.general.roomBlock);
+		
+		if(roomBlock == null)
+		{
+			roomBlock = Blocks.BARRIER;
+		}
 		
 		if(args.length >= 2)
 		{
@@ -57,7 +65,7 @@ public class CommandSpawnroom extends CommandUhcBase
 					{
 						for(double k = 250; k <= 253; k++)
 						{
-							world.setBlockState(new BlockPos(i, k, j), Blocks.AIR.getDefaultState());
+							world.setBlockState(new BlockPos(i, k, j), roomBlock.getDefaultState());
 						}
 					}
 				}
@@ -72,12 +80,12 @@ public class CommandSpawnroom extends CommandUhcBase
 				{
 					for(double j = centerZ1; j <= centerZ2; j++)
 					{
-						world.setBlockState(new BlockPos(i, 250, j), Blocks.BARRIER.getDefaultState());
+						world.setBlockState(new BlockPos(i, 250, j), roomBlock.getDefaultState());
 						if(j == centerZ1 || j == centerZ2)
 						{
 							for(double k = 250; k <= 253; k++)
 							{
-								world.setBlockState(new BlockPos(i, k, j), Blocks.BARRIER.getDefaultState());
+								world.setBlockState(new BlockPos(i, k, j), roomBlock.getDefaultState());
 							}
 						}
 					}
@@ -88,7 +96,7 @@ public class CommandSpawnroom extends CommandUhcBase
 						{
 							for(double k = 250; k <= 253; k++)
 							{
-								world.setBlockState(new BlockPos(i, k, j), Blocks.BARRIER.getDefaultState());
+								world.setBlockState(new BlockPos(i, k, j), roomBlock.getDefaultState());
 							}
 						}
 					}

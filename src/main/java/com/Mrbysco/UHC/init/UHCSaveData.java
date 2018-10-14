@@ -14,6 +14,8 @@ public class UHCSaveData extends WorldSavedData{
 	private boolean uhcStarting;
 	private boolean uhcOnGoing;
 	private boolean uhcIsFinished;
+	private boolean uhcShowdownOnGoing;
+	private boolean uhcShowdownFinished;
 	private boolean teamsLocked;
 	private int UHCDimension;
 
@@ -94,6 +96,8 @@ public class UHCSaveData extends WorldSavedData{
 		this.uhcStarting = false;
 		this.uhcOnGoing = false;
 		this.uhcIsFinished = false;
+		this.uhcShowdownOnGoing = false;
+		this.uhcShowdownFinished = false;
 		this.autoCook = false;
 		this.itemConversion = false;
 		this.applyCustomHealth = false;
@@ -166,6 +170,8 @@ public class UHCSaveData extends WorldSavedData{
 		this.uhcStarting = false;
 		this.uhcOnGoing = false;
 		this.uhcIsFinished = false;
+		this.uhcShowdownOnGoing = false;
+		this.uhcShowdownFinished = false;
 		this.autoCook = false;
 		this.itemConversion = false;
 		this.applyCustomHealth = false;
@@ -236,6 +242,8 @@ public class UHCSaveData extends WorldSavedData{
 		this.uhcStarting = false;
 		this.uhcOnGoing = false;
 		this.uhcIsFinished = false;
+		this.uhcShowdownOnGoing = false;
+		this.uhcShowdownFinished = false;
 		this.autoCook = false;
 		this.itemConversion = false;
 		this.applyCustomHealth = false;
@@ -674,6 +682,22 @@ public class UHCSaveData extends WorldSavedData{
 		this.uhcIsFinished = uhcIsFinished;
 	}
 	
+	public boolean isUhcShowdown() {
+		return uhcShowdownOnGoing;
+	}
+	
+	public void setUhcShowdown(boolean uhcShowdownOnGoing) {
+		this.uhcShowdownOnGoing = uhcShowdownOnGoing;
+	}
+	
+	public boolean isUhcShowdownFinished() {
+		return uhcShowdownFinished;
+	}
+	
+	public void setUhcShowdownFinished(boolean uhcShowdownFinished) {
+		this.uhcShowdownFinished = uhcShowdownFinished;
+	}
+	
 	public boolean isTimedNamesApplied() {
 		return timedNamesApplied;
 	}
@@ -751,6 +775,8 @@ public class UHCSaveData extends WorldSavedData{
 		uhcStarting = nbt.getBoolean("uhcStarting");
 		uhcOnGoing = nbt.getBoolean("uhcOnGoing");
 		uhcIsFinished = nbt.getBoolean("uhcIsFinished");
+		uhcShowdownOnGoing = nbt.getBoolean("uhcShowdownOnGoing");
+		uhcShowdownFinished = nbt.getBoolean("uhcShowdownFinished");
 		autoCook = nbt.getBoolean("autoCook");
 		itemConversion = nbt.getBoolean("itemConversion");
 		applyCustomHealth = nbt.getBoolean("CustomHealthApplied");
@@ -823,6 +849,8 @@ public class UHCSaveData extends WorldSavedData{
 		compound.setBoolean("uhcStarting", uhcStarting);
 		compound.setBoolean("uhcOnGoing", uhcOnGoing);
 		compound.setBoolean("uhcIsFinished", uhcIsFinished);
+		compound.setBoolean("uhcShowdownOnGoing", uhcShowdownOnGoing);
+		compound.setBoolean("uhcShowdownFinished", uhcShowdownFinished);
 		compound.setBoolean("autoCook", autoCook);
 		compound.setBoolean("itemConversion", itemConversion);
 		compound.setBoolean("CustomHealthApplied", applyCustomHealth);

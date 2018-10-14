@@ -1,5 +1,6 @@
 package com.Mrbysco.UHC.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,6 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.Mrbysco.UHC.init.UHCSaveData;
+import com.Mrbysco.UHC.utils.SpreadPosition;
+import com.Mrbysco.UHC.utils.SpreadUtil;
+import com.Mrbysco.UHC.utils.TeamUtil;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -18,6 +22,7 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -26,7 +31,7 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
-import net.minecraft.world.World;
+import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
 
 public class CommandRespawnUHC extends CommandUhcBase
@@ -79,6 +84,7 @@ public class CommandRespawnUHC extends CommandUhcBase
             
             if (scoreboard.addPlayerToTeam(s4, s) && players.contains(s4))
             {
+            	respawnPlayers(s4, s, sender, server);
                 set.add(s4);
             }
             else
@@ -100,6 +106,7 @@ public class CommandRespawnUHC extends CommandUhcBase
 
                     	if (scoreboard.addPlayerToTeam(s3, s) && players.contains(s3))
                         {
+                        	respawnPlayers(s3, s, sender, server);
                             set.add(s3);
                         }
                         else
@@ -114,6 +121,7 @@ public class CommandRespawnUHC extends CommandUhcBase
 
                     if (scoreboard.addPlayerToTeam(s2, s) && players.contains(s2))
                     {
+                    	respawnPlayers(s2, s, sender, server);
                         set.add(s2);
                     }
                     else
@@ -126,85 +134,8 @@ public class CommandRespawnUHC extends CommandUhcBase
 
         if (!set.isEmpty())
         {
-        	for(String playerName : set)
-        	{
-        		EntityPlayer player = server.getWorld(0).getPlayerEntityByName(getEntityName(server, sender, playerName));
-                if(player != null)
-                {
-                	NBTTagCompound entityData = player.getEntityData();
-                    World world = server.getWorld(0);
-                    UHCSaveData uhcData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-
-                    ScorePlayerTeam team = scoreboard.getTeam(s);
-                    if(team == null)
-                    {
-                    	return;
-                    }
-                    Collection<String> collection = team.getMembershipCollection();
-                    sender.setCommandStat(CommandResultStats.Type.QUERY_RESULT, collection.size());
-                    if (collection.isEmpty())
-                    {
-                        throw new CommandException("commands.scoreboard.teams.list.player.empty", new Object[] {team.getName()});
-                    }
-                    
-                    String memberName = Iterables.get(collection, 0);
-                    EntityPlayer teamMember = server.getWorld(0).getPlayerEntityByName(getEntityName(server, sender, memberName));
-                    if(teamMember != null)
-                    {
-                        BlockPos pos = teamMember.getPosition();
-                    	int teamDimension = teamMember.dimension;
-                    	if(player.dimension != teamDimension)
-            			{
-            				player.changeDimension(teamDimension);
-            			}
-                        player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
-                        player.setGameType(GameType.SURVIVAL);
-                        if(scoreboard.getObjective("health") != null)
-        			        scoreboard.removeObjectiveFromEntity(player.getName(), scoreboard.getObjective("health"));
-                    }
-                    else
-                    {
-                    	BlockPos deathPos;
-                    	BlockPos pos1 = player.getBedLocation();
-                		int dimInt = entityData.getInteger("deathDim");
-
-                    	if(pos1 != null)
-                    	{
-                    		deathPos = pos1;
-                    	}
-                    	else
-                    	{
-                    		deathPos = BlockPos.fromLong(entityData.getLong("deathPos"));
-                    	}
-            			if(player.dimension != dimInt)
-            			{
-            				player.changeDimension(dimInt);
-            			}
-                        player.setPositionAndUpdate(deathPos.getX(), deathPos.getY(), deathPos.getZ());
-                    	player.setGameType(GameType.SURVIVAL);
-                    	if(scoreboard.getObjective("health") != null)
-        			        scoreboard.removeObjectiveFromEntity(player.getName(), scoreboard.getObjective("health"));
-                    }
-                    
-                    double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
-        			boolean flag = uhcData.isApplyCustomHealth();
-        			double maxHealth = (double) uhcData.getMaxHealth();
-                    
-        			
-        			if(playerHealth != maxHealth && flag)
-        			{
-        				player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
-        				
-        				int instantHealth = uhcData.getMaxHealth() / 4;
-        				player.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 1, instantHealth, true, false));
-        				
-        	            entityData.setBoolean("modifiedMaxHealth", true);
-        			}
-        			
-        			sender.setCommandStat(CommandResultStats.Type.AFFECTED_ENTITIES, set.size());
-                    notifyCommandListener(sender, this, "commands.uhc.respawn.success", new Object[] {set.size(), s, joinNiceString(set.toArray(new String[set.size()]))});
-                }
-        	}
+        	sender.setCommandStat(CommandResultStats.Type.AFFECTED_ENTITIES, set.size());
+            notifyCommandListener(sender, this, "commands.uhc.respawn.success", new Object[] {set.size(), s, joinNiceString(set.toArray(new String[set.size()]))});
         }
 
         if (!set1.isEmpty())
@@ -213,9 +144,163 @@ public class CommandRespawnUHC extends CommandUhcBase
         }
     }
 	
-	public String removeBrackets(String string)
+	public void respawnPlayers(String playerName, String teamName, ICommandSender sender, MinecraftServer server)
 	{
-		return string.replace("[", "").replace("]", "");
+        Scoreboard scoreboard = this.getScoreboard(server);
+        UHCSaveData uhcData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+
+		EntityPlayer player = server.getWorld(0).getPlayerEntityByName(playerName);
+		if(player != null)
+		{
+        	NBTTagCompound entityData = player.getEntityData();
+            
+            ScorePlayerTeam selectedTeam = scoreboard.getTeam(teamName);
+            if(selectedTeam != null)
+            {
+            	if(!selectedTeam.getMembershipCollection().isEmpty())
+            	{
+                    Collection<String> teamMembers = selectedTeam.getMembershipCollection();
+                    if(!teamMembers.isEmpty())
+                    {
+                    	String memberName = Iterables.get(teamMembers, 0);
+                        EntityPlayer teamMember = server.getWorld(0).getPlayerEntityByName(memberName);
+
+                        if(teamMember != null)
+                        {
+                        	BlockPos pos = teamMember.getPosition();
+                        	int teamDimension = teamMember.dimension;
+                        	if(player.dimension != teamDimension)
+                				player.changeDimension(teamDimension);
+                        	
+                            player.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
+                            player.setGameType(GameType.SURVIVAL);
+                            
+                            if(scoreboard.getObjective("health") != null)
+            			        scoreboard.removeObjectiveFromEntity(player.getName(), scoreboard.getObjective("health"));
+                            
+                            setCustomHealth(player);
+                        }
+                    }
+                    else
+                    {
+                    	BlockPos pos1 = player.getBedLocation();
+                    	
+                		String dimInt = entityData.getString("deathDim");
+                		Long deathPosLong = entityData.getLong("deathPos");
+                		
+                		if(dimInt.isEmpty() && deathPosLong.equals(0L))
+                		{
+                        	BlockPos deathPos;
+
+                			if(deathPosLong != 0L)
+            				{
+                        		deathPos = BlockPos.fromLong(deathPosLong);
+            				}
+                    		else
+                    		{
+                        		deathPos = pos1;
+                    		}
+
+                        	if(!dimInt.isEmpty())
+                        	{
+                        		if(player.dimension != Integer.valueOf(dimInt))
+                    			{
+                    				player.changeDimension(Integer.valueOf(dimInt));
+                    			}
+                        	}
+                        	
+                            player.setPositionAndUpdate(deathPos.getX(), deathPos.getY(), deathPos.getZ());
+                		}
+                		else
+                		{
+                			if(player.dimension != uhcData.getUHCDimension())
+                			{
+                				player.changeDimension(uhcData.getUHCDimension());
+                			}
+                			
+            				ArrayList<EntityPlayerMP> playerList = new ArrayList<>(Arrays.asList((EntityPlayerMP) player));
+            				WorldBorder border = server.getWorld(0).getWorldBorder();
+
+            				double centerX = uhcData.getBorderCenterX();
+        					double centerZ = uhcData.getBorderCenterZ();
+        					if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
+        						border.setCenter(centerX, centerZ);
+        					
+        					int BorderSize = uhcData.getBorderSize();
+        					
+        					double spreadDistance = uhcData.getSpreadDistance();
+        					double spreadMaxRange = uhcData.getSpreadMaxRange();
+        					
+            				if(spreadMaxRange >= (BorderSize / 2))
+        						spreadMaxRange = (BorderSize / 2);
+            				
+                			if(uhcData.isRandomSpawns())
+        					{
+                				if(selectedTeam == scoreboard.getTeam("solo"))
+                				{
+                					try {
+            							SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, server.getWorld(0), uhcData.isSpreadRespectTeam());
+            						} catch (CommandException e) {
+            							e.printStackTrace();
+            						}
+                				}
+        						try {
+        							SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, server.getWorld(0), false);
+        						} catch (CommandException e) {
+        							e.printStackTrace();
+        						}
+        					}
+        					else
+        					{
+        						for(EntityPlayer players : playerList)
+        						{
+        							if(selectedTeam != scoreboard.getTeam("solo"))
+        							{
+        								BlockPos pos = TeamUtil.getPosForTeam(player.getTeam().getColor());
+        								
+        					            ((EntityPlayerMP)player).connection.setPlayerLocation(pos.getX(), pos.getY(), pos.getZ(), player.rotationYaw, player.rotationPitch);
+        							}
+        							else
+        							{
+        								try {
+        									SpreadUtil.spread(playerList, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, server.getWorld(0), false);
+        								} catch (CommandException e) {
+        									e.printStackTrace();
+        								}
+        							}
+        						}
+        					}
+                		}
+            			
+                    	player.setGameType(GameType.SURVIVAL);
+                    	if(scoreboard.getObjective("health") != null)
+        			        scoreboard.removeObjectiveFromEntity(player.getName(), scoreboard.getObjective("health"));
+                    	
+                    	setCustomHealth(player);
+                    }
+            	}
+            }
+		}
+	}
+	
+	public void setCustomHealth(EntityPlayer player)
+	{
+        UHCSaveData uhcData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+    	NBTTagCompound entityData = player.getEntityData();
+
+		double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
+		boolean flag = uhcData.isApplyCustomHealth();
+		double maxHealth = (double) uhcData.getMaxHealth();
+		
+		if(playerHealth != maxHealth && flag)
+		{
+			player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
+			
+			int instantHealth = uhcData.getMaxHealth() / 4;
+			player.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 1, instantHealth, true, false));
+			
+            entityData.setBoolean("modifiedMaxHealth", true);
+		}
 	}
 	
 	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,

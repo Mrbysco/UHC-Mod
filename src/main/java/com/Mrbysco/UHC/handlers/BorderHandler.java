@@ -95,9 +95,7 @@ public class BorderHandler {
 						double centerX = saveData.getBorderCenterX();
 						double centerZ = saveData.getBorderCenterZ();
 						double spreadDistance = saveData.getSpreadDistance();
-						
-						int BorderSize = saveData.getBorderSize();
-						
+
 						int oldSize = saveData.getBorderSize();
 						int newSize = saveData.getShrinkSize();
 		                long shrinkTimeSec = 0L;

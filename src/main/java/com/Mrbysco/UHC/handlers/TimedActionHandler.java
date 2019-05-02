@@ -16,7 +16,6 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -37,7 +36,7 @@ public class TimedActionHandler {
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-	    		WorldBorder border = world.getWorldBorder();
+//	    		WorldBorder border = world.getWorldBorder();
 				GameRules rules = world.getGameRules();
 	
 				if(saveData.isUhcOnGoing())

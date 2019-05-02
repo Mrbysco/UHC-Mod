@@ -78,7 +78,6 @@ public class GraceHandler {
 	
 	@SubscribeEvent
 	public void graceTimerEvent(LivingAttackEvent event) {
-		World world = event.getEntityLiving().world;
 		if(DimensionManager.getWorld(0) != null)
 		{
 			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
@@ -98,7 +97,6 @@ public class GraceHandler {
 	
 	@SubscribeEvent
 	public void graceTimerEvent(LivingHurtEvent event) {
-		World world = event.getEntityLiving().world;
 		if(DimensionManager.getWorld(0) != null)
 		{
 			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));

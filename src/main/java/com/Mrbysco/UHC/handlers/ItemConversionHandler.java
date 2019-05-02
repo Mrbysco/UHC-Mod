@@ -9,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -18,7 +17,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class ItemConversionHandler {
 	
@@ -27,7 +25,6 @@ public class ItemConversionHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			EntityPlayer player = (EntityPlayer) event.player;
-			World world = player.world;
 			if(DimensionManager.getWorld(0) != null)
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
@@ -255,8 +252,6 @@ public class ItemConversionHandler {
 	@SubscribeEvent
 	public void onLivingDrop(LivingDropsEvent event) {
 		World world = event.getEntity().getEntityWorld();
-		BlockPos pos = event.getEntity().getPosition();
-		Random rand = world.rand;
 		List<EntityItem> drops = event.getDrops();
 		if(DimensionManager.getWorld(0) != null)
 		{

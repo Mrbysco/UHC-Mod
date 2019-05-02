@@ -97,7 +97,6 @@ public class ModCompatHandler {
 							ArrayList<EntityPlayerMP> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(EntityPlayerMP.class, hitbox));
 							
 							ArrayList<EntityMob> collidingBossMobs = new ArrayList<>(world.getEntitiesWithinAABB(EntityMob.class, hitbox));
-							int respawnTime = (UltraHardCoremodConfigGen.modCompat.twilightforest.twilightRespawnTime * 1200);
 
 							if(world.getBlockState(info.getPos()).getBlock() instanceof twilightforest.block.BlockTFBossSpawner)
 							{

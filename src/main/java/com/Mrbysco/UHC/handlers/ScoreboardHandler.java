@@ -2,24 +2,18 @@ package com.Mrbysco.UHC.handlers;
 
 import com.Mrbysco.UHC.init.UHCSaveData;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.IScoreCriteria;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.GameRules;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import java.util.ArrayList;
 
 public class ScoreboardHandler {
 	@SubscribeEvent
@@ -31,11 +25,7 @@ public class ScoreboardHandler {
 			if(DimensionManager.getWorld(0) != null)
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-				MinecraftServer server = world.getMinecraftServer();
-				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-				WorldServer wServer = server.getWorld(0);
-				GameRules rules = wServer.getGameRules();
-				
+
 				for (TextFormatting color : TextFormatting.values())
 				{
 					boolean flag = !color.equals(TextFormatting.OBFUSCATED) && !color.equals(TextFormatting.BOLD) && 

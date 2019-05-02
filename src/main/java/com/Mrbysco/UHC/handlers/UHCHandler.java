@@ -51,7 +51,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class UHCHandler {
@@ -261,18 +260,14 @@ public class UHCHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
 		{
 			EntityPlayer player = event.player;
-			World world = player.world;
 			ItemStack bookStack = new ItemStack(ModItems.uhc_book);
 			
 			if(DimensionManager.getWorld(0) != null)
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-				List<Entity> entityList = world.loadedEntityList;
-				
+
 				if(!saveData.isUhcOnGoing() && !saveData.isUhcStarting())
 				{
-					MinecraftServer server = world.getMinecraftServer();
-	
 					NBTTagCompound entityData = player.getEntityData();
 					
 					if (entityData.getBoolean("canEditUHC") == true)
@@ -552,7 +547,6 @@ public class UHCHandler {
 	public void throwEvent(ItemTossEvent event)
 	{
 		Entity entity = event.getEntity();
-		World world = entity.world;
 		ItemStack stack = event.getEntityItem().getItem();
 		if(DimensionManager.getWorld(0) != null)
 		{
@@ -667,7 +661,6 @@ public class UHCHandler {
 			EntityPlayer player = event.player;
 			NBTTagCompound entityData = player.getEntityData();
 			World world = player.world;
-			UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
 			if(!world.isRemote)
 			{
@@ -687,7 +680,6 @@ public class UHCHandler {
 	public void onNewPlayerJoin(PlayerLoggedInEvent event)
 	{
 		EntityPlayer player = event.player;
-		WorldServer worldServer = (WorldServer)player.world;
 		UHCSaveData saveData = UHCSaveData.getForWorld(player.world);
 
 		if(!player.world.isRemote)
@@ -727,8 +719,6 @@ public class UHCHandler {
 	public void onPlayerPermissionClone(PlayerEvent.Clone event) {
 		EntityPlayer originalPlayer = event.getOriginal();
 		EntityPlayer newPlayer = event.getEntityPlayer();
-		
-		UHCSaveData saveData = UHCSaveData.getForWorld(newPlayer.world);
 
 		NBTTagCompound originalData = originalPlayer.getEntityData();
 		NBTTagCompound newData = newPlayer.getEntityData();
@@ -750,7 +740,6 @@ public class UHCHandler {
 		World world = player.world;
 		if(!world.isRemote)
 		{
-			MinecraftServer server = world.getMinecraftServer();
 			Scoreboard scoreboard = world.getScoreboard();
 			if(DimensionManager.getWorld(0) != null)
 			{
@@ -772,7 +761,6 @@ public class UHCHandler {
 		{
 			if(DimensionManager.getWorld(0) != null)
 			{
-				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				String teamName = team.getDisplayName();
 				for(EntityPlayerMP player : playerList)
 				{
@@ -800,7 +788,6 @@ public class UHCHandler {
 		{
 			if(DimensionManager.getWorld(0) != null)
 			{
-				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				for(EntityPlayerMP player : playerList)
 				{
 					if(player.getName() == winningPlayer.getName())
@@ -827,7 +814,6 @@ public class UHCHandler {
 		{
 			if(DimensionManager.getWorld(0) != null)
 			{
-				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				for(EntityPlayerMP player : playerList)
 				{
 					if(player.getName() == winningPlayer.getName())

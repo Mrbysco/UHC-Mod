@@ -134,7 +134,7 @@ public class GuiUHCBook extends GuiScreen{
 
     /** UHC save data */
     public static UHCSaveData saveData;
-    
+
 	private boolean uhcStarting;
 	private boolean uhcOnGoing;
 	private boolean teamsLocked;
@@ -194,8 +194,7 @@ public class GuiUHCBook extends GuiScreen{
 	
 	private boolean graceEnabled;
 	private int graceTime;
-	private boolean graceFinished;
-	
+
 	private NBTTagCompound playerData;
 
 	
@@ -486,13 +485,13 @@ public class GuiUHCBook extends GuiScreen{
 	public void syncData() {
 		if(this.currPage == 0)
 		{
-			if(randSizeField.getText() != String.valueOf(saveData.getRandomTeamSize()) && randSizeField.isFocused() == false)
+			if(randSizeField.getText() != String.valueOf(saveData.getRandomTeamSize()) && !randSizeField.isFocused())
 				randSizeField.setText(String.valueOf(saveData.getRandomTeamSize()));
 			
-			if(maxTeamSizeField.getText() != String.valueOf(saveData.getMaxTeamSize()) && maxTeamSizeField.isFocused() == false)
+			if(maxTeamSizeField.getText() != String.valueOf(saveData.getMaxTeamSize()) && !maxTeamSizeField.isFocused())
 				maxTeamSizeField.setText(String.valueOf(saveData.getMaxTeamSize()));
 			
-			if(difficultyField.getText() != String.valueOf(saveData.getDifficulty()) && difficultyField.isFocused() == false)
+			if(difficultyField.getText() != String.valueOf(saveData.getDifficulty()) && !difficultyField.isFocused())
 				difficultyField.setText(String.valueOf(saveData.getDifficulty()));
 			
 			if(collisionButton.getBoolean() != saveData.isTeamCollision())
@@ -507,25 +506,25 @@ public class GuiUHCBook extends GuiScreen{
 		
 		if(this.currPage == 1)
 		{
-			if(borderSizeField.getText() != String.valueOf(saveData.getBorderSize()) && borderSizeField.isFocused() == false)
+			if(borderSizeField.getText() != String.valueOf(saveData.getBorderSize()) && !borderSizeField.isFocused())
 				borderSizeField.setText(String.valueOf(saveData.getBorderSize()));
 			
-			if(borderCenterXField.getText() != String.valueOf(saveData.getBorderCenterX()) && borderCenterXField.isFocused() == false)
+			if(borderCenterXField.getText() != String.valueOf(saveData.getBorderCenterX()) && !borderCenterXField.isFocused())
 				borderCenterXField.setText(String.valueOf(saveData.getBorderCenterX()));
 			
-			if(borderCenterZField.getText() != String.valueOf(saveData.getBorderCenterZ()) && borderCenterZField.isFocused() == false)
+			if(borderCenterZField.getText() != String.valueOf(saveData.getBorderCenterZ()) && !borderCenterZField.isFocused())
 				borderCenterZField.setText(String.valueOf(saveData.getBorderCenterZ()));
 			
 			if(shrinkButton.getBoolean() != saveData.isShrinkEnabled())
 				shrinkButton.setBoolean(saveData.isShrinkEnabled());
 			
-			if(shrinkTimerField.getText() != String.valueOf(saveData.getShrinkTimer()) && shrinkTimerField.isFocused() == false)
+			if(shrinkTimerField.getText() != String.valueOf(saveData.getShrinkTimer()) && !shrinkTimerField.isFocused())
 				shrinkTimerField.setText(String.valueOf(saveData.getShrinkTimer()));
 			
-			if(shrinkSizeField.getText() != String.valueOf(saveData.getShrinkSize()) && shrinkSizeField.isFocused() == false)
+			if(shrinkSizeField.getText() != String.valueOf(saveData.getShrinkSize()) && !shrinkSizeField.isFocused())
 				shrinkSizeField.setText(String.valueOf(saveData.getShrinkSize()));
 			
-			if(shrinkOvertimeField.getText() != String.valueOf(saveData.getShrinkOvertime()) && shrinkOvertimeField.isFocused() == false)
+			if(shrinkOvertimeField.getText() != String.valueOf(saveData.getShrinkOvertime()) && !shrinkOvertimeField.isFocused())
 				shrinkOvertimeField.setText(String.valueOf(saveData.getShrinkOvertime()));
 			
 			if(ShrinkModeButton.getText() != saveData.getShrinkMode())
@@ -537,7 +536,7 @@ public class GuiUHCBook extends GuiScreen{
 			if(timeLockButton.getBoolean() != saveData.isTimeLock())
 				timeLockButton.setBoolean(saveData.isTimeLock());
 				
-			if(timeLockTimerField.getText() != String.valueOf(saveData.getTimeLockTimer()) && timeLockTimerField.isFocused() == false)
+			if(timeLockTimerField.getText() != String.valueOf(saveData.getTimeLockTimer()) && !timeLockTimerField.isFocused())
 				timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
 			
 			if(timeModeButton.getText() != saveData.getTimeMode())
@@ -546,19 +545,19 @@ public class GuiUHCBook extends GuiScreen{
 			if(minuteMarkButton.getBoolean() != saveData.isMinuteMark())
 				minuteMarkButton.setBoolean(saveData.isMinuteMark());
 			
-			if(minMarkTimerField.getText() != String.valueOf(saveData.getMinuteMarkTime()) && minMarkTimerField.isFocused() == false)
+			if(minMarkTimerField.getText() != String.valueOf(saveData.getMinuteMarkTime()) && !minMarkTimerField.isFocused())
 				minMarkTimerField.setText(String.valueOf(saveData.getMinuteMarkTime()));
 			
 			if(nameButton.getBoolean() != saveData.isTimedNames())
 				nameButton.setBoolean(saveData.isTimedNames());
 			
-			if(nameTimerField.getText() != String.valueOf(saveData.getNameTimer()) && nameTimerField.isFocused() == false)
+			if(nameTimerField.getText() != String.valueOf(saveData.getNameTimer()) && !nameTimerField.isFocused())
 				nameTimerField.setText(String.valueOf(saveData.getNameTimer()));
 			
 			if(glowButton.getBoolean() != saveData.isTimedGlow())
 				glowButton.setBoolean(saveData.isTimedGlow());
 			
-			if(glowTimerField.getText() != String.valueOf(saveData.getGlowTime()) && glowTimerField.isFocused() == false)
+			if(glowTimerField.getText() != String.valueOf(saveData.getGlowTime()) && !glowTimerField.isFocused())
 				glowTimerField.setText(String.valueOf(saveData.getGlowTime()));
 		}
 		
@@ -603,16 +602,16 @@ public class GuiUHCBook extends GuiScreen{
 			if(customHealthButton.getBoolean() != saveData.isApplyCustomHealth())
 				customHealthButton.setBoolean(saveData.isApplyCustomHealth());
 			
-			if(maxHealthField.getText() != String.valueOf(saveData.getMaxHealth()) && maxHealthField.isFocused() == false)
+			if(maxHealthField.getText() != String.valueOf(saveData.getMaxHealth()) && !maxHealthField.isFocused())
 				maxHealthField.setText(String.valueOf(saveData.getMaxHealth()));
 			
 			if(randomSpawnButton.getBoolean() != saveData.isRandomSpawns())
 				randomSpawnButton.setBoolean(saveData.isRandomSpawns());
 			
-			if(spreadDistanceField.getText() != String.valueOf(saveData.getMaxHealth()) && spreadDistanceField.isFocused() == false)
+			if(spreadDistanceField.getText() != String.valueOf(saveData.getMaxHealth()) && !spreadDistanceField.isFocused())
 				spreadDistanceField.setText(String.valueOf(saveData.getSpreadDistance()));
 			
-			if(spreadMaxRangeField.getText() != String.valueOf(saveData.getMaxHealth()) && spreadMaxRangeField.isFocused() == false)
+			if(spreadMaxRangeField.getText() != String.valueOf(saveData.getMaxHealth()) && !spreadMaxRangeField.isFocused())
 				spreadMaxRangeField.setText(String.valueOf(saveData.getSpreadMaxRange()));
 			
 			if(spreadRespectTeamButton.getBoolean() != saveData.isSpreadRespectTeam())
@@ -624,7 +623,7 @@ public class GuiUHCBook extends GuiScreen{
 			if(graceTimeButton.getBoolean() != saveData.isGraceEnabled())
 				graceTimeButton.setBoolean(saveData.isGraceEnabled());
 			
-			if(graceTimeField.getText() != String.valueOf(saveData.getGraceTime()) && graceTimeField.isFocused() == false)
+			if(graceTimeField.getText() != String.valueOf(saveData.getGraceTime()) && !graceTimeField.isFocused())
 				graceTimeField.setText(String.valueOf(saveData.getGraceTime()));
 		}
 	}
@@ -828,7 +827,7 @@ public class GuiUHCBook extends GuiScreen{
 			if(isColorNotHovered() && !flag && !teamsLockedButton.isMouseOver())
     	        this.fontRenderer.drawString(teamSelect, i + 65, j + 28, 0xFF555555);
 			
-			if(flag && maxTeamSizeField.isFocused() == false)
+			if(flag && !maxTeamSizeField.isFocused())
 		        this.drawCenteredString(fontRenderer, infinityString, i + 91, j + 28, 0xFFFF5555);
 			
 			String lockButton = I18n.format("book.uhc.option.locked");
@@ -885,7 +884,7 @@ public class GuiUHCBook extends GuiScreen{
 
 			boolean flag = hoverBoolean(mouseX, mouseY, shrinkTimerField.x, shrinkTimerField.y, shrinkTimerField.width, shrinkTimerField.height);
 			boolean flag1 = hoverBoolean(mouseX, mouseY, shrinkOvertimeField.x, shrinkOvertimeField.y, shrinkOvertimeField.width, shrinkOvertimeField.height);
-			if((flag && shrinkTimerField.isFocused() == false) || (flag1 && shrinkOvertimeField.isFocused() == false))
+			if((flag && !shrinkTimerField.isFocused()) || (flag1 && !shrinkOvertimeField.isFocused()))
 		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 	    }
 	    
@@ -920,7 +919,7 @@ public class GuiUHCBook extends GuiScreen{
 			
 			boolean flag = hoverBoolean(mouseX, mouseY, timeLockTimerField.x, timeLockTimerField.y, timeLockTimerField.width, timeLockTimerField.height);
 			boolean flag1 = hoverBoolean(mouseX, mouseY, minMarkTimerField.x, minMarkTimerField.y, minMarkTimerField.width, minMarkTimerField.height);
-			if((flag && timeLockTimerField.isFocused() == false) || (flag1 && minMarkTimerField.isFocused() == false))
+			if((flag && !timeLockTimerField.isFocused()) || (flag1 && !minMarkTimerField.isFocused()))
 		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 	    }
 	    
@@ -972,7 +971,7 @@ public class GuiUHCBook extends GuiScreen{
 
 			String healthExplain = I18n.format("book.uhc.explain.healthExplain");
 	    	boolean flag2 = hoverBoolean(mouseX, mouseY, maxHealthField.x, maxHealthField.y, maxHealthField.width, maxHealthField.height);
-			if(flag2 && maxHealthField.isFocused() == false)
+			if(flag2 && !maxHealthField.isFocused())
 		        this.drawCenteredString(fontRenderer, healthExplain, mouseX, mouseY + 5, 0xFFFF5555);
 		}
 	    
@@ -986,7 +985,7 @@ public class GuiUHCBook extends GuiScreen{
 	    	this.fontRenderer.drawString(GraceTimerString, i + 44, j + 41, 0xFF555555);
 	    	
 	    	boolean flag = hoverBoolean(mouseX, mouseY, graceTimeField.x, graceTimeField.y, graceTimeField.width, graceTimeField.height);
-			if(flag && timeLockTimerField.isFocused() == false)
+			if(flag && !timeLockTimerField.isFocused())
 		        this.drawCenteredString(fontRenderer, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 	    }
 	    
@@ -1352,7 +1351,7 @@ public class GuiUHCBook extends GuiScreen{
             }
             else if(button.id == 24)
             {
-            	if(saveData.isHealthInTab() == false)
+            	if(!saveData.isHealthInTab())
             	{
             		healthInTab = true;
             		healthOnSide = false;
@@ -1362,7 +1361,7 @@ public class GuiUHCBook extends GuiScreen{
             }
             else if(button.id == 25)
             {
-            	if(saveData.isHealthOnSide() == false)
+            	if(!saveData.isHealthOnSide())
             	{
             		healthInTab = false;
             		healthOnSide = true;
@@ -1372,7 +1371,7 @@ public class GuiUHCBook extends GuiScreen{
             }
             else if(button.id == 26)
             {
-            	if(saveData.isHealthUnderName() == false)
+            	if(!saveData.isHealthUnderName())
             	{
             		healthInTab = false;
             		healthOnSide = false;
@@ -1657,11 +1656,11 @@ public class GuiUHCBook extends GuiScreen{
             	if(difficultyField.mouseClicked(mouseX, mouseY, mouseButton))
             		difficultyField.setText("");
             	
-            	if(randSizeField.isFocused() == false)
+            	if(!randSizeField.isFocused())
             		randSizeField.setText(String.valueOf(saveData.getRandomTeamSize()));
-            	if(maxTeamSizeField.isFocused() == false)
+            	if(!maxTeamSizeField.isFocused())
             		maxTeamSizeField.setText(String.valueOf(saveData.getMaxTeamSize()));
-            	if(difficultyField.isFocused() == false)
+            	if(!difficultyField.isFocused())
             		difficultyField.setText(String.valueOf(saveData.getDifficulty()));
         	}
         	
@@ -1680,17 +1679,17 @@ public class GuiUHCBook extends GuiScreen{
             	if(shrinkOvertimeField.mouseClicked(mouseX, mouseY, mouseButton))
             		shrinkOvertimeField.setText("");
             	
-            	if(borderSizeField.isFocused() == false)
+            	if(!borderSizeField.isFocused())
             		borderSizeField.setText(String.valueOf(saveData.getBorderSize()));
-            	if(borderCenterXField.isFocused() == false)
+            	if(!borderCenterXField.isFocused())
             		borderCenterXField.setText(String.valueOf(saveData.getBorderCenterX()));
-            	if(borderCenterZField.isFocused() == false)
+            	if(!borderCenterZField.isFocused())
             		borderCenterZField.setText(String.valueOf(saveData.getBorderCenterZ()));
-            	if(shrinkTimerField.isFocused() == false)
+            	if(!shrinkTimerField.isFocused())
             		shrinkTimerField.setText(String.valueOf(saveData.getShrinkTimer()));
-            	if(shrinkSizeField.isFocused() == false)
+            	if(!shrinkSizeField.isFocused())
             		shrinkSizeField.setText(String.valueOf(saveData.getShrinkSize()));
-            	if(shrinkOvertimeField.isFocused() == false)
+            	if(!shrinkOvertimeField.isFocused())
             		shrinkOvertimeField.setText(String.valueOf(saveData.getShrinkOvertime()));
         	}
         	
@@ -1705,13 +1704,13 @@ public class GuiUHCBook extends GuiScreen{
         		if(glowTimerField.mouseClicked(mouseX, mouseY, mouseButton))
         			glowTimerField.setText("");
         		
-        		if(timeLockTimerField.isFocused() == false)
+        		if(!timeLockTimerField.isFocused())
         			timeLockTimerField.setText(String.valueOf(saveData.getTimeLockTimer()));
-        		if(minMarkTimerField.isFocused() == false)
+        		if(!minMarkTimerField.isFocused())
         			minMarkTimerField.setText(String.valueOf(saveData.getMinuteMarkTime()));
-        		if(nameTimerField.isFocused() == false)
+        		if(!nameTimerField.isFocused())
         			nameTimerField.setText(String.valueOf(saveData.getNameTimer()));
-        		if(glowTimerField.isFocused() == false)
+        		if(!glowTimerField.isFocused())
         			glowTimerField.setText(String.valueOf(saveData.getGlowTime()));
         	}
         	
@@ -1724,11 +1723,11 @@ public class GuiUHCBook extends GuiScreen{
         		if(spreadMaxRangeField.mouseClicked(mouseX, mouseY, mouseButton))
         			spreadMaxRangeField.setText("");
         		
-        		if(maxHealthField.isFocused() == false)
+        		if(!maxHealthField.isFocused())
         			maxHealthField.setText(String.valueOf(saveData.getMaxHealth()));
-        		if(spreadDistanceField.isFocused() == false)
+        		if(!spreadDistanceField.isFocused())
         			spreadDistanceField.setText(String.valueOf(saveData.getSpreadDistance()));
-        		if(spreadMaxRangeField.isFocused() == false)
+        		if(!spreadMaxRangeField.isFocused())
         			spreadMaxRangeField.setText(String.valueOf(saveData.getSpreadMaxRange()));
         	}
         	
@@ -1737,7 +1736,7 @@ public class GuiUHCBook extends GuiScreen{
         		if(graceTimeField.mouseClicked(mouseX, mouseY, mouseButton))
         			graceTimeField.setText("");
         		
-        		if(graceTimeField.isFocused() == false)
+        		if(!graceTimeField.isFocused())
         			graceTimeField.setText(String.valueOf(saveData.getGraceTime()));
         	}
         }

@@ -4,7 +4,6 @@ import com.Mrbysco.UHC.init.UHCSaveData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -17,14 +16,12 @@ public class PlayerHealthHandler {
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.phase == Phase.START && event.side.isServer()) {
 			EntityPlayer player = event.player;
-			World world = player.world;
 			if(DimensionManager.getWorld(0) != null)
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 				final NBTTagCompound entityData = player.getEntityData();
 				
 				double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
-				boolean flag = saveData.isApplyCustomHealth();
 				double maxHealth = (double) saveData.getMaxHealth();
 	
 				if(saveData.isApplyCustomHealth())

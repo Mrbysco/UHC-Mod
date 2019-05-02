@@ -15,7 +15,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.List;
-import java.util.Random;
 
 public class AutoCookHandler {
 	
@@ -61,7 +60,6 @@ public class AutoCookHandler {
 	public void onLivingDrop(LivingDropsEvent event) {
 		World world = event.getEntity().getEntityWorld();
 		BlockPos pos = event.getEntity().getPosition();
-		Random rand = world.rand;
 		List<EntityItem> drops = event.getDrops();
 		if(DimensionManager.getWorld(0) != null)
 		{
@@ -99,7 +97,6 @@ public class AutoCookHandler {
 	public void onToss(ItemTossEvent event) {
 		World world = event.getEntity().getEntityWorld();
 		BlockPos pos = event.getEntity().getPosition();
-		Random rand = world.rand;
 		EntityItem item = event.getEntityItem();
 		if(DimensionManager.getWorld(0) != null)
 		{

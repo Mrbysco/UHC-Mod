@@ -1,11 +1,7 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
-import com.Mrbysco.UHC.utils.TimerThing;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,17 +13,14 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.util.ArrayList;
+
 public class GraceHandler {
 	public int graceTimer;
-	public TimerThing milliTime;
-	
-	public GraceHandler() {
-		milliTime = new TimerThing();
-	}
 	
 	@SubscribeEvent
 	public void graceTimerEvent(TickEvent.WorldTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer())
 		{
 			World world = event.world;
 			if(DimensionManager.getWorld(0) != null)
@@ -39,10 +32,8 @@ public class GraceHandler {
 				
 				if(!playerList.isEmpty() && saveData.isUhcOnGoing())
 				{
-					if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
+					if (world.getWorldTime() % 20 == 0)
 					{
-						milliTime.setMilliTimeToCurrent();
-
 						if(!saveData.isGraceFinished())
 						{
 							if(saveData.isGraceEnabled())
@@ -81,10 +72,6 @@ public class GraceHandler {
 						}
 					}
 				}
-			}
-			else
-			{
-				milliTime.setMilliTimeToCurrent();
 			}
 		}
 	}

@@ -20,7 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class itemUHCBook extends Item{
 	public itemUHCBook(String registryName) {
-		this.setUnlocalizedName(Reference.MOD_PREFIX + registryName.replaceAll("_", ""));
+		this.setTranslationKey(Reference.MOD_PREFIX + registryName.replaceAll("_", ""));
 		this.setRegistryName(registryName);
 		this.setMaxStackSize(1);
 	}

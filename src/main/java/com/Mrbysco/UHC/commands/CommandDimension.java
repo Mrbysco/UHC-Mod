@@ -41,8 +41,8 @@ public class CommandDimension extends CommandUhcBase
 	        }
 			else
 			{
-				//saveData.setUHCDimension(0);
-				//saveData.markDirty();
+				saveData.setUHCDimension(0);
+				saveData.markDirty();
 		        sender.sendMessage(new TextComponentTranslation("commands.uhc.dimension.reset"));
 			}
         }
@@ -63,8 +63,8 @@ public class CommandDimension extends CommandUhcBase
 					if(args[1].matches("^-?[0-9]\\d*(\\.\\d+)?$"))
 					{
 						int dimension = Integer.parseInt(args[1]);
-					    //saveData.setUHCDimension(dimension);
-						//saveData.markDirty();
+					    saveData.setUHCDimension(dimension);
+						saveData.markDirty();
 				        sender.sendMessage(new TextComponentTranslation("commands.uhc.dimension.set.success", new Object[] {args[1]}));
 					}
 					else

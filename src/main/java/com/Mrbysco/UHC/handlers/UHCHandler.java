@@ -1,9 +1,5 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.Mrbysco.UHC.config.UltraHardCoremodConfigGen;
 import com.Mrbysco.UHC.init.ModItems;
 import com.Mrbysco.UHC.init.UHCSaveData;
@@ -12,9 +8,7 @@ import com.Mrbysco.UHC.lists.SpawnItemList;
 import com.Mrbysco.UHC.lists.info.SpawnItemInfo;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.packets.UHCPacketMessage;
-import com.Mrbysco.UHC.utils.TimerThing;
 import com.Mrbysco.UHC.utils.UHCTeleporter;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityFireworkRocket;
@@ -56,42 +50,38 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class UHCHandler {
 	
 	public int uhcStartTimer;
-	public TimerThing milliTime;
-	
-	public UHCHandler() {
-		milliTime = new TimerThing();
-	}
-	
+
 	@SubscribeEvent
 	public void UHCStartEventWorld(TickEvent.WorldTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer())
 		{
 			if(DimensionManager.getWorld(0) != null)
 			{
-				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
-				MinecraftServer server = DimensionManager.getWorld(0).getMinecraftServer();
-				ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
-				
-				if(!playerList.isEmpty())
-				{
-					if(saveData.isUhcStarting())
+				World world = event.world;
+				if (world.getWorldTime() % 20 == 0) {
+					UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
+					UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
+					MinecraftServer server = DimensionManager.getWorld(0).getMinecraftServer();
+					ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+
+					if(!playerList.isEmpty())
 					{
-						if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
+						if(saveData.isUhcStarting())
 						{
-							milliTime.setMilliTimeToCurrent();
-							
 							if(timerData.getUhcStartTimer() != this.uhcStartTimer)
 							{
 								this.uhcStartTimer = timerData.getUhcStartTimer();
 							}
-							
-							if(timerData.getUhcStartTimer() == 2 || timerData.getUhcStartTimer() == 3 || timerData.getUhcStartTimer() == 4 || 
-								timerData.getUhcStartTimer() == 5 || timerData.getUhcStartTimer() == 6 || timerData.getUhcStartTimer() == 7)
-							{
+
+							if(timerData.getUhcStartTimer() == 2 || timerData.getUhcStartTimer() == 3 || timerData.getUhcStartTimer() == 4 ||
+									timerData.getUhcStartTimer() == 5 || timerData.getUhcStartTimer() == 6 || timerData.getUhcStartTimer() == 7) {
 								if(timerData.getUhcStartTimer() == 2)
 								{
 									sendMessage(playerList, new TextComponentTranslation("uhc.start.5"));
@@ -142,16 +132,14 @@ public class UHCHandler {
 								timerData.markDirty();
 							}
 						}
-					}
-					else
-					{
-						if(timerData.getUhcStartTimer() != 0)
+						else
 						{
-							timerData.setUhcStartTimer(0);
-							timerData.markDirty();
+							if(timerData.getUhcStartTimer() != 0)
+							{
+								timerData.setUhcStartTimer(0);
+								timerData.markDirty();
+							}
 						}
-
-						milliTime.setMilliTimeToCurrent();
 					}
 				}
 			}

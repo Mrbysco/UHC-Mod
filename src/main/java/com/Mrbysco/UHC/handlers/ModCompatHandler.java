@@ -1,8 +1,5 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
 import com.Mrbysco.UHC.UltraHardCoremod;
 import com.Mrbysco.UHC.config.UltraHardCoremodConfigGen;
 import com.Mrbysco.UHC.init.UHCSaveData;
@@ -10,8 +7,6 @@ import com.Mrbysco.UHC.init.UHCTimerData;
 import com.Mrbysco.UHC.lists.EntityDataChangeList;
 import com.Mrbysco.UHC.lists.RespawnList;
 import com.Mrbysco.UHC.lists.info.RespawnInfo;
-import com.Mrbysco.UHC.utils.TimerThing;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
@@ -33,13 +28,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 public class ModCompatHandler {
 	public int twilightBossGraceTimer;
-	public TimerThing milliTime;
-
-	public ModCompatHandler() {
-		milliTime = new TimerThing();
-	}
 	
 	@Optional.Method(modid = "twilightforest")
 	@SubscribeEvent
@@ -61,10 +54,8 @@ public class ModCompatHandler {
 
 				if(!playerList.isEmpty() && saveData.isUhcOnGoing() && !RespawnList.respawnList.isEmpty())
 				{
-					if (System.currentTimeMillis() > milliTime.getMilliTime() + 1000L)
+					if (world.getWorldTime() % 20 == 0)
 					{
-						milliTime.setMilliTimeToCurrent();
-						
 						if(!saveData.getTwilightRespawn())
 						{
 							if(timerData.getTwilightBossGraceTimer() != this.twilightBossGraceTimer)
@@ -118,7 +109,7 @@ public class ModCompatHandler {
 							{
 								for (EntityMob mob : collidingBossMobs)
 								{
-									if(!mob.isNonBoss() && EntityRegistry.getEntry(mob.getClass()).getRegistryName().getResourcePath().equals("twilightforest"))
+									if(!mob.isNonBoss() && EntityRegistry.getEntry(mob.getClass()).getRegistryName().getNamespace().equals("twilightforest"))
 									{
 										info.setBossExists(true);
 									}
@@ -189,7 +180,7 @@ public class ModCompatHandler {
 		            	UltraHardCoremod.logger.error("nope... " +  nbtexception);
 		            }
 
-		            if(!nbttagcompound2.hasNoTags())
+		            if(!nbttagcompound2.isEmpty())
 		            {
 		            	UUID uuid = entity.getUniqueID();
 		                nbttagcompound.merge(nbttagcompound2);

@@ -15,7 +15,7 @@ public class CommandTreeUHC extends CommandTreeBase
         super.addSubcommand(new CommandRespawnUHC());
         super.addSubcommand(new CommandSpawnroom());
         super.addSubcommand(new CommandForceTeam());
-        //super.addSubcommand(new CommandDimension());
+        super.addSubcommand(new CommandDimension());
     }
 
 

@@ -10,26 +10,26 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class BooleanButton extends GuiButton
+public class LockButton extends GuiButton
 {	
 	public static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/book.png");
 
 	private final FontRenderer render;
-	protected Boolean booleanValue;
+	protected Boolean lockValue;
 	
-	public BooleanButton(int buttonId, int x, int y, FontRenderer renderIn, Boolean booleanIn)
+	public LockButton(int buttonId, int x, int y, FontRenderer renderIn, Boolean booleanIn)
 	{
 		super(buttonId, x, y, 15, 13, "");
 		this.render = renderIn;
-		this.booleanValue = booleanIn;
+		this.lockValue = booleanIn;
 	}
 	
 	public void setBoolean(Boolean value){
-		this.booleanValue = value;
+		this.lockValue = value;
 	}
 	
 	public Boolean getBoolean() {
-		return this.booleanValue;
+		return this.lockValue;
 	}
 	
 	/**
@@ -40,17 +40,20 @@ public class BooleanButton extends GuiButton
 		if (this.visible)
 		{
 			boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+			boolean prev = this.hovered;
+			this.hovered = flag;
+			
 			GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			mc.getTextureManager().bindTexture(BOOK_TEXTURE);
-			int textureX = 47;
+			int textureX = 79;
 			int textureY = 192;
 			if (flag)
-				textureY += 14;
+				textureY += 16;
 			
-			if (booleanValue)
+			if (!lockValue)
 				textureX += 16;
 	        
-			drawTexturedModalRect(x, y,  textureX, textureY, 15, 13);
+			drawTexturedModalRect(x, y,  textureX, textureY, 16, 13);
 		}
 	}
 }

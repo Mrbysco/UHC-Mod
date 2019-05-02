@@ -27,8 +27,8 @@ repositories {
 }
 
 version = "0.8.5"
-group = "com.Mrbysco.UHC" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Ultra Hard Coremod"
+group = "com.mrbysco.uhc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "UltraHardCoremod"
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {

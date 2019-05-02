@@ -1,13 +1,9 @@
 package com.Mrbysco.UHC.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.packets.UHCPacketMessage;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +17,9 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandResetUHC extends CommandUhcBase
 {

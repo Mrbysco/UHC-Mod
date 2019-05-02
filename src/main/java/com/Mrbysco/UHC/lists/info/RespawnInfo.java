@@ -1,10 +1,10 @@
 package com.Mrbysco.UHC.lists.info;
 
-import java.util.ArrayList;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.ArrayList;
 
 public class RespawnInfo {
 	private BlockPos pos;

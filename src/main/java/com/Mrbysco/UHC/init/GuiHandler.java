@@ -3,7 +3,6 @@ package com.Mrbysco.UHC.init;
 import com.Mrbysco.UHC.gui.GuiUHCBook;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.packets.UHCPacketMessage;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;

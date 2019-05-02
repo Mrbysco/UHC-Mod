@@ -1,13 +1,8 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.lists.ConversionList;
 import com.Mrbysco.UHC.lists.info.ItemConversionInfo;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +15,10 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class ItemConversionHandler {
 	

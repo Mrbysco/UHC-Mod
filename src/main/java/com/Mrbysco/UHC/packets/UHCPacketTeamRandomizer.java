@@ -1,11 +1,6 @@
 package com.Mrbysco.UHC.packets;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,6 +19,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class UHCPacketTeamRandomizer implements IMessage
 {

@@ -1,13 +1,12 @@
 package com.Mrbysco.UHC.lists;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.lists.info.AutoCookInfo;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
 
 public class CookList {
 	public static ArrayList<AutoCookInfo> autoCookList = new ArrayList<>();

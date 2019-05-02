@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.compat.ct.actions;
 
 import com.Mrbysco.UHC.lists.SpawnItemList;
-
 import crafttweaker.IAction;
 import crafttweaker.api.item.IItemStack;
 import crafttweaker.api.minecraft.CraftTweakerMC;

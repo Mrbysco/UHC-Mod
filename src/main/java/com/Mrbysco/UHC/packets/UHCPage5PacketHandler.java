@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.packets;
 
 import com.Mrbysco.UHC.init.UHCSaveData;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;

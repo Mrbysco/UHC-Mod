@@ -1,8 +1,5 @@
 package com.Mrbysco.UHC;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.Mrbysco.UHC.commands.CommandTreeUHC;
 import com.Mrbysco.UHC.config.UltraHardCoremodConfigGen;
 import com.Mrbysco.UHC.handlers.AutoCookHandler;
@@ -25,7 +22,6 @@ import com.Mrbysco.UHC.lists.RespawnList;
 import com.Mrbysco.UHC.lists.SpawnItemList;
 import com.Mrbysco.UHC.packets.ModPackethandler;
 import com.Mrbysco.UHC.proxy.CommonProxy;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -36,6 +32,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Reference.MOD_ID, 
 name = Reference.MOD_NAME, 

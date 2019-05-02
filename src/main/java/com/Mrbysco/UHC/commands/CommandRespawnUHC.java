@@ -1,19 +1,11 @@
 package com.Mrbysco.UHC.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.utils.SpreadPosition;
 import com.Mrbysco.UHC.utils.SpreadUtil;
 import com.Mrbysco.UHC.utils.TeamUtil;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.EntitySelector;
@@ -33,6 +25,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class CommandRespawnUHC extends CommandUhcBase
 {

@@ -2,7 +2,6 @@ package com.Mrbysco.UHC.packets;
 
 import com.Mrbysco.UHC.gui.GuiUHCBook;
 import com.Mrbysco.UHC.init.UHCSaveData;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.FMLCommonHandler;

@@ -1,10 +1,9 @@
 package com.Mrbysco.UHC.lists;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.lists.info.SpawnItemInfo;
-
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
 
 public class SpawnItemList {
 	public static ArrayList<SpawnItemInfo> spawnItemList = new ArrayList<>();

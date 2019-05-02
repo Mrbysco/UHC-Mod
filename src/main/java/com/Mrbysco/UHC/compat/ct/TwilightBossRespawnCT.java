@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.compat.ct;
 
 import com.Mrbysco.UHC.compat.ct.actions.ActionTwilightBossRespawn;
-
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import stanhebben.zenscript.annotations.ZenClass;

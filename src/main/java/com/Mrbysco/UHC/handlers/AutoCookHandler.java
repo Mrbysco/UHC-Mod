@@ -1,12 +1,8 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.util.List;
-import java.util.Random;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.lists.CookList;
 import com.Mrbysco.UHC.lists.info.AutoCookInfo;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.item.ItemStack;
@@ -18,13 +14,15 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.List;
+import java.util.Random;
+
 public class AutoCookHandler {
 	
 	@SubscribeEvent
 	public void onHarvestDrop(BlockEvent.HarvestDropsEvent event) {
 		World world = event.getWorld();
 		BlockPos pos = event.getPos();
-		Random rand = world.rand;
 		List<ItemStack> drops = event.getDrops();
 		if(DimensionManager.getWorld(0) != null)
 		{

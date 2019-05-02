@@ -1,11 +1,6 @@
 package com.Mrbysco.UHC.commands;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.Sets;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.EntitySelector;
@@ -16,6 +11,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class CommandForceTeam extends CommandUhcBase
 {

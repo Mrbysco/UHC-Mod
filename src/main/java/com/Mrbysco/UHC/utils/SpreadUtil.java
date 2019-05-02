@@ -1,13 +1,7 @@
 package com.Mrbysco.UHC.utils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +9,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class SpreadUtil {
 	public static void spread(List<EntityPlayerMP> players, SpreadPosition pos, double spreadDistance, double maxRange, World worldIn, boolean respectTeams) throws CommandException

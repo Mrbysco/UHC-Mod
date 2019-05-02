@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.init;
 
 import com.Mrbysco.UHC.Reference;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapStorage;

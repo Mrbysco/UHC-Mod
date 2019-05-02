@@ -1,12 +1,9 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.init.UHCTimerData;
 import com.Mrbysco.UHC.utils.SpreadPosition;
 import com.Mrbysco.UHC.utils.SpreadUtil;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketTitle;
@@ -20,6 +17,8 @@ import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import java.util.ArrayList;
 
 public class BorderHandler {
 	public int controlTimer;

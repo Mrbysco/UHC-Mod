@@ -19,17 +19,6 @@ commands.uhc.spawnroom.success=UHC Spawn room has been placed.
 commands.uhc.spawnroom.success1=UHC Spawn room has been removed.
 commands.uhc.spawnroom.failure=%s is invalid for /uhc spawnroom [place/remove].
 commands.uhc.spawnroom.failure.input=Too much input for /uhc spawnroom [place/remove].
-commands.uhc.dimension.usage=/uhc dimension [set/reset] <dimension id>
-commands.uhc.dimension.reset=UHC dimension has been reset.
-commands.uhc.dimension.reset.failure=/uhc dimension reset doesn't need a dimension.
-commands.uhc.dimension.set.failure.player=Only players can use /uhc dimension
-commands.uhc.dimension.set.failure.number=/uhc dimension set failed, %s is not a number.
-commands.uhc.dimension.set.failure=/uhc dimension set failed. You left the dimension blank.
-commands.uhc.dimension.set.failure1=%s %s is invalid for /uhc dimension [set/reset] <dimension id>.
-commands.uhc.dimension.set.failure2=/uhc dimension set only accepts 1 dimension id. %s is invalid.
-commands.uhc.dimension.set.failure3=%s is invalid for /uhc dimension [set/reset]
-commands.uhc.dimension.failure.input=Too much input for /uhc dimension [set/reset].
-commands.uhc.dimension.set.success=UHC dimension set to %s.
 
 
 # Book info

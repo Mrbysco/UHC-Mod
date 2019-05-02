@@ -1,11 +1,10 @@
 package com.Mrbysco.UHC.lists;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.lists.info.RespawnInfo;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.ArrayList;
 
 public class RespawnList {
 	public static ArrayList<RespawnInfo> respawnList = new ArrayList<>();

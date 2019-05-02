@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.compat.ct.actions;
 
 import com.Mrbysco.UHC.lists.EntityDataChangeList;
-
 import crafttweaker.IAction;
 
 public class ActionEntityDataChanger implements IAction {

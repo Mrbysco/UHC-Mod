@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.config;
 
 import com.Mrbysco.UHC.Reference;
-
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -23,9 +22,12 @@ public class UltraHardCoremodConfigGen {
 	public static modCompat modCompat = new modCompat();
 	
 	public static class General{
+		@Config.Comment("Configures the spawn room block placed for the showdown")
+		public int dimension = 0;
+
 		@Config.Comment("Configures the spawn room block placed by the /uhc spawnroom command")
 		public String roomBlock = Blocks.BARRIER.getRegistryName().toString();
-		
+
 		@Config.Comment("Configures the spawn room block placed for the showdown")
 		public String showdownBlock = Blocks.STONEBRICK.getRegistryName().toString();
 	}

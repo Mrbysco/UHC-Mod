@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.gui;
 
 import com.Mrbysco.UHC.Reference;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;

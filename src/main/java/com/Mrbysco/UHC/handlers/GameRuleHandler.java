@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.handlers;
 
 import com.Mrbysco.UHC.init.UHCSaveData;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.WorldServer;

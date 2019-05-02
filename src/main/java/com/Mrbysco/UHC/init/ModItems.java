@@ -1,14 +1,13 @@
 package com.Mrbysco.UHC.init;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.item.itemUHCBook;
-
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
+
+import java.util.ArrayList;
 
 @EventBusSubscriber
 public class ModItems {

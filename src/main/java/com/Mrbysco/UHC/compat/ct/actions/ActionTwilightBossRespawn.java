@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.compat.ct.actions;
 
 import com.Mrbysco.UHC.lists.RespawnList;
-
 import crafttweaker.IAction;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

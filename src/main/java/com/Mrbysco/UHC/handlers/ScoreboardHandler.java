@@ -1,9 +1,6 @@
 package com.Mrbysco.UHC.handlers;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
@@ -21,6 +18,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import java.util.ArrayList;
 
 public class ScoreboardHandler {
 	@SubscribeEvent

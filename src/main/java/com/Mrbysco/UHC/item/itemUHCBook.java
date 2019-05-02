@@ -1,11 +1,8 @@
 package com.Mrbysco.UHC.item;
 
-import java.util.List;
-
 import com.Mrbysco.UHC.Reference;
 import com.Mrbysco.UHC.UltraHardCoremod;
 import com.Mrbysco.UHC.init.GuiHandler;
-
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -17,6 +14,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 public class itemUHCBook extends Item{
 	public itemUHCBook(String registryName) {

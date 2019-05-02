@@ -1,10 +1,9 @@
 package com.Mrbysco.UHC.lists;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.lists.info.ItemConversionInfo;
-
 import net.minecraft.item.ItemStack;
+
+import java.util.ArrayList;
 
 public class ConversionList {
 	public static ArrayList<ItemConversionInfo> conversionList = new ArrayList<>();

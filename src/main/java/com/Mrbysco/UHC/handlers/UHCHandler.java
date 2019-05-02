@@ -71,6 +71,9 @@ public class UHCHandler {
 					MinecraftServer server = DimensionManager.getWorld(0).getMinecraftServer();
 					ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
 
+					if(saveData.getUHCDimension() != UltraHardCoremodConfigGen.general.dimension)
+						saveData.setUHCDimension(UltraHardCoremodConfigGen.general.dimension);
+
 					if(!playerList.isEmpty())
 					{
 						if(saveData.isUhcStarting())
@@ -148,20 +151,19 @@ public class UHCHandler {
 	
 	@SubscribeEvent
 	public void UHCStartEventPlayer(TickEvent.PlayerTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer())
+		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer())
 		{
 			EntityPlayer player = event.player;
 			if(DimensionManager.getWorld(0) != null)
 			{
 				UHCSaveData saveData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-				UHCTimerData timerData = UHCTimerData.getForWorld(DimensionManager.getWorld(0));
 				NBTTagCompound entityData = player.getEntityData();
 
 				if(saveData.isUhcStarting())
 				{					
 					if (!entityData.hasKey("startFatigue"))
 						entityData.setBoolean("startFatigue", true);
-					
+
 					if(this.uhcStartTimer == 7)
 					{
 						if(!SpawnItemList.spawnItemList.isEmpty() && SpawnItemList.spawnItemList != null)

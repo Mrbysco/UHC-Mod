@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.utils;
 
 import com.Mrbysco.UHC.config.UltraHardCoremodConfigGen;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 

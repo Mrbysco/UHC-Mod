@@ -1,10 +1,10 @@
 package com.Mrbysco.UHC.lists;
 
-import java.util.HashMap;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.HashMap;
 
 public class EntityDataChangeList {
 	public static HashMap<Class<? extends Entity>, String> dataMap = new HashMap<>();

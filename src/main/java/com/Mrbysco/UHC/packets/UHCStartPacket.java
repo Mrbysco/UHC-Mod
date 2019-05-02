@@ -1,12 +1,9 @@
 package com.Mrbysco.UHC.packets;
 
-import java.util.ArrayList;
-
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.utils.SpreadPosition;
 import com.Mrbysco.UHC.utils.SpreadUtil;
 import com.Mrbysco.UHC.utils.TeamUtil;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +26,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
+import java.util.ArrayList;
 
 public class UHCStartPacket implements IMessage{	
 	public UHCStartPacket() {}

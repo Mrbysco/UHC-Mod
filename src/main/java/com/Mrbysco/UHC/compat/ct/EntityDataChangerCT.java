@@ -1,7 +1,6 @@
 package com.Mrbysco.UHC.compat.ct;
 
 import com.Mrbysco.UHC.compat.ct.actions.ActionEntityDataChanger;
-
 import crafttweaker.CraftTweakerAPI;
 import crafttweaker.annotations.ZenRegister;
 import crafttweaker.api.entity.IEntityDefinition;

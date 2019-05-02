@@ -1,12 +1,5 @@
 package com.Mrbysco.UHC.gui;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.lwjgl.input.Keyboard;
-
 import com.Mrbysco.UHC.Reference;
 import com.Mrbysco.UHC.init.UHCSaveData;
 import com.Mrbysco.UHC.packets.ModPackethandler;
@@ -19,7 +12,6 @@ import com.Mrbysco.UHC.packets.UHCPage4Packet;
 import com.Mrbysco.UHC.packets.UHCPage5Packet;
 import com.Mrbysco.UHC.packets.UHCPage6Packet;
 import com.Mrbysco.UHC.packets.UHCStartPacket;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -34,6 +26,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GuiUHCBook extends GuiScreen{

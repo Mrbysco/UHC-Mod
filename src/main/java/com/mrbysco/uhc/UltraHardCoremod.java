@@ -36,10 +36,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Reference.MOD_ID, 
-name = Reference.MOD_NAME, 
-version = Reference.VERSION, 
-acceptedMinecraftVersions = Reference.ACCEPTED_VERSIONS,
-dependencies = Reference.DEPENDENCIES)
+	name = Reference.MOD_NAME,
+	version = Reference.VERSION,
+	acceptedMinecraftVersions = Reference.ACCEPTED_VERSIONS,
+	dependencies = Reference.DEPENDENCIES)
 
 public class UltraHardCoremod {
 	@Instance(Reference.MOD_ID)

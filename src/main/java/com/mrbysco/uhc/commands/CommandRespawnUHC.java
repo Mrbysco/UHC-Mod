@@ -1,11 +1,11 @@
 package com.mrbysco.uhc.commands;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.mrbysco.uhc.init.UHCSaveData;
 import com.mrbysco.uhc.utils.SpreadPosition;
 import com.mrbysco.uhc.utils.SpreadUtil;
 import com.mrbysco.uhc.utils.TeamUtil;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.EntitySelector;

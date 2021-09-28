@@ -1,73 +1,55 @@
 package com.mrbysco.uhc;
 
-import com.mrbysco.uhc.commands.CommandTreeUHC;
-import com.mrbysco.uhc.config.UltraHardCoremodConfigGen;
-import com.mrbysco.uhc.handlers.AutoCookHandler;
-import com.mrbysco.uhc.handlers.BorderHandler;
-import com.mrbysco.uhc.handlers.GameRuleHandler;
-import com.mrbysco.uhc.handlers.GraceHandler;
-import com.mrbysco.uhc.handlers.ItemConversionHandler;
-import com.mrbysco.uhc.handlers.ModCompatHandler;
-import com.mrbysco.uhc.handlers.PlayerHealthHandler;
-import com.mrbysco.uhc.handlers.ScoreboardHandler;
-import com.mrbysco.uhc.handlers.TeamSpamHandler;
-import com.mrbysco.uhc.handlers.TimedActionHandler;
-import com.mrbysco.uhc.handlers.TimerHandler;
-import com.mrbysco.uhc.handlers.UHCHandler;
-import com.mrbysco.uhc.init.GuiHandler;
-import com.mrbysco.uhc.lists.ConversionList;
-import com.mrbysco.uhc.lists.CookList;
+import com.mrbysco.uhc.commands.UHCCommands;
+import com.mrbysco.uhc.config.UHCConfig;
+import com.mrbysco.uhc.handler.AutoCookHandler;
+import com.mrbysco.uhc.handler.BorderHandler;
+import com.mrbysco.uhc.handler.GameRuleHandler;
+import com.mrbysco.uhc.handler.GraceHandler;
+import com.mrbysco.uhc.handler.ItemConversionHandler;
+import com.mrbysco.uhc.handler.ModCompatHandler;
+import com.mrbysco.uhc.handler.PlayerHealthHandler;
+import com.mrbysco.uhc.handler.ScoreboardHandler;
+import com.mrbysco.uhc.handler.TeamSpamHandler;
+import com.mrbysco.uhc.handler.TimedActionHandler;
+import com.mrbysco.uhc.handler.TimerHandler;
+import com.mrbysco.uhc.handler.UHCHandler;
 import com.mrbysco.uhc.lists.EntityDataChangeList;
-import com.mrbysco.uhc.lists.RespawnList;
 import com.mrbysco.uhc.lists.SpawnItemList;
-import com.mrbysco.uhc.packets.ModPackethandler;
-import com.mrbysco.uhc.proxy.CommonProxy;
+import com.mrbysco.uhc.packets.UHCPacketHandler;
+import com.mrbysco.uhc.registry.ModRecipes;
+import com.mrbysco.uhc.registry.ModRegistry;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Reference.MOD_ID, 
-	name = Reference.MOD_NAME,
-	version = Reference.VERSION,
-	acceptedMinecraftVersions = Reference.ACCEPTED_VERSIONS,
-	dependencies = Reference.DEPENDENCIES)
+
+@Mod(Reference.MOD_ID)
 
 public class UltraHardCoremod {
-	@Instance(Reference.MOD_ID)
-	public static UltraHardCoremod instance;
-	
-	@SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
-	public static CommonProxy proxy;
-	
-	public static final Logger logger = LogManager.getLogger(Reference.MOD_ID);
+	public static final Logger LOGGER = LogManager.getLogger();
 
-	@EventHandler
-	public void PreInit(FMLPreInitializationEvent event)
-	{
-		logger.debug("Registering config / checking config");
-		MinecraftForge.EVENT_BUS.register(new UltraHardCoremodConfigGen());
-		
-		logger.debug("Registering Packet");
-		ModPackethandler.registerMessages();
-		
-		proxy.Preinit();
-	}
-	
-	
-	@EventHandler
-    public void init(FMLInitializationEvent event)
-	{
-		logger.debug("Registering event handlers");
+	public UltraHardCoremod() {
+		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, UHCConfig.commonSpec);
+		eventBus.register(UHCConfig.class);
+
+		eventBus.addListener(this::setup);
+
+		ModRecipes.RECIPE_SERIALIZERS.register(eventBus);
+		ModRegistry.ITEMS.register(eventBus);
+
 		MinecraftForge.EVENT_BUS.register(new UHCHandler());
+		MinecraftForge.EVENT_BUS.register(new AutoCookHandler());
 		MinecraftForge.EVENT_BUS.register(new GameRuleHandler());
 		MinecraftForge.EVENT_BUS.register(new TimerHandler());
 		MinecraftForge.EVENT_BUS.register(new TimedActionHandler());
@@ -76,36 +58,26 @@ public class UltraHardCoremod {
 		MinecraftForge.EVENT_BUS.register(new PlayerHealthHandler());
 		MinecraftForge.EVENT_BUS.register(new AutoCookHandler());
 		MinecraftForge.EVENT_BUS.register(new ItemConversionHandler());
-		MinecraftForge.EVENT_BUS.register(new ModCompatHandler());
 		MinecraftForge.EVENT_BUS.register(new GraceHandler());
 		MinecraftForge.EVENT_BUS.register(new TeamSpamHandler());
-		
-		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
-		
-		logger.debug("Initialize default cook list");
-		CookList.initializeAutoCook();
-		
-		logger.debug("Initialize default conversion list");
-		ConversionList.initializeConversion();
-		
-		logger.debug("Initialize default spawn item list (which is empty)");
+		MinecraftForge.EVENT_BUS.register(new ModCompatHandler());
+
+		MinecraftForge.EVENT_BUS.addListener(this::onCommandRegister);
+
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			//TODO: insert client stuff here
+		});
+	}
+
+	private void setup(final FMLCommonSetupEvent event) {
+		LOGGER.debug("Registering Packets");
+		UHCPacketHandler.registerMessages();
+
 		SpawnItemList.initializeSpawnItems();
-		
-		RespawnList.initializeRespawnList();
 		EntityDataChangeList.initializeDataChanges();
-		
-		proxy.Init();
-    }
-	
-	@EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-		proxy.PostInit();
-    }
-	
-	@EventHandler
-	public void serverStarting(FMLServerStartingEvent event)
-    {
-		event.registerServerCommand(new CommandTreeUHC());
-    }
+	}
+
+	public void onCommandRegister(RegisterCommandsEvent event) {
+		UHCCommands.initializeCommands(event.getDispatcher());
+	}
 }

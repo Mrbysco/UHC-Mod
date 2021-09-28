@@ -1,11 +1,21 @@
 package com.mrbysco.uhc.packets;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import com.mrbysco.uhc.data.UHCSaveData;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.fml.network.PacketDistributor;
 
-public class UHCPage3Packet implements IMessage
-{
+import java.util.function.Supplier;
+
+public class UHCPage3Packet {
 	public boolean timeLock;
 	public int timeLockUntil;
 	public String timeLockMode;
@@ -16,10 +26,8 @@ public class UHCPage3Packet implements IMessage
 	public boolean timedGlow;
 	public int timedGlowAfter;
 	
-	public UHCPage3Packet() {}
-	
-	public UHCPage3Packet(boolean timeLock , int timeLockUntil, String timeLockMode, boolean minuteMark, int minuteEvery, 
-			boolean timedNames, int timedNamesAfter, boolean timedGlow, int timedGlowAfter) {
+	public UHCPage3Packet(boolean timeLock , int timeLockUntil, String timeLockMode, boolean minuteMark, int minuteEvery,
+						  boolean timedNames, int timedNamesAfter, boolean timedGlow, int timedGlowAfter) {
 		this.timeLock = timeLock;
 		this.timeLockUntil = timeLockUntil;
 		this.timeLockMode = timeLockMode;
@@ -30,30 +38,55 @@ public class UHCPage3Packet implements IMessage
 		this.timedGlow = timedGlow;
 		this.timedGlowAfter = timedGlowAfter;
 	}
-	
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		timeLock = buf.readBoolean();
-		timeLockUntil = buf.readInt();
-		timeLockMode = ByteBufUtils.readUTF8String(buf);
-		minuteMark = buf.readBoolean();
-		minuteEvery = buf.readInt();
-		timedNames = buf.readBoolean();
-		timedNamesAfter = buf.readInt();
-		timedGlow = buf.readBoolean();
-		timedGlowAfter = buf.readInt();
-	}
 
-	@Override
-	public void toBytes(ByteBuf buf) {
+	public void encode(PacketBuffer buf) {
 		buf.writeBoolean(timeLock);
 		buf.writeInt(timeLockUntil);
-		ByteBufUtils.writeUTF8String(buf, timeLockMode);
+		buf.writeString(timeLockMode);
 		buf.writeBoolean(minuteMark);
 		buf.writeInt(minuteEvery);
 		buf.writeBoolean(timedNames);
 		buf.writeInt(timedNamesAfter);
 		buf.writeBoolean(timedGlow);
 		buf.writeInt(timedGlowAfter);
+	}
+
+	public static UHCPage3Packet decode(final PacketBuffer packetBuffer) {
+		return new UHCPage3Packet(packetBuffer.readBoolean(), packetBuffer.readInt(), packetBuffer.readString(),
+				packetBuffer.readBoolean(), packetBuffer.readInt(), packetBuffer.readBoolean(), packetBuffer.readInt(),
+				packetBuffer.readBoolean(), packetBuffer.readInt());
+	}
+
+	public void handle(Supplier<Context> context) {
+		NetworkEvent.Context ctx = context.get();
+		ctx.enqueueWork(() -> {
+			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
+				ServerPlayerEntity serverPlayer = ctx.getSender();
+				ServerWorld overworld = serverPlayer.getServer().getWorld(World.OVERWORLD);
+				if(overworld != null) {
+					UHCSaveData saveData = UHCSaveData.get(overworld);
+					CompoundNBT playerData = serverPlayer.getPersistentData();
+
+					if(playerData.getBoolean("canEditUHC")) {
+						saveData.setTimeLock(timeLock);
+						saveData.setTimeLockTimer(timeLockUntil);
+						saveData.setTimeMode(timeLockMode);
+						saveData.setMinuteMark(minuteMark);
+						saveData.setMinuteMarkTime(minuteEvery);
+						saveData.setTimedNames(timedNames);
+						saveData.setNameTimer(timedNamesAfter);
+						saveData.setTimedGlow(timedGlow);
+						saveData.setGlowTime(timedGlowAfter);
+						saveData.markDirty();
+
+						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(serverPlayer.getUniqueID(), saveData));
+					} else {
+						serverPlayer.sendMessage(new StringTextComponent("You don't have permissions to edit the UHC book").mergeStyle(TextFormatting.RED), Util.DUMMY_UUID);
+					}
+				}
+
+			}
+		});
+		ctx.setPacketHandled(true);
 	}
 }

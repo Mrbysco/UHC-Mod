@@ -1,0 +1,8 @@
+{
+  "type": "ultrahardcoremod:auto_cook_recipe",
+  "ingredient": {
+    "item": "minecraft:porkchop"
+  },
+  "result": "minecraft:cooked_porkchop",
+  "experience": 0.35
+}

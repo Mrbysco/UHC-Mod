@@ -1,19 +1,19 @@
 package com.mrbysco.uhc.commands;
 
-import com.mrbysco.uhc.init.UHCSaveData;
-import com.mrbysco.uhc.init.UHCTimerData;
-import com.mrbysco.uhc.packets.ModPackethandler;
+import com.mrbysco.uhc.data.UHCSaveData;
+import com.mrbysco.uhc.data.UHCTimerData;
+import com.mrbysco.uhc.packets.UHCPacketHandler;
 import com.mrbysco.uhc.packets.UHCPacketMessage;
+import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraftforge.common.DimensionManager;
@@ -35,8 +35,8 @@ public class CommandResetUHC extends CommandUhcBase
 	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        World world = (World)(sender instanceof EntityPlayer ? ((EntityPlayer)sender).world : server.getWorld(0));
-		ArrayList<EntityPlayerMP> playerList = (ArrayList<EntityPlayerMP>)server.getPlayerList().getPlayers();
+        World world = (World)(sender instanceof PlayerEntity ? ((PlayerEntity)sender).world : server.getWorld(0));
+		ArrayList<ServerPlayerEntity> playerList = (ArrayList<ServerPlayerEntity>)server.getPlayerList().getPlayers();
 
         if(!world.isRemote)
         {
@@ -69,7 +69,7 @@ public class CommandResetUHC extends CommandUhcBase
 				}
 			}
 			
-			for(EntityPlayerMP player : playerList)
+			for(ServerPlayerEntity player : playerList)
 			{
 				player.inventory.clear();
 				player.heal(100);
@@ -102,8 +102,8 @@ public class CommandResetUHC extends CommandUhcBase
     		saveData.resetAll();
     		saveData.markDirty();
     		
-    		ModPackethandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
-            sender.sendMessage(new TextComponentTranslation("commands.uhc.reset.success"));
+    		UHCPacketHandler.INSTANCE.sendToAll(new UHCPacketMessage(saveData));
+            sender.sendMessage(new TranslationTextComponent("commands.uhc.reset.success"));
         }
     }
 }

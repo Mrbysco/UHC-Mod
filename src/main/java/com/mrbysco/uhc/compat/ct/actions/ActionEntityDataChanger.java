@@ -1,25 +1,29 @@
 package com.mrbysco.uhc.compat.ct.actions;
 
+import com.blamejared.crafttweaker.api.actions.IRuntimeAction;
+import com.blamejared.crafttweaker.impl.entity.MCEntityType;
 import com.mrbysco.uhc.lists.EntityDataChangeList;
-import crafttweaker.IAction;
+import com.mrbysco.uhc.lists.EntityDataChangeList.AttributeChange;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.ResourceLocation;
 
-public class ActionEntityDataChanger implements IAction {
+public class ActionEntityDataChanger implements IRuntimeAction {
+	private final EntityType<?> entityType;
+	private final AttributeChange attributeChange;
 
-	private final String entityId;
-	private final String dataChange;
-
-	public ActionEntityDataChanger(String entityId, String dataChange) {
-		this.entityId = entityId;
-		this.dataChange = dataChange;
+	public ActionEntityDataChanger(MCEntityType entityType, ResourceLocation attributeLocation, float value) {
+		this.entityType = entityType.getInternal();
+		this.attributeChange = new AttributeChange(attributeLocation, value);
 	}
 	
 	@Override
 	public void apply() {
-		EntityDataChangeList.addDataChange(entityId, dataChange);
+		EntityDataChangeList.addDataChange((EntityType<? extends LivingEntity>) entityType, attributeChange);
 	}
 
 	@Override
 	public String describe() {
-		return String.format(this.entityId.toString() + "'s entitydata will be changed upon spawn");
+		return this.entityType.toString() + "'s entitydata will be changed upon spawn";
 	}
 }

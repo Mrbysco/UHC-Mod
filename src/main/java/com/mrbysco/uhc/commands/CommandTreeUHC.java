@@ -2,8 +2,8 @@ package com.mrbysco.uhc.commands;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.server.command.CommandTreeBase;
 
@@ -35,10 +35,10 @@ public class CommandTreeUHC extends CommandTreeBase
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
     {
 		Entity senderEntity = sender.getCommandSenderEntity();
-		EntityPlayer player = null;
-		if(senderEntity instanceof EntityPlayer)
+		PlayerEntity player = null;
+		if(senderEntity instanceof PlayerEntity)
 		{
-			player = (EntityPlayer) senderEntity;
+			player = (PlayerEntity) senderEntity;
 		}
 		if(player == null)
 		{
@@ -46,7 +46,7 @@ public class CommandTreeUHC extends CommandTreeBase
 		}
 		else
 		{
-			final NBTTagCompound entityData = player.getEntityData();
+			final CompoundNBT entityData = player.getEntityData();
 
 	        return super.checkPermission(server, sender) || (player != null && entityData.getBoolean("canEditUHC") == true);
 		}

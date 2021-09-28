@@ -2,10 +2,10 @@ package com.mrbysco.uhc.commands;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.mrbysco.uhc.init.UHCSaveData;
 import com.mrbysco.uhc.utils.SpreadPosition;
 import com.mrbysco.uhc.utils.SpreadUtil;
 import com.mrbysco.uhc.utils.TeamUtil;
+import com.mrbysco.uhc.data.UHCSaveData;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.EntitySelector;
@@ -13,11 +13,11 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.MobEffects;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -77,7 +77,7 @@ public class CommandRespawnUHC extends CommandUhcBase
         Set<String> set1 = Sets.<String>newHashSet();
         List<String> players = Arrays.asList(server.getOnlinePlayerNames());
         
-        if (sender instanceof EntityPlayer && startIndex == args.length)
+        if (sender instanceof PlayerEntity && startIndex == args.length)
         {
             String s4 = getCommandSenderAsPlayer(sender).getName();
             
@@ -148,10 +148,10 @@ public class CommandRespawnUHC extends CommandUhcBase
         Scoreboard scoreboard = this.getScoreboard(server);
         UHCSaveData uhcData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
 
-		EntityPlayer player = server.getWorld(0).getPlayerEntityByName(playerName);
+		PlayerEntity player = server.getWorld(0).getPlayerEntityByName(playerName);
 		if(player != null)
 		{
-        	NBTTagCompound entityData = player.getEntityData();
+        	CompoundNBT entityData = player.getEntityData();
             
             ScorePlayerTeam selectedTeam = scoreboard.getTeam(teamName);
             if(selectedTeam != null)
@@ -162,7 +162,7 @@ public class CommandRespawnUHC extends CommandUhcBase
                     if(!teamMembers.isEmpty())
                     {
                     	String memberName = Iterables.get(teamMembers, 0);
-                        EntityPlayer teamMember = server.getWorld(0).getPlayerEntityByName(memberName);
+                        PlayerEntity teamMember = server.getWorld(0).getPlayerEntityByName(memberName);
 
                         if(teamMember != null)
                         {
@@ -217,7 +217,7 @@ public class CommandRespawnUHC extends CommandUhcBase
                 				player.changeDimension(uhcData.getUHCDimension());
                 			}
                 			
-            				ArrayList<EntityPlayerMP> playerList = new ArrayList<>(Arrays.asList((EntityPlayerMP) player));
+            				ArrayList<ServerPlayerEntity> playerList = new ArrayList<>(Arrays.asList((ServerPlayerEntity) player));
             				WorldBorder border = server.getWorld(0).getWorldBorder();
 
             				double centerX = uhcData.getBorderCenterX();
@@ -251,13 +251,13 @@ public class CommandRespawnUHC extends CommandUhcBase
         					}
         					else
         					{
-        						for(EntityPlayer players : playerList)
+        						for(PlayerEntity players : playerList)
         						{
         							if(selectedTeam != scoreboard.getTeam("solo"))
         							{
         								BlockPos pos = TeamUtil.getPosForTeam(player.getTeam().getColor());
         								
-        					            ((EntityPlayerMP)player).connection.setPlayerLocation(pos.getX(), pos.getY(), pos.getZ(), player.rotationYaw, player.rotationPitch);
+        					            ((ServerPlayerEntity)player).connection.setPlayerLocation(pos.getX(), pos.getY(), pos.getZ(), player.rotationYaw, player.rotationPitch);
         							}
         							else
         							{
@@ -282,10 +282,10 @@ public class CommandRespawnUHC extends CommandUhcBase
 		}
 	}
 	
-	public void setCustomHealth(EntityPlayer player)
+	public void setCustomHealth(PlayerEntity player)
 	{
         UHCSaveData uhcData = UHCSaveData.getForWorld(DimensionManager.getWorld(0));
-    	NBTTagCompound entityData = player.getEntityData();
+    	CompoundNBT entityData = player.getEntityData();
 
 		double playerHealth = player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue();
 		boolean flag = uhcData.isApplyCustomHealth();
@@ -296,7 +296,7 @@ public class CommandRespawnUHC extends CommandUhcBase
 			player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(maxHealth);
 			
 			int instantHealth = uhcData.getMaxHealth() / 4;
-			player.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 1, instantHealth, true, false));
+			player.addPotionEffect(new EffectInstance(Effects.INSTANT_HEALTH, 1, instantHealth, true, false));
 			
             entityData.setBoolean("modifiedMaxHealth", true);
 		}

@@ -1,15 +1,15 @@
 package com.mrbysco.uhc.commands;
 
-import com.mrbysco.uhc.config.UltraHardCoremodConfigGen;
-import com.mrbysco.uhc.init.UHCSaveData;
+import com.mrbysco.uhc.OLD.config.UltraHardCoremodConfigGen;
+import com.mrbysco.uhc.data.UHCSaveData;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
 
@@ -31,7 +31,7 @@ public class CommandSpawnroom extends CommandUhcBase
 	
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        World world = (World)(sender instanceof EntityPlayer ? ((EntityPlayer)sender).world : server.getWorld(0));
+        World world = (World)(sender instanceof PlayerEntity ? ((PlayerEntity)sender).world : server.getWorld(0));
         WorldInfo info = world.getWorldInfo();
         
 		UHCSaveData saveData = UHCSaveData.getForWorld(server.getWorld(0));
@@ -70,7 +70,7 @@ public class CommandSpawnroom extends CommandUhcBase
 				saveData.setSpawnRoom(false);
 				saveData.setSpawnRoomDimension(0);
 				saveData.markDirty();
-		        sender.sendMessage(new TextComponentTranslation("commands.uhc.spawnroom.success1"));
+		        sender.sendMessage(new TranslationTextComponent("commands.uhc.spawnroom.success1"));
 	        }
 			else if ("place".equalsIgnoreCase(args[0]))
 			{
@@ -103,7 +103,7 @@ public class CommandSpawnroom extends CommandUhcBase
 				saveData.setSpawnRoom(true);
 				saveData.setSpawnRoomDimension(world.provider.getDimension());
 				saveData.markDirty();
-		        sender.sendMessage(new TextComponentTranslation("commands.uhc.spawnroom.success"));
+		        sender.sendMessage(new TranslationTextComponent("commands.uhc.spawnroom.success"));
 			}
 			else
 			{

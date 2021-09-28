@@ -7,7 +7,7 @@ import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -59,7 +59,7 @@ public class CommandForceTeam extends CommandUhcBase
         Set<String> set = Sets.<String>newHashSet();
         Set<String> set1 = Sets.<String>newHashSet();
 
-        if (sender instanceof EntityPlayer && startIndex == args.length)
+        if (sender instanceof PlayerEntity && startIndex == args.length)
         {
             String s4 = getCommandSenderAsPlayer(sender).getName();
 

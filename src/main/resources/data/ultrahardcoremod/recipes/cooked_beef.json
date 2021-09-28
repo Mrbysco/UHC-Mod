@@ -1,0 +1,8 @@
+{
+  "type": "ultrahardcoremod:auto_cook_recipe",
+  "ingredient": {
+    "item": "minecraft:beef"
+  },
+  "result": "minecraft:cooked_beef",
+  "experience": 0.35
+}

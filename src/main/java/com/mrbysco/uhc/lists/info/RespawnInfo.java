@@ -1,31 +1,24 @@
 package com.mrbysco.uhc.lists.info;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 
 public class RespawnInfo {
-	private BlockPos pos;
-	private final IBlockState state;
+	private final BlockState state;
 	public ArrayList<Team> teamsReached;
 	public boolean spawnerExists;
 	public boolean bossExists;
 	
-	public RespawnInfo(BlockPos pos, IBlockState state) {
-		this.pos = pos;
+	public RespawnInfo(BlockState state) {
 		this.state = state;
 		this.teamsReached = new ArrayList<>();
 		this.spawnerExists = false;
 		this.bossExists = false;
 	}
 	
-	public BlockPos getPos() {
-		return pos;
-	}
-	
-	public IBlockState getState() {
+	public BlockState getState() {
 		return state;
 	}
 	

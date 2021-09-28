@@ -4,8 +4,8 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.MinecraftServer;
 
 public class CommandUhcBase extends CommandBase{
@@ -34,10 +34,10 @@ public class CommandUhcBase extends CommandBase{
 	public boolean checkPermission(MinecraftServer server, ICommandSender sender)
     {
 		Entity senderEntity = sender.getCommandSenderEntity();
-		EntityPlayer player = null;
-		if(senderEntity instanceof EntityPlayer)
+		PlayerEntity player = null;
+		if(senderEntity instanceof PlayerEntity)
 		{
-			player = (EntityPlayer) senderEntity;
+			player = (PlayerEntity) senderEntity;
 		}
 		if(player == null)
 		{
@@ -45,7 +45,7 @@ public class CommandUhcBase extends CommandBase{
 		}
 		else
 		{
-			final NBTTagCompound entityData = player.getEntityData();
+			final CompoundNBT entityData = player.getEntityData();
 
 	        return super.checkPermission(server, sender) || (player != null && entityData.getBoolean("canEditUHC") == true);
 		}

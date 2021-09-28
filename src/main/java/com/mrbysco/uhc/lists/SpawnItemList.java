@@ -14,13 +14,10 @@ public class SpawnItemList {
 		
 	}
 	
-	public static void addSpawnItems(ItemStack stack1, ItemStack stack2, ItemStack stack3, ItemStack stack4, 
-			ItemStack stack5, ItemStack stack6, ItemStack stack7, ItemStack stack8, ItemStack stack9) {
+	public static void addSpawnItems(ItemStack[] stacks) {
 		// Check if the info doesn't already exist
-		spawnItem_info = new SpawnItemInfo(stack1, stack2, stack3, stack4, stack5, stack6, stack7, stack8, stack9);
-		if(spawnItemList.contains(spawnItem_info))
-			return;
-		else
+		spawnItem_info = new SpawnItemInfo(stacks);
+		if(!spawnItemList.contains(spawnItem_info))
 			spawnItemList.add(spawnItem_info);
 	}
 }

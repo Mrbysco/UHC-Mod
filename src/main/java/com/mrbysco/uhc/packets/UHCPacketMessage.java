@@ -1,55 +1,45 @@
 package com.mrbysco.uhc.packets;
 
-import com.mrbysco.uhc.gui.GuiUHCBook;
-import com.mrbysco.uhc.init.UHCSaveData;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import com.mrbysco.uhc.data.UHCSaveData;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent.Context;
 
-public class UHCPacketMessage implements IMessage
-{
+import java.util.UUID;
+import java.util.function.Supplier;
+
+public class UHCPacketMessage {
     private UHCSaveData data;
-	
-	public UHCPacketMessage() {}
-	
-	public UHCPacketMessage(UHCSaveData uhcData)
-	{
-		data = uhcData;
-	}
-	
-	@Override
-	public void fromBytes(ByteBuf buf) {
-		if (this.data == null)
-            this.data = new UHCSaveData();
-		
-		this.data.readFromNBT(ByteBufUtils.readTag(buf));
+
+	private UHCPacketMessage(PacketBuffer buf) {
+		this.data = new UHCSaveData();
+		this.data.read(buf.readCompoundTag());
 	}
 
-	@Override
-	public void toBytes(ByteBuf buf) {
-		NBTTagCompound tag = new NBTTagCompound();
-        ByteBufUtils.writeTag(buf, this.data.writeToNBT(tag));
+	public UHCPacketMessage(UHCSaveData data) {
+		this.data = data;
 	}
-	
-	public static class PacketHandler implements IMessageHandler<UHCPacketMessage, IMessage>
-	{
-		@Override
-		public IMessage onMessage(UHCPacketMessage message, MessageContext ctx) {
-			
-	        FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
-		    return null;
-		}
-		
-		private void handle(UHCPacketMessage message, MessageContext ctx) {
-			if (ctx.side == Side.CLIENT && message != null)
-            {
-				GuiUHCBook.saveData = message.data;
-            }
-		}
+
+	public UHCPacketMessage(UUID playerUUID, UHCSaveData tag) {
+		this.data = tag;
+	}
+
+	public void encode(PacketBuffer buf) {
+		buf.writeCompoundTag(data.write(new CompoundNBT()));
+	}
+
+	public static UHCPacketMessage decode(final PacketBuffer packetBuffer) {
+		return new UHCPacketMessage(packetBuffer);
+	}
+
+	public void handle(Supplier<Context> context) {
+		NetworkEvent.Context ctx = context.get();
+		ctx.enqueueWork(() -> {
+			if (ctx.getDirection().getReceptionSide().isClient() && ctx.getSender() != null) {
+				com.mrbysco.uhc.client.ClientHelper.updateBook(data);
+			}
+		});
+		ctx.setPacketHandled(true);
 	}
 }

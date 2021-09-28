@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+issueTrackerURL="https://github.com/Mrbysco/UHC-Mod/issues"
+license="MIT"
+
+[[mods]]
+modId="ultrahardcoremod"
+version="${file.jarVersion}"
+displayName="Ultra Hard Coremod"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/ultra-hard-coremod"
+authors="Mrbysco, ShyNieke"
+credits="A UHC mod highly inspired by Gerrybrano's UHC Blox"
+logoFile="logo.png"
+description='''
+A UHC mod made for Modded Minecraft
+'''
+[[dependencies.ultrahardcoremod]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.16.5,1.17)"
+ordering="NONE"
+side="BOTH"

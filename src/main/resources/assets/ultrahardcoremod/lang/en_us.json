@@ -3,7 +3,7 @@
   "ultrahardcoremod.config.title": "Ultra Hard Coremod Config",
 
   "_comment": "Item",
-  "item.ultrahardcoremod:uhcbook": "│ UHC Book│",
+  "item.ultrahardcoremod.uhc_book": "│ UHC Book│",
 
   "_comment": "Command",
   "commands.uhc.usage": "/uhc",

@@ -67,15 +67,17 @@ public class GraceHandler {
 	@SubscribeEvent
 	public void graceTimerEvent(LivingAttackEvent event) {
 		World world = event.getEntityLiving().world;
-		MinecraftServer server = world.getServer();
-		ServerWorld overworld = server.getWorld(World.OVERWORLD);
-		if(overworld != null) {
-			UHCSaveData saveData = UHCSaveData.get(overworld);
-			if(saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
-				if(event.getEntityLiving() instanceof PlayerEntity) {
-					Entity trueSource = event.getSource().getTrueSource();
-					if(trueSource instanceof PlayerEntity) {
-						event.setCanceled(true);
+		if(!world.isRemote) {
+			MinecraftServer server = world.getServer();
+			ServerWorld overworld = server.getWorld(World.OVERWORLD);
+			if(overworld != null) {
+				UHCSaveData saveData = UHCSaveData.get(overworld);
+				if(saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
+					if(event.getEntityLiving() instanceof PlayerEntity) {
+						Entity trueSource = event.getSource().getTrueSource();
+						if(trueSource instanceof PlayerEntity) {
+							event.setCanceled(true);
+						}
 					}
 				}
 			}
@@ -85,15 +87,17 @@ public class GraceHandler {
 	@SubscribeEvent
 	public void graceTimerEvent(LivingHurtEvent event) {
 		World world = event.getEntityLiving().world;
-		MinecraftServer server = world.getServer();
-		ServerWorld overworld = server.getWorld(World.OVERWORLD);
-		if(overworld != null) {
-			UHCSaveData saveData = UHCSaveData.get(overworld);
-			if(saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
-				if(event.getEntityLiving() instanceof PlayerEntity) {
-					Entity trueSource = event.getSource().getTrueSource();
-					if(trueSource instanceof PlayerEntity) {
-						event.setCanceled(true);
+		if(!world.isRemote) {
+			MinecraftServer server = world.getServer();
+			ServerWorld overworld = server.getWorld(World.OVERWORLD);
+			if(overworld != null) {
+				UHCSaveData saveData = UHCSaveData.get(overworld);
+				if(saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
+					if(event.getEntityLiving() instanceof PlayerEntity) {
+						Entity trueSource = event.getSource().getTrueSource();
+						if(trueSource instanceof PlayerEntity) {
+							event.setCanceled(true);
+						}
 					}
 				}
 			}

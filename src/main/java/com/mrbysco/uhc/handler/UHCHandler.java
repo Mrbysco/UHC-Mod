@@ -8,6 +8,7 @@ import com.mrbysco.uhc.lists.info.SpawnItemInfo;
 import com.mrbysco.uhc.packets.UHCPacketHandler;
 import com.mrbysco.uhc.packets.UHCPacketMessage;
 import com.mrbysco.uhc.registry.ModRegistry;
+import com.mrbysco.uhc.utils.PlayerHelper;
 import com.mrbysco.uhc.utils.UHCTeleporter;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -295,7 +296,7 @@ public class UHCHandler {
 							if(team == scoreboard.getTeam("solo")) {
 								if(team.getMembershipCollection().size() == 1) {
 									for (String s : team.getMembershipCollection()) {
-										PlayerEntity winningPlayer = getPlayerEntityByName(world, s);
+										PlayerEntity winningPlayer = PlayerHelper.getPlayerEntityByName(world, s);
 										SoloWonTheUHC(winningPlayer, playerList, world);
 										saveData.setUhcIsFinished(true);
 						            }
@@ -304,7 +305,7 @@ public class UHCHandler {
 								YouWonTheUHC(teamsAlive.get(0), playerList, world);
 								for(int i = 0; i < 7; i++) {
 									for(String players : teamsAlive.get(0).getMembershipCollection()) {
-										PlayerEntity teamPlayer = getPlayerEntityByName(world, players);
+										PlayerEntity teamPlayer = PlayerHelper.getPlayerEntityByName(world, players);
 										FireworkRocketEntity rocket = new FireworkRocketEntity(world,
 												teamPlayer.getPosX(), teamPlayer.getPosY() + 3, teamPlayer.getPosZ(), getFirework(world.rand));
 										world.addEntity(rocket);
@@ -317,7 +318,7 @@ public class UHCHandler {
 									
 									for(String playerName : teamPlayers) {
 										scoreboard.removePlayerFromTeams(playerName);
-										PlayerEntity player = getPlayerEntityByName(world, playerName);
+										PlayerEntity player = PlayerHelper.getPlayerEntityByName(world, playerName);
 										playersAlive.add((ServerPlayerEntity)player);
 									}
 									
@@ -333,18 +334,6 @@ public class UHCHandler {
 				}
 			}
 		}
-	}
-
-	public PlayerEntity getPlayerEntityByName(World world, String name) {
-		for (int j2 = 0; j2 < world.getPlayers().size(); ++j2) {
-			PlayerEntity player = world.getPlayers().get(j2);
-
-			if (name.equals(player.getName().toString())) {
-				return player;
-			}
-		}
-
-		return null;
 	}
 	
 	@SubscribeEvent
@@ -403,34 +392,30 @@ public class UHCHandler {
 				TeleportChoosing++;
 			}
 			switch (TeleportChoosing) {
-			case 1:
-				player.setPositionAndUpdate(centerX2 -1.5, 251, centerZ2 -1.5);
-				break;
-			case 2:
-				player.setPositionAndUpdate(centerX1 +2.5, 251, centerZ1 +2.5);
-				break;
-			case 3:
-				player.setPositionAndUpdate(centerX2 -1.5, 251, centerZ1 +2.5);
-				break;
-			case 4:
-				player.setPositionAndUpdate(centerX1 +2.5, 251, centerZ2 -1.5);
-				break;
-			case 5:
-				player.setPositionAndUpdate(centerX2 -1.5, 251, centerZ);
-				break;
-			case 6:
-				player.setPositionAndUpdate(centerX1 +2.5, 251, centerZ);
-				break;
-			case 7:
-				player.setPositionAndUpdate(centerX, 251, centerZ1 +2.5);
-				break;
-			case 8:
-				player.setPositionAndUpdate(centerX, 251, centerZ2 -1.5);
-				break;
-
-			default:
-				player.setPositionAndUpdate(centerX2-1.5, 251, centerZ2 -1.5);
-				break;
+				default:
+					player.setPositionAndUpdate(centerX2 - 1.5, 251, centerZ2 - 1.5);
+					break;
+				case 2:
+					player.setPositionAndUpdate(centerX1 + 2.5, 251, centerZ1 + 2.5);
+					break;
+				case 3:
+					player.setPositionAndUpdate(centerX2 - 1.5, 251, centerZ1 + 2.5);
+					break;
+				case 4:
+					player.setPositionAndUpdate(centerX1 + 2.5, 251, centerZ2 - 1.5);
+					break;
+				case 5:
+					player.setPositionAndUpdate(centerX2 - 1.5, 251, centerZ);
+					break;
+				case 6:
+					player.setPositionAndUpdate(centerX1 + 2.5, 251, centerZ);
+					break;
+				case 7:
+					player.setPositionAndUpdate(centerX, 251, centerZ1 + 2.5);
+					break;
+				case 8:
+					player.setPositionAndUpdate(centerX, 251, centerZ2 - 1.5);
+					break;
 			}
 		}
 	}
@@ -667,10 +652,10 @@ public class UHCHandler {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				if(saveData.isUhcOnGoing()) {
 					ScorePlayerTeam spectatorTeam = scoreboard.getTeam("spectator");
-					scoreboard.addPlayerToTeam(player.getName().toString(), spectatorTeam);
+					scoreboard.addPlayerToTeam(player.getName().getString(), spectatorTeam);
 
 					scoreboard.getObjective("health");
-					scoreboard.removeObjectiveFromEntity(player.getName().toString(), scoreboard.getObjective("health"));
+					scoreboard.removeObjectiveFromEntity(player.getName().getString(), scoreboard.getObjective("health"));
 				}
 			}
 		}
@@ -711,7 +696,7 @@ public class UHCHandler {
 							}
 						}
 					}
-					STitlePacket spackettitle1 = new STitlePacket(STitlePacket.Type.TITLE, new TranslationTextComponent("uhc.player.won", TextFormatting.DARK_RED + winningPlayer.getName().toString()));
+					STitlePacket spackettitle1 = new STitlePacket(STitlePacket.Type.TITLE, new TranslationTextComponent("uhc.player.won", TextFormatting.DARK_RED + winningPlayer.getName().getString()));
 					player.connection.sendPacket(spackettitle1);
 				}
 			}
@@ -731,7 +716,7 @@ public class UHCHandler {
 							}
 						}
 					}
-					STitlePacket spackettitle1 = new STitlePacket(STitlePacket.Type.TITLE, new TranslationTextComponent("uhc.player.showdown.won", TextFormatting.DARK_RED + winningPlayer.getName().toString()));
+					STitlePacket spackettitle1 = new STitlePacket(STitlePacket.Type.TITLE, new TranslationTextComponent("uhc.player.showdown.won", TextFormatting.DARK_RED + winningPlayer.getName().getString()));
 					player.connection.sendPacket(spackettitle1);
 				}
 			}
@@ -777,7 +762,7 @@ public class UHCHandler {
 
 				if(player.getTeam() == null) {
 					ScorePlayerTeam soloTeam = scoreboard.getTeam("solo");
-					scoreboard.addPlayerToTeam(player.getName().toString(), soloTeam);
+					scoreboard.addPlayerToTeam(player.getName().getString(), soloTeam);
 				}
 
 				UHCPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), new UHCPacketMessage(saveData));

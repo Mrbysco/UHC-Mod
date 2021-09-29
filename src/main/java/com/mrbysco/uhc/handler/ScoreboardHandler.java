@@ -100,7 +100,7 @@ public class ScoreboardHandler {
 					}
 				}
 
-				if(scoreboard.getPlayersTeam(player.getName().toString()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing()) {
+				if(scoreboard.getPlayersTeam(player.getName().getString()) == scoreboard.getTeam("spectator") && saveData.isUhcOnGoing()) {
 					if(!player.isCreative())
 						player.setGameType(GameType.SPECTATOR);
 				}

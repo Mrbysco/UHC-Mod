@@ -56,7 +56,7 @@ public class UHCPacketTeamRandomizer {
 							if(player.getTeam() == scoreboard.getTeam("spectator"))
 								teamPlayers.remove(player);
 							else
-								scoreboard.removePlayerFromTeams(player.getName().toString());
+								scoreboard.removePlayerFromTeams(player.getName().getString());
 						}
 
 						List<ScorePlayerTeam> foundTeams = new ArrayList<ScorePlayerTeam>();
@@ -98,7 +98,7 @@ public class UHCPacketTeamRandomizer {
 									PlayerEntity player = tempList.get(0);
 
 									ScorePlayerTeam scorePlayerTeam = scoreboard.getTeam(teamName);
-									scoreboard.addPlayerToTeam(player.getName().toString(), scorePlayerTeam);
+									scoreboard.addPlayerToTeam(player.getName().getString(), scorePlayerTeam);
 									for(ServerPlayerEntity players : playerList) {
 										if(team != null)
 											players.sendMessage(new TranslationTextComponent("book.uhc.team.randomized", player.getName(), team.getColor() + team.getName().replaceAll("_", " ")), Util.DUMMY_UUID);

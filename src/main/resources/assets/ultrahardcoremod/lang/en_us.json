@@ -13,7 +13,7 @@
   "commands.uhc.respawn.success": "Respawned %s player(s) to team %s: %s.",
   "commands.uhc.respawn.failure": "Could not respawn %s player(s) to team %s: %s",
   "commands.uhc.forceteam.usage": "/uhc forceteam <team> [player]",
-  "commands.uhc.forceteam.success": "Forcefully put %s player(s) in team %s: %s.",
+  "commands.uhc.forceteam.success": "Forcefully put %s player(s) in team %s",
   "commands.uhc.forceteam.failure": "Could not force team of %s because %s is not online.",
   "commands.uhc.spawnroom.usage": "/uhc spawnroom [place/remove]",
   "commands.uhc.spawnroom.success": "UHC Spawn room has been placed.",

@@ -14,11 +14,17 @@ public class UHCTeleporter implements ITeleporter{
         this.targetPos = targetPos;
     }
 
+	public UHCTeleporter() {
+		this.targetPos = null;
+	}
+
 	@Override
 	public Entity placeEntity(Entity newEntity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity) {
 		Entity entity = repositionEntity.apply(false); //Must be false or we fall on vanilla
 
-		entity.moveToBlockPosAndAngles(targetPos, yaw, entity.rotationPitch);
+		if(targetPos != null)
+			entity.moveToBlockPosAndAngles(targetPos, yaw, entity.rotationPitch);
+
 		return entity;
 	}
 }

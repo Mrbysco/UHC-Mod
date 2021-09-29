@@ -66,7 +66,7 @@ public class UHCStartPacket{
 							if(player.getTeam() == scoreboard.getTeam("spectator"))
 								player.setGameType(GameType.SPECTATOR);
 							if(player.getTeam() == null)
-								scoreboard.addPlayerToTeam(player.getName().toString(), scoreboard.getTeam("solo"));
+								scoreboard.addPlayerToTeam(player.getName().getString(), scoreboard.getTeam("solo"));
 							if(player.getTeam() != scoreboard.getTeam("solo"))
 								soloPlayers.remove(player);
 						}
@@ -123,7 +123,7 @@ public class UHCStartPacket{
 						for(PlayerEntity player : playerList) {
 							ScoreObjective score = scoreboard.getObjective("health");
 							if(score != null)
-								scoreboard.removeObjectiveFromEntity(player.getName().toString(), score);
+								scoreboard.removeObjectiveFromEntity(player.getName().getString(), score);
 
 							if(player.isCreative())
 								player.setGameType(GameType.SURVIVAL);
@@ -138,18 +138,15 @@ public class UHCStartPacket{
 							double centerZ1 = centerZ -7;
 							double centerZ2 = centerZ +7;
 
-							for(double i = centerX1; i <= centerX2; i++)
-							{
-								for(double j = centerZ1; j <= centerZ2; j++)
-								{
-									for(double k = 250; k <= 253; k++)
-									{
+							for(double i = centerX1; i <= centerX2; i++) {
+								for(double j = centerZ1; j <= centerZ2; j++) {
+									for(double k = 250; k <= 253; k++) {
 										world.setBlockState(new BlockPos(i, k, j), Blocks.AIR.getDefaultState());
 									}
 								}
 							}
 							saveData.setSpawnRoom(false);
-							saveData.setSpawnRoomDimension(0);
+							saveData.setSpawnRoomDimension(World.OVERWORLD.getLocation());
 							saveData.markDirty();
 						}
 

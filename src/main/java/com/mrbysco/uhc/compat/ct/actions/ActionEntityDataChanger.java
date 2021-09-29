@@ -24,6 +24,6 @@ public class ActionEntityDataChanger implements IRuntimeAction {
 
 	@Override
 	public String describe() {
-		return this.entityType.toString() + "'s entitydata will be changed upon spawn";
+		return this.entityType.getRegistryName() + "'s entitydata will be changed upon spawn";
 	}
 }

@@ -32,7 +32,7 @@ public class UHCPacketTeam {
 	}
 
 	public UHCPacketTeam(ITextComponent name, String team, String teamName, int colorIndex) {
-		this.playerName = name.toString();
+		this.playerName = name.getString();
 		this.team = team;
 		this.teamName = teamName;
 		this.colorIndex = colorIndex;

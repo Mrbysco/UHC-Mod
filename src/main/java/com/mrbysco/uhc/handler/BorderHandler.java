@@ -17,6 +17,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BorderHandler {
 	public int controlTimer;
@@ -26,7 +27,7 @@ public class BorderHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
 			World world = event.world;
 			MinecraftServer server = world.getServer();
-			ArrayList<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+			List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 			
 			ServerWorld overworld = server.getWorld(World.OVERWORLD);
 			if(overworld != null) {

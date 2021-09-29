@@ -75,7 +75,7 @@ public class UHCCommands {
 
 	private static int reset(CommandContext<CommandSource> ctx) throws CommandSyntaxException {
 		MinecraftServer server = ctx.getSource().getServer();
-		List<ServerPlayerEntity> playerList = server.getPlayerList().getPlayers();
+		List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 		ServerWorld overworld = server.getWorld(World.OVERWORLD);
 		if(overworld != null) {
 			UHCSaveData saveData = UHCSaveData.get(overworld);

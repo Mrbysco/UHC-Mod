@@ -46,11 +46,11 @@ public class UHCPacketTeamRandomizer {
 					CompoundNBT playerData = serverPlayer.getPersistentData();
 					ServerWorld world = serverPlayer.getServerWorld();
 					MinecraftServer server = world.getServer();
-					ArrayList<ServerPlayerEntity> playerList = (ArrayList<ServerPlayerEntity>)server.getPlayerList().getPlayers();
+					List<ServerPlayerEntity>  playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 					Scoreboard scoreboard = world.getScoreboard();
 
 					if(playerData.getBoolean("canEditUHC") == true) {
-						ArrayList<ServerPlayerEntity>teamPlayers = (ArrayList<ServerPlayerEntity>) playerList.clone();
+						List<ServerPlayerEntity>teamPlayers = new ArrayList<>(playerList);
 
 						for (PlayerEntity player : playerList) {
 							if(player.getTeam() == scoreboard.getTeam("spectator"))
@@ -81,7 +81,7 @@ public class UHCPacketTeamRandomizer {
 						}
 
 						Collections.shuffle(playerList);
-						ArrayList<ServerPlayerEntity>tempList = (ArrayList<ServerPlayerEntity>) teamPlayers.clone();
+						List<ServerPlayerEntity>tempList = new ArrayList<>(teamPlayers);
 
 						int playerAmount = playerList.size();
 						int amountPerTeam = (int)Math.ceil((double)playerAmount / (double)randomTeams);

@@ -27,6 +27,7 @@ import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class UHCStartPacket{
@@ -54,13 +55,13 @@ public class UHCStartPacket{
 					ServerWorld world = serverPlayer.getServerWorld();
 					WorldBorder border = world.getWorldBorder();
 					MinecraftServer server = world.getServer();
-					ArrayList<ServerPlayerEntity> playerList = (ArrayList<ServerPlayerEntity>)server.getPlayerList().getPlayers();
+					List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 					Scoreboard scoreboard = world.getScoreboard();
 					IWorldInfo info = world.getWorldInfo();
 
 					if(playerData.getBoolean("canEditUHC") == true) {
-						ArrayList<ServerPlayerEntity>soloPlayers = (ArrayList<ServerPlayerEntity>) playerList.clone();
-						ArrayList<ServerPlayerEntity>teamPlayers = (ArrayList<ServerPlayerEntity>) playerList.clone();
+						List<ServerPlayerEntity>soloPlayers = new ArrayList<>(playerList);
+						List<ServerPlayerEntity>teamPlayers = new ArrayList<>(playerList);
 
 						for (PlayerEntity player : playerList) {
 							if(player.getTeam() == scoreboard.getTeam("spectator"))

@@ -14,6 +14,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GraceHandler {
 	public int graceTimer;
@@ -27,7 +28,7 @@ public class GraceHandler {
 			if(overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
-				ArrayList<ServerPlayerEntity> playerList = (ArrayList<ServerPlayerEntity>)server.getPlayerList().getPlayers();
+				List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 				
 				if(!playerList.isEmpty() && saveData.isUhcOnGoing()) {
 					if (world.getGameTime() % 20 == 0) {

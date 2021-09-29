@@ -10,6 +10,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TimerHandler {
 	public int shrinkTimeUntil;
@@ -27,7 +28,7 @@ public class TimerHandler {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
 				MinecraftServer server = world.getServer();
-				ArrayList<ServerPlayerEntity> playerList = (ArrayList<ServerPlayerEntity>)server.getPlayerList().getPlayers();
+				List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 				
 				if(!playerList.isEmpty() && saveData.isUhcOnGoing()) {
 					if(!saveData.isShrinkApplied()) {

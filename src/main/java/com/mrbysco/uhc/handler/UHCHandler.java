@@ -58,6 +58,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class UHCHandler {
@@ -74,7 +75,7 @@ public class UHCHandler {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					UHCTimerData timerData = UHCTimerData.get(overworld);
 					MinecraftServer server = overworld.getServer();
-					ArrayList<ServerPlayerEntity> playerList = (ArrayList<ServerPlayerEntity>)server.getPlayerList().getPlayers();
+					List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 
 					ResourceLocation configDimension = ResourceLocation.tryCreate(UHCConfig.COMMON.spawnDimension.get());
 					if(!saveData.getUHCDimension().equals(configDimension))
@@ -204,7 +205,7 @@ public class UHCHandler {
 			player.addItemStackToInventory(stack);
 	}
 	
-	public static void sendMessage(ArrayList<ServerPlayerEntity> list, ITextComponent text) {
+	public static void sendMessage(List<ServerPlayerEntity> list, ITextComponent text) {
 		for (ServerPlayerEntity player : list) {
 			player.sendMessage(text, Util.DUMMY_UUID);
 		}
@@ -288,7 +289,7 @@ public class UHCHandler {
 						teamsAlive.removeIf(team -> team.getMembershipCollection().size() == 0);
 					}
 					
-					ArrayList<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+					List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 					
 					if(teamsAlive.size() == 1) {
 						ScorePlayerTeam team = teamsAlive.get(0);
@@ -437,8 +438,8 @@ public class UHCHandler {
 				Scoreboard scoreboard = world.getScoreboard();
 				MinecraftServer server = world.getServer();
 				
-				ArrayList<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
-				ArrayList<ServerPlayerEntity> playersAlive = new ArrayList<>();
+				List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+				List<ServerPlayerEntity> playersAlive = new ArrayList<>();
 
 				for(ServerPlayerEntity player : playerList) {
 					if(player.interactionManager.getGameType() == GameType.SURVIVAL && player.getTeam() != scoreboard.getTeam("spectator")) {
@@ -661,7 +662,7 @@ public class UHCHandler {
 		}
 	}
 	
-	public void YouWonTheUHC(ScorePlayerTeam team, ArrayList<ServerPlayerEntity> playerList, World world) {
+	public void YouWonTheUHC(ScorePlayerTeam team, List<ServerPlayerEntity> playerList, World world) {
 		if(!world.isRemote) {
 			ServerWorld overworld = world.getServer().getWorld(World.OVERWORLD);
 			if(overworld != null) {
@@ -683,7 +684,7 @@ public class UHCHandler {
 		}
 	}
 	
-	public void SoloWonTheUHC(PlayerEntity winningPlayer, ArrayList<ServerPlayerEntity> playerList, World world) {
+	public void SoloWonTheUHC(PlayerEntity winningPlayer, List<ServerPlayerEntity> playerList, World world) {
 		if(!world.isRemote) {
 			ServerWorld overworld = world.getServer().getWorld(World.OVERWORLD);
 			if(overworld != null) {
@@ -703,7 +704,7 @@ public class UHCHandler {
 		}
 	}
 	
-	public void WonTheShowdown(PlayerEntity winningPlayer, ArrayList<ServerPlayerEntity> playerList, World world) {
+	public void WonTheShowdown(PlayerEntity winningPlayer, List<ServerPlayerEntity> playerList, World world) {
 		if(!world.isRemote) {
 			ServerWorld overworld = world.getServer().getWorld(World.OVERWORLD);
 			if(overworld != null) {

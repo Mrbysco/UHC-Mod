@@ -22,6 +22,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TimedActionHandler {
 	@SubscribeEvent
@@ -31,7 +32,7 @@ public class TimedActionHandler {
 			MinecraftServer server = world.getServer();
 			ServerWorld overworld = world.getServer().getWorld(World.OVERWORLD);
 			if(server != null && overworld != null) {
-				ArrayList<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+				List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 				Scoreboard scoreboard = world.getScoreboard();
 
 				UHCSaveData saveData = UHCSaveData.get(overworld);

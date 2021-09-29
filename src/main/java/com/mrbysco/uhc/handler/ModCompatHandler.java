@@ -30,6 +30,7 @@ import twilightforest.tileentity.spawner.BossSpawnerTileEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ModCompatHandler {
@@ -48,7 +49,7 @@ public class ModCompatHandler {
 				MinecraftServer server = world.getServer();
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
-				ArrayList<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+				List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 
 				if(saveData.isUhcOnGoing()) {
 					world.tickableTileEntities.forEach((tile) -> {

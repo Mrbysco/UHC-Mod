@@ -172,7 +172,7 @@ public class UHCBookScreen extends Screen {
 	public void init() {
 		super.init();
 		minecraft.keyboardListener.enableRepeatEvents(true);
-		
+
         initValues();
         
         this.buttonDone = this.addButton(new Button(this.width / 2 - 100, 196, 200, 20, new TranslationTextComponent("gui.done"), (button) -> {

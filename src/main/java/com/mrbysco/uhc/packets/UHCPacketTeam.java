@@ -2,19 +2,17 @@ package com.mrbysco.uhc.packets;
 
 import com.mrbysco.uhc.Reference;
 import com.mrbysco.uhc.data.UHCSaveData;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 import java.util.function.Supplier;
 
@@ -31,28 +29,28 @@ public class UHCPacketTeam {
 		this.colorIndex = colorIndex;
 	}
 
-	public UHCPacketTeam(ITextComponent name, String team, String teamName, int colorIndex) {
+	public UHCPacketTeam(Component name, String team, String teamName, int colorIndex) {
 		this.playerName = name.getString();
 		this.team = team;
 		this.teamName = teamName;
 		this.colorIndex = colorIndex;
 	}
 
-	public UHCPacketTeam(PacketBuffer packetBuffer) {
-		this.playerName = packetBuffer.readString();
-		this.team = packetBuffer.readString();
-		this.teamName = packetBuffer.readString();
+	public UHCPacketTeam(FriendlyByteBuf packetBuffer) {
+		this.playerName = packetBuffer.readUtf();
+		this.team = packetBuffer.readUtf();
+		this.teamName = packetBuffer.readUtf();
 		this.colorIndex = packetBuffer.readInt();
 	}
 
-	public void encode(PacketBuffer buf) {
-		buf.writeString(playerName);
-		buf.writeString(team);
-		buf.writeString(teamName);
+	public void encode(FriendlyByteBuf buf) {
+		buf.writeUtf(playerName);
+		buf.writeUtf(team);
+		buf.writeUtf(teamName);
 		buf.writeInt(colorIndex);
 	}
 
-	public static UHCPacketTeam decode(final PacketBuffer packetBuffer) {
+	public static UHCPacketTeam decode(final FriendlyByteBuf packetBuffer) {
 		return new UHCPacketTeam(packetBuffer);
 	}
 
@@ -60,19 +58,19 @@ public class UHCPacketTeam {
 		NetworkEvent.Context ctx = context.get();
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
-				ServerPlayerEntity serverPlayer = ctx.getSender();
-				ServerWorld overworld = serverPlayer.getServer().getWorld(World.OVERWORLD);
-				if(overworld != null) {
+				ServerPlayer serverPlayer = ctx.getSender();
+				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
-					CompoundNBT playerData = serverPlayer.getPersistentData();
-					if(playerData.getBoolean(teamAntiSpam)) {
-						serverPlayer.sendMessage(new TranslationTextComponent("book.uhc.team.antispam"), Util.DUMMY_UUID);
+					CompoundTag playerData = serverPlayer.getPersistentData();
+					if (playerData.getBoolean(teamAntiSpam)) {
+						serverPlayer.sendSystemMessage(Component.translatable("book.uhc.team.antispam"));
 					} else {
-						if(saveData.areTeamsLocked()) {
-							if(playerData.getBoolean("canEditUHC") == true) {
+						if (saveData.areTeamsLocked()) {
+							if (playerData.getBoolean("canEditUHC") == true) {
 								switchTeams(serverPlayer, saveData.getMaxTeamSize());
 							} else {
-								serverPlayer.sendMessage(new TranslationTextComponent("book.uhc.team.locked"), Util.DUMMY_UUID);
+								serverPlayer.sendSystemMessage(Component.translatable("book.uhc.team.locked"));
 							}
 						} else {
 							switchTeams(serverPlayer, saveData.getMaxTeamSize());
@@ -87,37 +85,37 @@ public class UHCPacketTeam {
 
 	private final String teamAntiSpam = Reference.MOD_PREFIX + "team_anti_spam";
 
-	private void switchTeams(ServerPlayerEntity serverPlayer, int maxTeamSize) {
-		Scoreboard scoreboard = serverPlayer.getServerWorld().getScoreboard();
-		CompoundNBT playerData = serverPlayer.getPersistentData();
-		ScorePlayerTeam scorePlayerTeam = scoreboard.getTeam(team);
-		if(team.equals("solo")) {
+	private void switchTeams(ServerPlayer serverPlayer, int maxTeamSize) {
+		Scoreboard scoreboard = serverPlayer.getLevel().getScoreboard();
+		CompoundTag playerData = serverPlayer.getPersistentData();
+		PlayerTeam scorePlayerTeam = scoreboard.getPlayerTeam(team);
+		if (team.equals("solo")) {
 			scoreboard.addPlayerToTeam(playerName, scorePlayerTeam);
 			playerData.putBoolean(teamAntiSpam, true);
 			sendTeamSwitchMessage(serverPlayer);
 		} else {
-			if(maxTeamSize == -1) {
+			if (maxTeamSize == -1) {
 				scoreboard.addPlayerToTeam(playerName, scorePlayerTeam);
 				playerData.putBoolean(teamAntiSpam, true);
 				sendTeamSwitchMessage(serverPlayer);
 			} else {
-				if(scorePlayerTeam.getMembershipCollection().size() < maxTeamSize) {
+				if (scorePlayerTeam.getPlayers().size() < maxTeamSize) {
 					scoreboard.addPlayerToTeam(playerName, scorePlayerTeam);
 					playerData.putBoolean(teamAntiSpam, true);
 					sendTeamSwitchMessage(serverPlayer);
 				} else {
-					serverPlayer.sendMessage(new TranslationTextComponent("book.uhc.team.maxed", team), Util.DUMMY_UUID);
+					serverPlayer.sendSystemMessage(Component.translatable("book.uhc.team.maxed", team));
 				}
 			}
 		}
 	}
 
-	private void sendTeamSwitchMessage(ServerPlayerEntity serverPlayer) {
-		for(ServerPlayerEntity players : serverPlayer.getServer().getPlayerList().getPlayers()) {
-			if(team.equals("solo"))
-				players.sendMessage(new TranslationTextComponent("book.uhc.team.solo", playerName, TextFormatting.fromColorIndex(colorIndex) + teamName), Util.DUMMY_UUID);
+	private void sendTeamSwitchMessage(ServerPlayer serverPlayer) {
+		for (ServerPlayer players : serverPlayer.getServer().getPlayerList().getPlayers()) {
+			if (team.equals("solo"))
+				players.sendSystemMessage(Component.translatable("book.uhc.team.solo", playerName, ChatFormatting.getById(colorIndex) + teamName));
 			else
-				players.sendMessage(new TranslationTextComponent("book.uhc.team.selected", playerName, TextFormatting.fromColorIndex(colorIndex) + teamName), Util.DUMMY_UUID);
+				players.sendSystemMessage(Component.translatable("book.uhc.team.selected", playerName, ChatFormatting.getById(colorIndex) + teamName));
 		}
 	}
 }

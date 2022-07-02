@@ -1,10 +1,10 @@
 package com.mrbysco.uhc.packets;
 
 import com.mrbysco.uhc.Reference;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.Optional;
 
@@ -18,6 +18,7 @@ public class UHCPacketHandler {
 	);
 
 	private static int id = 0;
+
 	public static void registerMessages() {
 		INSTANCE.registerMessage(id++, UHCPacketMessage.class, UHCPacketMessage::encode, UHCPacketMessage::decode, UHCPacketMessage::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 

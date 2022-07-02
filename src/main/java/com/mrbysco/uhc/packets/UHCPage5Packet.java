@@ -1,20 +1,19 @@
 package com.mrbysco.uhc.packets;
 
 import com.mrbysco.uhc.data.UHCSaveData;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.IWorldInfo;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelData;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent.Context;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
@@ -23,31 +22,31 @@ public class UHCPage5Packet {
 	public boolean mobGriefing;
 	public boolean customHealth;
 	public int maxHealth;
-	
+
 	public boolean randomSpawns;
 	public int spreadDistance;
 	public int spreadMaxRange;
 	public boolean spreadRespectTeam;
-	
-	public UHCPage5Packet(boolean weatherCycle, boolean mobGriefing, boolean customHealth, int maxHealth, boolean randomSpawns, 
-			int spreadDistance, int spreadMaxRange, boolean spreadRespectTeam) {
+
+	public UHCPage5Packet(boolean weatherCycle, boolean mobGriefing, boolean customHealth, int maxHealth, boolean randomSpawns,
+						  int spreadDistance, int spreadMaxRange, boolean spreadRespectTeam) {
 		this.weatherCycle = weatherCycle;
 		this.mobGriefing = mobGriefing;
 		this.customHealth = customHealth;
 		this.maxHealth = maxHealth;
-		
+
 		this.randomSpawns = randomSpawns;
 		this.spreadDistance = spreadDistance;
 		this.spreadMaxRange = spreadMaxRange;
 		this.spreadRespectTeam = spreadRespectTeam;
 	}
 
-	public void encode(PacketBuffer buf) {
+	public void encode(FriendlyByteBuf buf) {
 		buf.writeBoolean(weatherCycle);
 		buf.writeBoolean(mobGriefing);
 		buf.writeBoolean(customHealth);
 		buf.writeInt(maxHealth);
-		
+
 		buf.writeBoolean(randomSpawns);
 		buf.writeInt(spreadDistance);
 		buf.writeInt(spreadMaxRange);
@@ -55,7 +54,7 @@ public class UHCPage5Packet {
 
 	}
 
-	public static UHCPage5Packet decode(final PacketBuffer packetBuffer) {
+	public static UHCPage5Packet decode(final FriendlyByteBuf packetBuffer) {
 		return new UHCPage5Packet(packetBuffer.readBoolean(), packetBuffer.readBoolean(), packetBuffer.readBoolean(), packetBuffer.readInt(),
 				packetBuffer.readBoolean(), packetBuffer.readInt(), packetBuffer.readInt(), packetBuffer.readBoolean());
 	}
@@ -64,33 +63,33 @@ public class UHCPage5Packet {
 		NetworkEvent.Context ctx = context.get();
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
-				ServerPlayerEntity serverPlayer = ctx.getSender();
-				ServerWorld serverWorld = serverPlayer.getServerWorld();
-				ServerWorld overworld = serverPlayer.getServer().getWorld(World.OVERWORLD);
-				if(overworld != null) {
+				ServerPlayer serverPlayer = ctx.getSender();
+				ServerLevel serverWorld = serverPlayer.getLevel();
+				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
-					CompoundNBT playerData = serverPlayer.getPersistentData();
+					CompoundTag playerData = serverPlayer.getPersistentData();
 					MinecraftServer minecraftserver = serverWorld.getServer();
-					IWorldInfo wInfo = serverWorld.getWorldInfo();
+					LevelData wInfo = serverWorld.getLevelData();
 					GameRules rules = minecraftserver.getGameRules();
 
-					if(playerData.getBoolean("canEditUHC")) {
-						if(mobGriefing) {
-							if(!rules.getBoolean(GameRules.MOB_GRIEFING))
-								rules.get(GameRules.MOB_GRIEFING).set(true, minecraftserver);
+					if (playerData.getBoolean("canEditUHC")) {
+						if (mobGriefing) {
+							if (!rules.getBoolean(GameRules.RULE_MOBGRIEFING))
+								rules.getRule(GameRules.RULE_MOBGRIEFING).set(true, minecraftserver);
 						} else {
-							if(rules.getBoolean(GameRules.MOB_GRIEFING))
-								rules.get(GameRules.MOB_GRIEFING).set(false, minecraftserver);
+							if (rules.getBoolean(GameRules.RULE_MOBGRIEFING))
+								rules.getRule(GameRules.RULE_MOBGRIEFING).set(false, minecraftserver);
 						}
 
-						if(weatherCycle) {
-							if(!rules.getBoolean(GameRules.DO_WEATHER_CYCLE))
-								rules.get(GameRules.DO_WEATHER_CYCLE).set(true, minecraftserver);
+						if (weatherCycle) {
+							if (!rules.getBoolean(GameRules.RULE_WEATHER_CYCLE))
+								rules.getRule(GameRules.RULE_WEATHER_CYCLE).set(true, minecraftserver);
 						} else {
-							if(serverWorld.isRaining())
+							if (serverWorld.isRaining())
 								wInfo.setRaining(false);
-							if(rules.getBoolean(GameRules.DO_WEATHER_CYCLE))
-								rules.get(GameRules.DO_WEATHER_CYCLE).set(false, minecraftserver);
+							if (rules.getBoolean(GameRules.RULE_WEATHER_CYCLE))
+								rules.getRule(GameRules.RULE_WEATHER_CYCLE).set(false, minecraftserver);
 						}
 
 						saveData.setWeatherEnabled(weatherCycle);
@@ -102,11 +101,11 @@ public class UHCPage5Packet {
 						saveData.setSpreadDistance(spreadDistance);
 						saveData.setSpreadMaxRange(spreadMaxRange);
 						saveData.setSpreadRespectTeam(spreadRespectTeam);
-						saveData.markDirty();
+						saveData.setDirty();
 
-						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(serverPlayer.getUniqueID(), saveData));
+						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(serverPlayer.getUUID(), saveData));
 					} else {
-						serverPlayer.sendMessage(new StringTextComponent("You don't have permissions to edit the UHC book").mergeStyle(TextFormatting.RED), Util.DUMMY_UUID);
+						serverPlayer.sendSystemMessage(Component.literal("You don't have permissions to edit the UHC book").withStyle(ChatFormatting.RED));
 					}
 				}
 

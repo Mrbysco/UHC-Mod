@@ -5,23 +5,22 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mrbysco.uhc.registry.ModRecipes;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
-public class ConversionRecipe implements IRecipe<IInventory> {
+public class ConversionRecipe implements Recipe<Container> {
 	protected final ResourceLocation id;
 	protected final String group;
 	protected final Ingredient ingredient;
@@ -35,24 +34,24 @@ public class ConversionRecipe implements IRecipe<IInventory> {
 	}
 
 	@Override
-	public IRecipeType<?> getType() {
-		return ModRecipes.CONVERSION_RECIPE_TYPE;
+	public RecipeType<?> getType() {
+		return ModRecipes.CONVERSION_RECIPE_TYPE.get();
 	}
 
 	@Override
-	public boolean matches(IInventory inv, World worldIn) {
-		return this.ingredient.test(inv.getStackInSlot(0));
+	public boolean matches(Container inv, Level worldIn) {
+		return this.ingredient.test(inv.getItem(0));
 	}
 
 	public NonNullList<ItemStack> getResults() {
 		return results;
 	}
 
-	public ItemStack getCraftingResult(IInventory inventory) {
-		return getRecipeOutput().copy();
+	public ItemStack assemble(Container inventory) {
+		return getResultItem().copy();
 	}
 
-	public boolean canFit(int x, int y) {
+	public boolean canCraftInDimensions(int x, int y) {
 		return false;
 	}
 
@@ -62,7 +61,7 @@ public class ConversionRecipe implements IRecipe<IInventory> {
 		return nonnulllist;
 	}
 
-	public ItemStack getRecipeOutput() {
+	public ItemStack getResultItem() {
 		return this.results.get(0);
 	}
 
@@ -75,19 +74,20 @@ public class ConversionRecipe implements IRecipe<IInventory> {
 	}
 
 	@Override
-	public IRecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<?> getSerializer() {
 		return ModRecipes.CONVERSION_SERIALIZER.get();
 	}
 
-	public static class SerializerConversionRecipe extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<ConversionRecipe> {
+	public static class SerializerConversionRecipe implements RecipeSerializer<ConversionRecipe> {
 		@Override
-		public ConversionRecipe read(ResourceLocation recipeId, JsonObject json) {
-			String s = JSONUtils.getString(json, "group", "");
-			JsonElement jsonelement = (JsonElement)(JSONUtils.isJsonArray(json, "ingredient") ? JSONUtils.getJsonArray(json, "ingredient") : JSONUtils.getJsonObject(json, "ingredient"));
-			Ingredient ingredient = Ingredient.deserialize(jsonelement);
+		public ConversionRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+			String s = GsonHelper.getAsString(json, "group", "");
+			JsonElement jsonelement = (JsonElement) (GsonHelper.isArrayNode(json, "ingredient") ? GsonHelper.getAsJsonArray(json, "ingredient") : GsonHelper.getAsJsonObject(json, "ingredient"));
+			Ingredient ingredient = Ingredient.fromJson(jsonelement);
 			//Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
-			if (!json.has("results")) throw new com.google.gson.JsonSyntaxException("Missing results, expected to find a string or object");
-			NonNullList<ItemStack> nonnulllist = readItemStacks(JSONUtils.getJsonArray(json, "results"));
+			if (!json.has("results"))
+				throw new com.google.gson.JsonSyntaxException("Missing results, expected to find a string or object");
+			NonNullList<ItemStack> nonnulllist = readItemStacks(GsonHelper.getAsJsonArray(json, "results"));
 			if (nonnulllist.isEmpty()) {
 				throw new JsonParseException("No results for conversion recipe");
 			} else if (nonnulllist.size() > 9) {
@@ -99,9 +99,9 @@ public class ConversionRecipe implements IRecipe<IInventory> {
 		private static NonNullList<ItemStack> readItemStacks(JsonArray resultArray) {
 			NonNullList<ItemStack> nonnulllist = NonNullList.create();
 
-			for(int i = 0; i < resultArray.size(); ++i) {
-				if(resultArray.get(i).isJsonObject()) {
-					ItemStack stack = ShapedRecipe.deserializeItem(resultArray.get(i).getAsJsonObject());
+			for (int i = 0; i < resultArray.size(); ++i) {
+				if (resultArray.get(i).isJsonObject()) {
+					ItemStack stack = ShapedRecipe.itemStackFromJson(resultArray.get(i).getAsJsonObject());
 					nonnulllist.add(stack);
 				}
 			}
@@ -111,25 +111,25 @@ public class ConversionRecipe implements IRecipe<IInventory> {
 
 		@Nullable
 		@Override
-		public ConversionRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
-			String s = buffer.readString(32767);
-			Ingredient ingredient = Ingredient.read(buffer);
+		public ConversionRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+			String s = buffer.readUtf(32767);
+			Ingredient ingredient = Ingredient.fromNetwork(buffer);
 
 			int size = buffer.readVarInt();
 			NonNullList<ItemStack> resultList = NonNullList.withSize(size, ItemStack.EMPTY);
-			for(int j = 0; j < resultList.size(); ++j) {
-				resultList.set(j, buffer.readItemStack());
+			for (int j = 0; j < resultList.size(); ++j) {
+				resultList.set(j, buffer.readItem());
 			}
 			return new ConversionRecipe(recipeId, s, ingredient, resultList);
 		}
 
 		@Override
-		public void write(PacketBuffer buffer, ConversionRecipe recipe) {
-			buffer.writeString(recipe.group);
-			recipe.ingredient.write(buffer);
+		public void toNetwork(FriendlyByteBuf buffer, ConversionRecipe recipe) {
+			buffer.writeUtf(recipe.group);
+			recipe.ingredient.toNetwork(buffer);
 			buffer.writeVarInt(recipe.results.size());
-			for(ItemStack stack : recipe.results) {
-				buffer.writeItemStack(stack);
+			for (ItemStack stack : recipe.results) {
+				buffer.writeItem(stack);
 			}
 		}
 	}

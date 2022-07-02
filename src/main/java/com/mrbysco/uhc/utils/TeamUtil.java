@@ -1,17 +1,17 @@
 package com.mrbysco.uhc.utils;
 
 import com.mrbysco.uhc.config.UHCConfig;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
 
 import java.util.List;
 
 public class TeamUtil {
-		
-	public static BlockPos getPosForTeam(TextFormatting teamColor) {
+
+	public static BlockPos getPosForTeam(ChatFormatting teamColor) {
 		BlockPos pos = new BlockPos(0, -1, 0);
 		List<? extends String> teamList = UHCConfig.COMMON.teamSpawns.get();
-		if(teamList.size() == 14) {
+		if (teamList.size() == 14) {
 			switch (teamColor) {
 				case DARK_RED:
 					String team1 = teamList.get(0);
@@ -87,40 +87,40 @@ public class TeamUtil {
 					break;
 			}
 		}
-		
+
 		return pos;
 	}
-	
+
 	public static String getTeamNameFromInt(int value) {
 		switch (value) {
 			default:
-				return TextFormatting.DARK_RED.getFriendlyName();
+				return ChatFormatting.DARK_RED.getName();
 			case 1:
-				return TextFormatting.GOLD.getFriendlyName();
+				return ChatFormatting.GOLD.getName();
 			case 2:
-				return TextFormatting.DARK_GREEN.getFriendlyName();
+				return ChatFormatting.DARK_GREEN.getName();
 			case 3:
-				return TextFormatting.DARK_AQUA.getFriendlyName();
+				return ChatFormatting.DARK_AQUA.getName();
 			case 4:
-				return TextFormatting.DARK_BLUE.getFriendlyName();
+				return ChatFormatting.DARK_BLUE.getName();
 			case 5:
-				return TextFormatting.DARK_PURPLE.getFriendlyName();
+				return ChatFormatting.DARK_PURPLE.getName();
 			case 6:
-				return TextFormatting.DARK_GRAY.getFriendlyName();
+				return ChatFormatting.DARK_GRAY.getName();
 			case 7:
-				return TextFormatting.RED.getFriendlyName();
+				return ChatFormatting.RED.getName();
 			case 8:
-				return TextFormatting.YELLOW.getFriendlyName();
+				return ChatFormatting.YELLOW.getName();
 			case 9:
-				return TextFormatting.GREEN.getFriendlyName();
+				return ChatFormatting.GREEN.getName();
 			case 10:
-				return TextFormatting.AQUA.getFriendlyName();
+				return ChatFormatting.AQUA.getName();
 			case 11:
-				return TextFormatting.BLUE.getFriendlyName();
+				return ChatFormatting.BLUE.getName();
 			case 12:
-				return TextFormatting.LIGHT_PURPLE.getFriendlyName();
+				return ChatFormatting.LIGHT_PURPLE.getName();
 			case 13:
-				return TextFormatting.GRAY.getFriendlyName();
+				return ChatFormatting.GRAY.getName();
 		}
 	}
 }

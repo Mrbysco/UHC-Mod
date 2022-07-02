@@ -1,21 +1,19 @@
 package com.mrbysco.uhc.packets;
 
 import com.mrbysco.uhc.data.UHCSaveData;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,11 +25,11 @@ public class UHCPacketTeamRandomizer {
 
 	}
 
-	public void encode(PacketBuffer buf) {
+	public void encode(FriendlyByteBuf buf) {
 
 	}
 
-	public static UHCPacketTeamRandomizer decode(final PacketBuffer packetBuffer) {
+	public static UHCPacketTeamRandomizer decode(final FriendlyByteBuf packetBuffer) {
 		return new UHCPacketTeamRandomizer();
 	}
 
@@ -39,76 +37,76 @@ public class UHCPacketTeamRandomizer {
 		NetworkEvent.Context ctx = context.get();
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
-				ServerPlayerEntity serverPlayer = ctx.getSender();
-				ServerWorld overworld = serverPlayer.getServer().getWorld(World.OVERWORLD);
-				if(overworld != null) {
+				ServerPlayer serverPlayer = ctx.getSender();
+				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
-					CompoundNBT playerData = serverPlayer.getPersistentData();
-					ServerWorld world = serverPlayer.getServerWorld();
+					CompoundTag playerData = serverPlayer.getPersistentData();
+					ServerLevel world = serverPlayer.getLevel();
 					MinecraftServer server = world.getServer();
-					List<ServerPlayerEntity>  playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+					List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 					Scoreboard scoreboard = world.getScoreboard();
 
-					if(playerData.getBoolean("canEditUHC") == true) {
-						List<ServerPlayerEntity>teamPlayers = new ArrayList<>(playerList);
+					if (playerData.getBoolean("canEditUHC") == true) {
+						List<ServerPlayer> teamPlayers = new ArrayList<>(playerList);
 
-						for (PlayerEntity player : playerList) {
-							if(player.getTeam() == scoreboard.getTeam("spectator"))
+						for (Player player : playerList) {
+							if (player.getTeam() == scoreboard.getPlayerTeam("spectator"))
 								teamPlayers.remove(player);
 							else
-								scoreboard.removePlayerFromTeams(player.getName().getString());
+								scoreboard.removePlayerFromTeam(player.getName().getString());
 						}
 
-						List<ScorePlayerTeam> foundTeams = new ArrayList<ScorePlayerTeam>();
-						for (ScorePlayerTeam team : scoreboard.getTeams()) {
-							if(team != scoreboard.getTeam("spectator")) {
+						List<PlayerTeam> foundTeams = new ArrayList<PlayerTeam>();
+						for (PlayerTeam team : scoreboard.getPlayerTeams()) {
+							if (team != scoreboard.getPlayerTeam("spectator")) {
 								foundTeams.add(team);
 							}
 						}
 
-						for(ScorePlayerTeam team : foundTeams) {
-							if(!team.getMembershipCollection().isEmpty()) {
-								team.getMembershipCollection().clear();
+						for (PlayerTeam team : foundTeams) {
+							if (!team.getPlayers().isEmpty()) {
+								team.getPlayers().clear();
 								foundTeams.remove(team);
 							}
 						}
 
 						int randomTeams = saveData.getRandomTeamSize();
-						if(randomTeams > 14) {
+						if (randomTeams > 14) {
 							saveData.setRandomTeamSize(14);
-							saveData.markDirty();
+							saveData.setDirty();
 							randomTeams = 14;
 						}
 
 						Collections.shuffle(playerList);
-						List<ServerPlayerEntity>tempList = new ArrayList<>(teamPlayers);
+						List<ServerPlayer> tempList = new ArrayList<>(teamPlayers);
 
 						int playerAmount = playerList.size();
-						int amountPerTeam = (int)Math.ceil((double)playerAmount / (double)randomTeams);
+						int amountPerTeam = (int) Math.ceil((double) playerAmount / (double) randomTeams);
 
 						ArrayList<String> possibleTeams = getTeams();
 
-						for(int i = 0; i < randomTeams; i++) {
-							String teamName = possibleTeams.get(possibleTeams.size() > 1 ? world.rand.nextInt(possibleTeams.size()) : 0);
+						for (int i = 0; i < randomTeams; i++) {
+							String teamName = possibleTeams.get(possibleTeams.size() > 1 ? world.random.nextInt(possibleTeams.size()) : 0);
 							possibleTeams.remove(teamName);
-							ScorePlayerTeam team = scoreboard.getTeam(teamName);
+							PlayerTeam team = scoreboard.getPlayerTeam(teamName);
 
-							for(int j = 0; j < amountPerTeam; j++) {
-								if(!tempList.isEmpty()) {
-									PlayerEntity player = tempList.get(0);
+							for (int j = 0; j < amountPerTeam; j++) {
+								if (!tempList.isEmpty()) {
+									Player player = tempList.get(0);
 
-									ScorePlayerTeam scorePlayerTeam = scoreboard.getTeam(teamName);
+									PlayerTeam scorePlayerTeam = scoreboard.getPlayerTeam(teamName);
 									scoreboard.addPlayerToTeam(player.getName().getString(), scorePlayerTeam);
-									for(ServerPlayerEntity players : playerList) {
-										if(team != null)
-											players.sendMessage(new TranslationTextComponent("book.uhc.team.randomized", player.getName(), team.getColor() + team.getName().replaceAll("_", " ")), Util.DUMMY_UUID);
+									for (ServerPlayer players : playerList) {
+										if (team != null)
+											players.sendSystemMessage(Component.translatable("book.uhc.team.randomized", player.getName(), team.getColor() + team.getName().replaceAll("_", " ")));
 									}
 									tempList.remove(player);
 								}
 							}
 						}
 					} else {
-						serverPlayer.sendMessage(new StringTextComponent("You don't have permissions to randomize the teams").mergeStyle(TextFormatting.RED), Util.DUMMY_UUID);
+						serverPlayer.sendSystemMessage(Component.literal("You don't have permissions to randomize the teams").withStyle(ChatFormatting.RED));
 					}
 				}
 
@@ -120,20 +118,20 @@ public class UHCPacketTeamRandomizer {
 	private static ArrayList<String> getTeams() {
 		ArrayList<String> teams = new ArrayList<>();
 
-		teams.add(TextFormatting.DARK_RED.getFriendlyName());
-		teams.add(TextFormatting.GOLD.getFriendlyName());
-		teams.add(TextFormatting.DARK_GREEN.getFriendlyName());
-		teams.add(TextFormatting.DARK_AQUA.getFriendlyName());
-		teams.add(TextFormatting.DARK_BLUE.getFriendlyName());
-		teams.add(TextFormatting.DARK_PURPLE.getFriendlyName());
-		teams.add(TextFormatting.DARK_GRAY.getFriendlyName());
-		teams.add(TextFormatting.RED.getFriendlyName());
-		teams.add(TextFormatting.YELLOW.getFriendlyName());
-		teams.add(TextFormatting.GREEN.getFriendlyName());
-		teams.add(TextFormatting.AQUA.getFriendlyName());
-		teams.add(TextFormatting.BLUE.getFriendlyName());
-		teams.add(TextFormatting.LIGHT_PURPLE.getFriendlyName());
-		teams.add(TextFormatting.GRAY.getFriendlyName());
+		teams.add(ChatFormatting.DARK_RED.getName());
+		teams.add(ChatFormatting.GOLD.getName());
+		teams.add(ChatFormatting.DARK_GREEN.getName());
+		teams.add(ChatFormatting.DARK_AQUA.getName());
+		teams.add(ChatFormatting.DARK_BLUE.getName());
+		teams.add(ChatFormatting.DARK_PURPLE.getName());
+		teams.add(ChatFormatting.DARK_GRAY.getName());
+		teams.add(ChatFormatting.RED.getName());
+		teams.add(ChatFormatting.YELLOW.getName());
+		teams.add(ChatFormatting.GREEN.getName());
+		teams.add(ChatFormatting.AQUA.getName());
+		teams.add(ChatFormatting.BLUE.getName());
+		teams.add(ChatFormatting.LIGHT_PURPLE.getName());
+		teams.add(ChatFormatting.GRAY.getName());
 
 		return teams;
 	}

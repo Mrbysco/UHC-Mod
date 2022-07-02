@@ -1,17 +1,16 @@
 package com.mrbysco.uhc.config;
 
 import com.mrbysco.uhc.UltraHardCoremod;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class UHCConfig {
@@ -71,14 +70,14 @@ public class UHCConfig {
 			builder.comment("Mod Support")
 					.push("mod_support");
 
-				builder.comment("Twilight Forest")
-						.push("twilightforest");
+			builder.comment("Twilight Forest")
+					.push("twilightforest");
 
-				twilightRespawnTime = builder
+			twilightRespawnTime = builder
 					.comment("The amount of seconds it takes before bosses can be spawned after the start of the UHC [default: 1200 aka 20 minutes]")
 					.defineInRange("twilightRespawnTime", 1200, 0, Integer.MAX_VALUE);
 
-				builder.pop();
+			builder.pop();
 
 			builder.pop();
 		}
@@ -86,22 +85,22 @@ public class UHCConfig {
 
 	public static boolean isValidResourceLocation(Object object) {
 		boolean flag = object instanceof String;
-		if(flag) {
+		if (flag) {
 			String value = (String) object;
-			return ResourceLocation.tryCreate(value) != null;
+			return ResourceLocation.tryParse(value) != null;
 		}
 		return false;
 	}
 
 	public static boolean isValidLocation(Object object) {
 		boolean flag = object instanceof String;
-		if(flag) {
+		if (flag) {
 			String value = (String) object;
-			if(value.contains(",")) {
+			if (value.contains(",")) {
 				String[] splitValues = value.split(",");
-				if(splitValues.length == 3) {
-					for(String splitValue : splitValues) {
-						if(!NumberUtils.isParsable(splitValue)) {
+				if (splitValues.length == 3) {
+					for (String splitValue : splitValues) {
+						if (!NumberUtils.isParsable(splitValue)) {
 							return false;
 						}
 					}
@@ -122,12 +121,12 @@ public class UHCConfig {
 	}
 
 	@SubscribeEvent
-	public static void onLoad(final ModConfig.Loading configEvent) {
+	public static void onLoad(final ModConfigEvent.Loading configEvent) {
 		UltraHardCoremod.LOGGER.debug("Loaded UltraHardCoremod's config file {}", configEvent.getConfig().getFileName());
 	}
 
 	@SubscribeEvent
-	public static void onFileChange(final ModConfig.Reloading configEvent) {
+	public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
 		UltraHardCoremod.LOGGER.debug("UltraHardCoremod's config just got changed on the file system!");
 	}
 }

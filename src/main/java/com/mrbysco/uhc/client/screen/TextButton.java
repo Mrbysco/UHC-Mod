@@ -1,10 +1,10 @@
 package com.mrbysco.uhc.client.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 
 public class TextButton extends Button {
 	private final Minecraft mc;
@@ -12,29 +12,29 @@ public class TextButton extends Button {
 	private int hoverColor = 0xFFFF5555;
 	private boolean shadow = true;
 
-	public TextButton(int x, int y, ITextComponent text, Minecraft mc, Button.IPressable onPressIn) {
-		super(x, y, mc.fontRenderer.getStringPropertyWidth(text), mc.fontRenderer.FONT_HEIGHT, text, onPressIn);
+	public TextButton(int x, int y, Component text, Minecraft mc, Button.OnPress onPressIn) {
+		super(x, y, mc.font.width(text), mc.font.lineHeight, text, onPressIn);
 		this.mc = mc;
 	}
 
 	@Override
-	public void setMessage(ITextComponent message) {
+	public void setMessage(Component message) {
 		super.setMessage(message);
-		this.width = mc.fontRenderer.getStringPropertyWidth(message);
+		this.width = mc.font.width(message);
 	}
 
-	public void shadowEnabled(boolean shadow){
+	public void shadowEnabled(boolean shadow) {
 		this.shadow = shadow;
 	}
-	
-	public void setColors(int normal, int hover){
+
+	public void setColors(int normal, int hover) {
 		this.hoverColor = hover;
 		this.color = normal;
 	}
 
 	@Override
-	public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		FontRenderer renderer = mc.fontRenderer;
+	public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+		Font renderer = mc.font;
 
 		int colorInt = this.color;
 		if (color != 0) {
@@ -45,13 +45,13 @@ public class TextButton extends Button {
 			colorInt = this.hoverColor;
 		}
 
-		ITextComponent component = getMessage();
-		if(shadow) {
-			renderer.drawTextWithShadow(matrixStack, component, x, y, colorInt);
+		Component component = getMessage();
+		if (shadow) {
+			renderer.drawShadow(matrixStack, component, x, y, colorInt);
 		} else {
-			renderer.drawText(matrixStack, component, x, y, colorInt);
+			renderer.draw(matrixStack, component, x, y, colorInt);
 		}
-		if (this.isHovered()) {
+		if (this.isHoveredOrFocused()) {
 			this.renderToolTip(matrixStack, mouseX, mouseY);
 		}
 	}

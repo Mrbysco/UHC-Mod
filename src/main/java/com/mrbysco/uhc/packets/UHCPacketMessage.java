@@ -1,20 +1,20 @@
 package com.mrbysco.uhc.packets;
 
 import com.mrbysco.uhc.data.UHCSaveData;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 import java.util.UUID;
 import java.util.function.Supplier;
 
 public class UHCPacketMessage {
-    private UHCSaveData data;
+	private UHCSaveData data;
 
-	private UHCPacketMessage(PacketBuffer buf) {
+	private UHCPacketMessage(FriendlyByteBuf buf) {
 		this.data = new UHCSaveData();
-		this.data.read(buf.readCompoundTag());
+		this.data.load(buf.readNbt());
 	}
 
 	public UHCPacketMessage(UHCSaveData data) {
@@ -25,11 +25,11 @@ public class UHCPacketMessage {
 		this.data = tag;
 	}
 
-	public void encode(PacketBuffer buf) {
-		buf.writeCompoundTag(data.write(new CompoundNBT()));
+	public void encode(FriendlyByteBuf buf) {
+		buf.writeNbt(data.save(new CompoundTag()));
 	}
 
-	public static UHCPacketMessage decode(final PacketBuffer packetBuffer) {
+	public static UHCPacketMessage decode(final FriendlyByteBuf packetBuffer) {
 		return new UHCPacketMessage(packetBuffer);
 	}
 

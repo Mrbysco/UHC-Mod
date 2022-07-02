@@ -4,29 +4,27 @@ import com.mrbysco.uhc.UltraHardCoremod;
 import com.mrbysco.uhc.config.UHCConfig;
 import com.mrbysco.uhc.data.UHCSaveData;
 import com.mrbysco.uhc.data.UHCTimerData;
-import com.mrbysco.uhc.handler.TimerHandler;
 import com.mrbysco.uhc.lists.EntityDataChangeList;
 import com.mrbysco.uhc.lists.EntityDataChangeList.AttributeChange;
 import com.mrbysco.uhc.lists.info.RespawnInfo;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
-import twilightforest.tileentity.spawner.BossSpawnerTileEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,88 +39,88 @@ public class ModCompatHandler {
 	@SubscribeEvent
 	public void TwilightHandler(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && ModList.get().isLoaded("twilightforest")) {
-			ServerWorld world = (ServerWorld)event.world;
-			
+			ServerLevel world = (ServerLevel) event.world;
+
 			Scoreboard scoreboard = world.getScoreboard();
-			ServerWorld overworld = event.world.getServer().getWorld(World.OVERWORLD);
-			if(overworld != null) {
+			ServerLevel overworld = event.world.getServer().getLevel(Level.OVERWORLD);
+			if (overworld != null) {
 				MinecraftServer server = world.getServer();
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
-				List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+				List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 
-				if(saveData.isUhcOnGoing()) {
-					world.tickableTileEntities.forEach((tile) -> {
-						if(!tile.isRemoved() && tile instanceof BossSpawnerTileEntity) {
-							BlockPos pos = tile.getPos();
-							BlockState state = tile.getBlockState();
-							if(respawnList.containsKey(pos)) {
-								RespawnInfo info = new RespawnInfo(state);
-								info.setSpawnerExists(true);
-								respawnList.put(pos, info);
-							}
-						}
-					});
+				if (saveData.isUhcOnGoing()) {
+//					world.tickableBlockEntities.forEach((tile) -> { TODO: Get the boss spawners working
+//						if (!tile.isRemoved() && tile instanceof BossSpawnerTileEntity) {
+//							BlockPos pos = tile.getBlockPos();
+//							BlockState state = tile.getBlockState();
+//							if (respawnList.containsKey(pos)) {
+//								RespawnInfo info = new RespawnInfo(state);
+//								info.setSpawnerExists(true);
+//								respawnList.put(pos, info);
+//							}
+//						}
+//					});
 
-					if(!playerList.isEmpty() && !respawnList.isEmpty()) {
+					if (!playerList.isEmpty() && !respawnList.isEmpty()) {
 						if (world.getGameTime() % 20 == 0) {
-							if(!saveData.getTwilightRespawn()) {
-								if(timerData.getTwilightBossGraceTimer() != this.twilightBossGraceTimer) {
+							if (!saveData.getTwilightRespawn()) {
+								if (timerData.getTwilightBossGraceTimer() != this.twilightBossGraceTimer) {
 									this.twilightBossGraceTimer = timerData.getTwilightBossGraceTimer();
-									if(saveData.getTwilightRespawn()) {
+									if (saveData.getTwilightRespawn()) {
 										saveData.setTwilightRespawn(false);
-										saveData.markDirty();
+										saveData.setDirty();
 									}
 								}
 
-								if(timerData.getTwilightBossGraceTimer() >= TimerHandler.tickTime(UHCConfig.COMMON.twilightRespawnTime.get())) {
+								if (timerData.getTwilightBossGraceTimer() >= TimerHandler.tickTime(UHCConfig.COMMON.twilightRespawnTime.get())) {
 									this.twilightBossGraceTimer = TimerHandler.tickTime(UHCConfig.COMMON.twilightRespawnTime.get());
 									saveData.setTwilightRespawn(true);
-									saveData.markDirty();
+									saveData.setDirty();
 								} else {
 									++this.twilightBossGraceTimer;
 									timerData.setTwilightBossGraceTimer(this.twilightBossGraceTimer);
-									timerData.markDirty();
+									timerData.setDirty();
 								}
 							}
 						}
 					}
 
-					if(!saveData.isUhcIsFinished() && saveData.getTwilightRespawn()) {
-						if(!respawnList.isEmpty()) {
+					if (!saveData.isUhcIsFinished() && saveData.getTwilightRespawn()) {
+						if (!respawnList.isEmpty()) {
 							for (Map.Entry<BlockPos, RespawnInfo> infoEntry : respawnList.entrySet()) {
 								BlockPos pos = infoEntry.getKey();
 								RespawnInfo info = infoEntry.getValue();
 								BlockState state = info.getState();
-								AxisAlignedBB hitbox = new AxisAlignedBB(pos.getX() - 0.5f, 0 - 0.5f, pos.getZ() - 0.5f, pos.getX() + 0.5f, 256 + 0.5f, pos.getZ() + 0.5f)
-										.expand(-50, -50, -50).expand(50, 50, 50);
-								ArrayList<ServerPlayerEntity> collidingList = new ArrayList<>(world.getEntitiesWithinAABB(ServerPlayerEntity.class, hitbox));
+								AABB hitbox = new AABB(pos.getX() - 0.5f, 0 - 0.5f, pos.getZ() - 0.5f, pos.getX() + 0.5f, 256 + 0.5f, pos.getZ() + 0.5f)
+										.expandTowards(-50, -50, -50).expandTowards(50, 50, 50);
+								ArrayList<ServerPlayer> collidingList = new ArrayList<>(world.getEntitiesOfClass(ServerPlayer.class, hitbox));
 
-								ArrayList<MonsterEntity> collidingBossMobs = new ArrayList<>(world.getEntitiesWithinAABB(MonsterEntity.class, hitbox));
+								ArrayList<Monster> collidingBossMobs = new ArrayList<>(world.getEntitiesOfClass(Monster.class, hitbox));
 
-								if(world.getBlockState(pos).getBlock() instanceof twilightforest.block.BossSpawnerBlock) {
-									if(!info.isSpawnerExists())
+								if (world.getBlockState(pos).getBlock() instanceof twilightforest.block.BossSpawnerBlock) {
+									if (!info.isSpawnerExists())
 										info.setSpawnerExists(true);
 								}
 
-								if(!collidingBossMobs.isEmpty() && !info.isBossExists()) {
-									for (MonsterEntity mob : collidingBossMobs) {
-										if(!mob.canChangeDimension() && mob.getType().getRegistryName().getNamespace().equals("twilightforest")) {
+								if (!collidingBossMobs.isEmpty() && !info.isBossExists()) {
+									for (Monster mob : collidingBossMobs) {
+										if (!mob.canChangeDimensions() && ForgeRegistries.ENTITIES.getKey(mob.getType()).getNamespace().equals("twilightforest")) {
 											info.setBossExists(true);
 										}
 									}
 								}
 
-								if(!collidingList.isEmpty()) {
-									for (ServerPlayerEntity player : collidingList) {
+								if (!collidingList.isEmpty()) {
+									for (ServerPlayer player : collidingList) {
 										Team team = player.getTeam();
 
-										if(team != null && team != scoreboard.getTeam("solo") && !player.isSpectator()) {
-											if(!info.teamsReached.contains(team)) {
-												if(!info.isBossExists() && !info.isSpawnerExists()) {
+										if (team != null && team != scoreboard.getPlayerTeam("solo") && !player.isSpectator()) {
+											if (!info.teamsReached.contains(team)) {
+												if (!info.isBossExists() && !info.isSpawnerExists()) {
 													info.teamsReached.add(team);
 
-													world.setBlockState(pos, state);
+													world.setBlockAndUpdate(pos, state);
 													info.setBossExists(true);
 												}
 											}
@@ -137,25 +135,25 @@ public class ModCompatHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void mobDataChanger(EntityJoinWorldEvent event) {
-		World world = event.getWorld();
-		if (!world.isRemote) {
+		Level world = event.getWorld();
+		if (!world.isClientSide) {
 			if (event.getEntity() instanceof LivingEntity && EntityDataChangeList.dataMap != null && !EntityDataChangeList.dataMap.isEmpty()) {
 				LivingEntity livingEntity = (LivingEntity) event.getEntity();
 				if (EntityDataChangeList.dataMap.containsKey(livingEntity.getType())) {
 					AttributeChange attributeChange = EntityDataChangeList.dataMap.get(livingEntity.getType());
 					Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(attributeChange.getAttributeLocation());
 					if (attribute != null) {
-						ModifiableAttributeInstance instance = livingEntity.getAttribute(attribute);
-						if(instance != null) {
+						AttributeInstance instance = livingEntity.getAttribute(attribute);
+						if (instance != null) {
 							instance.setBaseValue(attributeChange.getValue());
 						} else {
-							UltraHardCoremod.LOGGER.error(String.format("Can't find attribute %s on entity %s", attribute.getAttributeName(), livingEntity.getType().getRegistryName()));
+							UltraHardCoremod.LOGGER.error(String.format("Can't find attribute %s on entity %s", attribute.getDescriptionId(), ForgeRegistries.ENTITIES.getKey(livingEntity.getType())));
 						}
 					} else {
-						UltraHardCoremod.LOGGER.error("Can't find attribute by the resource name: " + attribute.getAttributeName());
+						UltraHardCoremod.LOGGER.error("Can't find attribute by the resource name: " + attribute.getDescriptionId());
 					}
 				}
 			}

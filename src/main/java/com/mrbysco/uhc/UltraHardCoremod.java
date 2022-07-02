@@ -46,6 +46,7 @@ public class UltraHardCoremod {
 		eventBus.addListener(this::setup);
 
 		ModRecipes.RECIPE_SERIALIZERS.register(eventBus);
+		ModRecipes.RECIPE_TYPES.register(eventBus);
 		ModRegistry.ITEMS.register(eventBus);
 
 		MinecraftForge.EVENT_BUS.register(new UHCHandler());

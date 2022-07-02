@@ -2,22 +2,21 @@ package com.mrbysco.uhc.handler;
 
 import com.mrbysco.uhc.data.UHCSaveData;
 import com.mrbysco.uhc.data.UHCTimerData;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.Team;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -28,128 +27,128 @@ public class TimedActionHandler {
 	@SubscribeEvent
 	public void ScoreboardStuff(TickEvent.WorldTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			World world = event.world;
+			Level world = event.world;
 			MinecraftServer server = world.getServer();
-			ServerWorld overworld = world.getServer().getWorld(World.OVERWORLD);
-			if(server != null && overworld != null) {
-				List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+			ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
+			if (server != null && overworld != null) {
+				List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 				Scoreboard scoreboard = world.getScoreboard();
 
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
 				GameRules rules = world.getGameRules();
-	
-				if(saveData.isUhcOnGoing()) {
-					if(saveData.isTimeLock()) {
+
+				if (saveData.isUhcOnGoing()) {
+					if (saveData.isTimeLock()) {
 						int timeLockTimer = timerData.getTimeLockTimer();
 						boolean timeFlag = timeLockTimer == TimerHandler.tickTime(saveData.getTimeLockTimer());
-						if(timeFlag) {
-							if(rules.getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
-								if(saveData.getTimeMode().equals("Day")) {
-									if(world.isDaytime()) {
-										if(rules.getBoolean(GameRules.DO_DAYLIGHT_CYCLE))
-											rules.get(GameRules.DO_DAYLIGHT_CYCLE).set(false, server);
+						if (timeFlag) {
+							if (rules.getBoolean(GameRules.RULE_DAYLIGHT)) {
+								if (saveData.getTimeMode().equals("Day")) {
+									if (world.isDay()) {
+										if (rules.getBoolean(GameRules.RULE_DAYLIGHT))
+											rules.getRule(GameRules.RULE_DAYLIGHT).set(false, server);
 									}
-								} else if(saveData.getTimeMode().equals("Night")) {
-									if(!world.isDaytime()) {
-										if(rules.getBoolean(GameRules.DO_DAYLIGHT_CYCLE))
-											rules.get(GameRules.DO_DAYLIGHT_CYCLE).set(false, server);
+								} else if (saveData.getTimeMode().equals("Night")) {
+									if (!world.isDay()) {
+										if (rules.getBoolean(GameRules.RULE_DAYLIGHT))
+											rules.getRule(GameRules.RULE_DAYLIGHT).set(false, server);
 									}
 								} else {
-									if(rules.getBoolean(GameRules.DO_DAYLIGHT_CYCLE))
-										rules.get(GameRules.DO_DAYLIGHT_CYCLE).set(true, server);
+									if (rules.getBoolean(GameRules.RULE_DAYLIGHT))
+										rules.getRule(GameRules.RULE_DAYLIGHT).set(true, server);
 								}
 							}
-							
-							if(!saveData.isTimeLockApplied()) {
-								for(ServerPlayerEntity player : playerList) {
-			    					player.sendMessage(new TranslationTextComponent("message.timelock", TextFormatting.GOLD + saveData.getTimeMode()), Util.DUMMY_UUID);
+
+							if (!saveData.isTimeLockApplied()) {
+								for (ServerPlayer player : playerList) {
+									player.sendSystemMessage(Component.translatable("message.timelock", ChatFormatting.GOLD + saveData.getTimeMode()));
 								}
-								
+
 								saveData.setTimeLockApplied(true);
-								saveData.markDirty();
+								saveData.setDirty();
 							}
 						}
-		    		}
-		    		
-		    		if(saveData.isMinuteMark()) {
-		    			int minuteMarkTimer = timerData.getMinuteMarkTimer();
-		    			int minutes = saveData.getMinuteMarkTime();
-		    			int minuteAmount = timerData.getMinuteMarkAmount();
+					}
+
+					if (saveData.isMinuteMark()) {
+						int minuteMarkTimer = timerData.getMinuteMarkTimer();
+						int minutes = saveData.getMinuteMarkTime();
+						int minuteAmount = timerData.getMinuteMarkAmount();
 						boolean minuteMarkFlag = minuteMarkTimer >= TimerHandler.tickTime(minutes);
-						if(minuteMarkFlag) {
-							if(minuteAmount != timerData.getMinuteMarkAmount())
+						if (minuteMarkFlag) {
+							if (minuteAmount != timerData.getMinuteMarkAmount())
 								minuteAmount = timerData.getMinuteMarkAmount();
-							
+
 							++minuteAmount;
 							timerData.setMinuteMarkAmount(minuteAmount);
-							for(ServerPlayerEntity player : playerList) {
-								FireworkRocketEntity rocket = new FireworkRocketEntity(world, player.getPosX(), player.getPosY() + 2, player.getPosZ(), ItemStack.EMPTY);
-								player.playSound(SoundEvents.ENTITY_FIREWORK_ROCKET_LAUNCH, 1F, 1F);
-	    						player.world.addEntity(rocket);
+							for (ServerPlayer player : playerList) {
+								FireworkRocketEntity rocket = new FireworkRocketEntity(world, player.getX(), player.getY() + 2, player.getZ(), ItemStack.EMPTY);
+								player.playSound(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1F, 1F);
+								player.level.addFreshEntity(rocket);
 
 								int minutesDone = minutes * minuteAmount;
-								if(minuteAmount == 1) {
-		    						player.sendStatusMessage(new TranslationTextComponent("message.minutemark.single.time", TextFormatting.YELLOW + String.valueOf(minutesDone)), true);
-		    						player.sendMessage(new TranslationTextComponent("message.minutemark.single.time", TextFormatting.YELLOW + String.valueOf(minutesDone)), Util.DUMMY_UUID);
+								if (minuteAmount == 1) {
+									player.displayClientMessage(Component.translatable("message.minutemark.single.time", ChatFormatting.YELLOW + String.valueOf(minutesDone)), true);
+									player.sendSystemMessage(Component.translatable("message.minutemark.single.time", ChatFormatting.YELLOW + String.valueOf(minutesDone)));
 								} else {
-			    					player.sendStatusMessage(new TranslationTextComponent("message.minutemark.time", TextFormatting.YELLOW + String.valueOf(minutesDone)), true);
-			    					player.sendMessage(new TranslationTextComponent("message.minutemark.time", TextFormatting.YELLOW + String.valueOf(minutesDone)), Util.DUMMY_UUID);
+									player.displayClientMessage(Component.translatable("message.minutemark.time", ChatFormatting.YELLOW + String.valueOf(minutesDone)), true);
+									player.sendSystemMessage(Component.translatable("message.minutemark.time", ChatFormatting.YELLOW + String.valueOf(minutesDone)));
 								}
 							}
 							timerData.setMinuteMarkTimer(0);
-							timerData.markDirty();
+							timerData.setDirty();
 						}
-		    		}
-		    		
-		    		if(saveData.isTimedNames()) {
-		    			int timedNameTimer = timerData.getNameTimer();
-		    			boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
-		    			
-		    			if(timedNameFlag && !saveData.isTimedNamesApplied()) {
-		    				for (ScorePlayerTeam team : scoreboard.getTeams()) {
-		    					if (team.getNameTagVisibility() != Team.Visible.ALWAYS)
-		    						team.setNameTagVisibility(Team.Visible.ALWAYS);
-		    				}
-		    				
-		    				for(ServerPlayerEntity player : playerList) {
-		    					player.sendMessage(new TranslationTextComponent("message.timedname"), Util.DUMMY_UUID);
+					}
+
+					if (saveData.isTimedNames()) {
+						int timedNameTimer = timerData.getNameTimer();
+						boolean timedNameFlag = timedNameTimer == TimerHandler.tickTime(saveData.getNameTimer());
+
+						if (timedNameFlag && !saveData.isTimedNamesApplied()) {
+							for (PlayerTeam team : scoreboard.getPlayerTeams()) {
+								if (team.getNameTagVisibility() != Team.Visibility.ALWAYS)
+									team.setNameTagVisibility(Team.Visibility.ALWAYS);
 							}
-	
+
+							for (ServerPlayer player : playerList) {
+								player.sendSystemMessage(Component.translatable("message.timedname"));
+							}
+
 							saveData.setTimedNamesApplied(true);
-							saveData.markDirty();
-		    			} else {
-		    				for (ScorePlayerTeam team : scoreboard.getTeams()) {
-		    					if (team.getNameTagVisibility() != Team.Visible.HIDE_FOR_OTHER_TEAMS)
-		    						team.setNameTagVisibility(Team.Visible.HIDE_FOR_OTHER_TEAMS);
-		    				}
-		    			}
-		    		}
-		    		
-		    		if(saveData.isTimedGlow()) {
-		    			int timedGlowTimer = timerData.getGlowTimer();
-		    			boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getGlowTime());
-	
-		    			if(timedGlowFlag) {
-		    				for (ServerPlayerEntity player : playerList) {
-		    					if(player.getActivePotionEffect(Effects.GLOWING) == null)
-		    						player.addPotionEffect(new EffectInstance(Effects.GLOWING, 32767 * 20, 10, true, false));
-		    				}
-		    				
-		    				if(!saveData.isGlowTimeApplied()) {
-		    					for (ServerPlayerEntity player : playerList) {
-			    					player.sendMessage(new TranslationTextComponent("message.timedglow"), Util.DUMMY_UUID);
-		    					}
+							saveData.setDirty();
+						} else {
+							for (PlayerTeam team : scoreboard.getPlayerTeams()) {
+								if (team.getNameTagVisibility() != Team.Visibility.HIDE_FOR_OTHER_TEAMS)
+									team.setNameTagVisibility(Team.Visibility.HIDE_FOR_OTHER_TEAMS);
+							}
+						}
+					}
+
+					if (saveData.isTimedGlow()) {
+						int timedGlowTimer = timerData.getGlowTimer();
+						boolean timedGlowFlag = timedGlowTimer == TimerHandler.tickTime(saveData.getGlowTime());
+
+						if (timedGlowFlag) {
+							for (ServerPlayer player : playerList) {
+								if (player.getEffect(MobEffects.GLOWING) == null)
+									player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 32767 * 20, 10, true, false));
+							}
+
+							if (!saveData.isGlowTimeApplied()) {
+								for (ServerPlayer player : playerList) {
+									player.sendSystemMessage(Component.translatable("message.timedglow"));
+								}
 								saveData.setGlowTimeApplied(true);
-								saveData.markDirty();
-		    				}
-		    			} else {
-		    				for (ServerPlayerEntity player : playerList) {
-		    					if(player.isGlowing())
-		    						player.setGlowing(false);
-		    				}
-		    			}
-		    		}
+								saveData.setDirty();
+							}
+						} else {
+							for (ServerPlayer player : playerList) {
+								if (player.hasGlowingTag())
+									player.setGlowingTag(false);
+							}
+						}
+					}
 				}
 			}
 		}

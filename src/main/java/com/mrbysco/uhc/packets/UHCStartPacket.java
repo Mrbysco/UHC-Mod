@@ -1,45 +1,44 @@
 package com.mrbysco.uhc.packets;
 
+import com.mrbysco.uhc.data.UHCSaveData;
 import com.mrbysco.uhc.utils.SpreadPosition;
 import com.mrbysco.uhc.utils.SpreadUtil;
 import com.mrbysco.uhc.utils.TeamUtil;
-import com.mrbysco.uhc.data.UHCSaveData;
-import net.minecraft.block.Blocks;
-import net.minecraft.command.CommandException;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.potion.Effects;
-import net.minecraft.scoreboard.ScoreObjective;
-import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandRuntimeException;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.GameType;
-import net.minecraft.world.World;
-import net.minecraft.world.border.WorldBorder;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.IWorldInfo;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.storage.LevelData;
+import net.minecraft.world.scores.Objective;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent.Context;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class UHCStartPacket{
+public class UHCStartPacket {
 	public UHCStartPacket() {
 
 	}
 
-	public void encode(PacketBuffer buf) {
+	public void encode(FriendlyByteBuf buf) {
 
 	}
 
-	public static UHCStartPacket decode(final PacketBuffer packetBuffer) {
+	public static UHCStartPacket decode(final FriendlyByteBuf packetBuffer) {
 		return new UHCStartPacket();
 	}
 
@@ -47,28 +46,28 @@ public class UHCStartPacket{
 		NetworkEvent.Context ctx = context.get();
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
-				ServerPlayerEntity serverPlayer = ctx.getSender();
-				ServerWorld overworld = serverPlayer.getServer().getWorld(World.OVERWORLD);
-				if(overworld != null) {
+				ServerPlayer serverPlayer = ctx.getSender();
+				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
-					CompoundNBT playerData = serverPlayer.getPersistentData();
-					ServerWorld world = serverPlayer.getServerWorld();
+					CompoundTag playerData = serverPlayer.getPersistentData();
+					ServerLevel world = serverPlayer.getLevel();
 					WorldBorder border = world.getWorldBorder();
 					MinecraftServer server = world.getServer();
-					List<ServerPlayerEntity> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+					List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 					Scoreboard scoreboard = world.getScoreboard();
-					IWorldInfo info = world.getWorldInfo();
+					LevelData info = world.getLevelData();
 
-					if(playerData.getBoolean("canEditUHC") == true) {
-						List<ServerPlayerEntity>soloPlayers = new ArrayList<>(playerList);
-						List<ServerPlayerEntity>teamPlayers = new ArrayList<>(playerList);
+					if (playerData.getBoolean("canEditUHC") == true) {
+						List<ServerPlayer> soloPlayers = new ArrayList<>(playerList);
+						List<ServerPlayer> teamPlayers = new ArrayList<>(playerList);
 
-						for (PlayerEntity player : playerList) {
-							if(player.getTeam() == scoreboard.getTeam("spectator"))
-								player.setGameType(GameType.SPECTATOR);
-							if(player.getTeam() == null)
-								scoreboard.addPlayerToTeam(player.getName().getString(), scoreboard.getTeam("solo"));
-							if(player.getTeam() != scoreboard.getTeam("solo"))
+						for (ServerPlayer player : playerList) {
+							if (player.getTeam() == scoreboard.getPlayerTeam("spectator"))
+								player.setGameMode(GameType.SPECTATOR);
+							if (player.getTeam() == null)
+								scoreboard.addPlayerToTeam(player.getName().getString(), scoreboard.getPlayerTeam("solo"));
+							if (player.getTeam() != scoreboard.getPlayerTeam("solo"))
 								soloPlayers.remove(player);
 						}
 
@@ -80,82 +79,81 @@ public class UHCStartPacket{
 							border.setCenter(centerX, centerZ);
 
 						int BorderSize = saveData.getBorderSize();
-						server.getCommandManager().handleCommand(serverPlayer.getCommandSource(), "/worldborder set " + BorderSize);
+						server.getCommands().performCommand(serverPlayer.createCommandSourceStack(), "/worldborder set " + BorderSize);
 						//border.setTransition(BorderSize);
 
 						double spreadDistance = saveData.getSpreadDistance();
 						double spreadMaxRange = saveData.getSpreadMaxRange();
 
-						if(spreadMaxRange >= (BorderSize / 2))
+						if (spreadMaxRange >= (BorderSize / 2))
 							spreadMaxRange = (BorderSize / 2);
 
 						world.setDayTime(0);
 						info.setRaining(false);
 
-						if(saveData.isRandomSpawns())
-						{
+						if (saveData.isRandomSpawns()) {
 							try {
-								SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
-							} catch (CommandException e) {
+								SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
+							} catch (CommandRuntimeException e) {
 								e.printStackTrace();
 							}
 
 							try {
-								SpreadUtil.spread(teamPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, false);
-							} catch (CommandException e) {
+								SpreadUtil.spread(teamPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, world, false);
+							} catch (CommandRuntimeException e) {
 								e.printStackTrace();
 							}
 						} else {
-							for(PlayerEntity player : playerList) {
-								if(player.getTeam() != scoreboard.getTeam("solo")) {
+							for (Player player : playerList) {
+								if (player.getTeam() != scoreboard.getPlayerTeam("solo")) {
 									BlockPos pos = TeamUtil.getPosForTeam(player.getTeam().getColor());
 
-									((ServerPlayerEntity)player).connection.setPlayerLocation(pos.getX(), pos.getY(), pos.getZ(), player.rotationYaw, player.rotationPitch);
+									((ServerPlayer) player).connection.teleport(pos.getX(), pos.getY(), pos.getZ(), player.getYRot(), player.getXRot());
 								} else {
 									try {
-										SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX,centerZ), spreadDistance, spreadMaxRange, world, false);
-									} catch (CommandException e) {
+										SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, world, false);
+									} catch (CommandRuntimeException e) {
 										e.printStackTrace();
 									}
 								}
 							}
 						}
 
-						for(PlayerEntity player : playerList) {
-							ScoreObjective score = scoreboard.getObjective("health");
-							if(score != null)
-								scoreboard.removeObjectiveFromEntity(player.getName().getString(), score);
+						for (ServerPlayer player : playerList) {
+							Objective score = scoreboard.getOrCreateObjective("health");
+							if (score != null)
+								scoreboard.resetPlayerScore(player.getName().getString(), score);
 
-							if(player.isCreative())
-								player.setGameType(GameType.SURVIVAL);
+							if (player.isCreative())
+								player.setGameMode(GameType.SURVIVAL);
 
-							if (player.getActivePotionEffect(Effects.GLOWING) != null)
-								player.removePotionEffect(Effects.GLOWING);
+							if (player.getEffect(MobEffects.GLOWING) != null)
+								player.removeEffect(MobEffects.GLOWING);
 						}
 
-						if(saveData.isSpawnRoom()) {
-							double centerX1 = centerX -7;
-							double centerX2 = centerX +7;
-							double centerZ1 = centerZ -7;
-							double centerZ2 = centerZ +7;
+						if (saveData.isSpawnRoom()) {
+							double centerX1 = centerX - 7;
+							double centerX2 = centerX + 7;
+							double centerZ1 = centerZ - 7;
+							double centerZ2 = centerZ + 7;
 
-							for(double i = centerX1; i <= centerX2; i++) {
-								for(double j = centerZ1; j <= centerZ2; j++) {
-									for(double k = 250; k <= 253; k++) {
-										world.setBlockState(new BlockPos(i, k, j), Blocks.AIR.getDefaultState());
+							for (double i = centerX1; i <= centerX2; i++) {
+								for (double j = centerZ1; j <= centerZ2; j++) {
+									for (double k = 250; k <= 253; k++) {
+										world.setBlockAndUpdate(new BlockPos(i, k, j), Blocks.AIR.defaultBlockState());
 									}
 								}
 							}
 							saveData.setSpawnRoom(false);
-							saveData.setSpawnRoomDimension(World.OVERWORLD.getLocation());
-							saveData.markDirty();
+							saveData.setSpawnRoomDimension(Level.OVERWORLD.location());
+							saveData.setDirty();
 						}
 
-						saveData.setUHCDimension(serverPlayer.world.getDimensionKey().getLocation());
+						saveData.setUHCDimension(serverPlayer.level.dimension().location());
 						saveData.setUhcStarting(true);
-						saveData.markDirty();
+						saveData.setDirty();
 					} else {
-						serverPlayer.sendMessage(new StringTextComponent(TextFormatting.RED + "You don't have permissions to start the UHC"), Util.DUMMY_UUID);
+						serverPlayer.sendSystemMessage(Component.literal(ChatFormatting.RED + "You don't have permissions to start the UHC"));
 					}
 				}
 

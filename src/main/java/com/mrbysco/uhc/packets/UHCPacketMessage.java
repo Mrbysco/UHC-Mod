@@ -10,11 +10,11 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class UHCPacketMessage {
-	private UHCSaveData data;
+	private final UHCSaveData data;
 
 	private UHCPacketMessage(FriendlyByteBuf buf) {
 		this.data = new UHCSaveData();
-		this.data.load(buf.readNbt());
+		UHCSaveData.load(buf.readNbt());
 	}
 
 	public UHCPacketMessage(UHCSaveData data) {

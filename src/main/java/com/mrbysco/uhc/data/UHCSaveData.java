@@ -352,7 +352,7 @@ public class UHCSaveData extends SavedData {
 		this.healthUnderName = healthUnderName;
 	}
 
-	public boolean DoDaylightCycle() {
+	public boolean doDaylightCycle() {
 		return doDaylightCycle;
 	}
 
@@ -360,7 +360,7 @@ public class UHCSaveData extends SavedData {
 		this.doDaylightCycle = doDaylightCycle;
 	}
 
-	public boolean isAutoCook() {
+	public boolean isAutoCookEnabled() {
 		return autoCook;
 	}
 
@@ -920,11 +920,11 @@ public class UHCSaveData extends SavedData {
 		return compound;
 	}
 
-	public static UHCSaveData get(Level world) {
-		if (!(world instanceof ServerLevel)) {
+	public static UHCSaveData get(Level level) {
+		if (!(level instanceof ServerLevel)) {
 			throw new RuntimeException("Attempted to get the data from a client world. This is wrong.");
 		}
-		ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
+		ServerLevel overworld = level.getServer().overworld();
 
 		DimensionDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(UHCSaveData::load, UHCSaveData::new, DATA_NAME);

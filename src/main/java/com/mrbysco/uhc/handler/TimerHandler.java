@@ -20,14 +20,14 @@ public class TimerHandler {
 	public int glowTimer;
 
 	@SubscribeEvent
-	public void timerEvent(TickEvent.WorldTickEvent event) {
+	public void timerEvent(TickEvent.LevelTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer()) {
-			Level world = event.world;
-			ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
-			if (overworld != null && world.getGameTime() % 20 == 0) {
+			Level level = event.level;
+			ServerLevel overworld = level.getServer().overworld();
+			if (overworld != null && level.getGameTime() % 20 == 0) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
-				MinecraftServer server = world.getServer();
+				MinecraftServer server = level.getServer();
 				List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 
 				if (!playerList.isEmpty() && saveData.isUhcOnGoing()) {

@@ -57,9 +57,10 @@ public class UHCCommands {
 		root.requires((commandSource) -> commandSource.hasPermission(2))
 				.then(Commands.literal("forceteam")
 						.then(Commands.argument("team", TeamArgument.team())
-								.executes((source) -> forceTeam(source, TeamArgument.getTeam(source, "team"), ScoreHolderArgument.getNamesWithDefaultWildcard(source, "members")))))
+								.executes((source) -> forceTeam(source, TeamArgument.getTeam(source, "team"),
+										ScoreHolderArgument.getNamesWithDefaultWildcard(source, "members")))))
 				.then(Commands.literal("reset")
-						.executes((source) -> reset(source)))
+						.executes(UHCCommands::reset))
 				.then(Commands.literal("spawnroom")
 						.then(Commands.literal("place")
 								.executes((source) -> placeSpawnroom(source, "place")))
@@ -67,16 +68,17 @@ public class UHCCommands {
 								.executes((source) -> placeSpawnroom(source, "remove"))))
 				.then(Commands.literal("respawn")
 						.then(Commands.argument("team", TeamArgument.team())
-								.executes((source) -> respawn(source, TeamArgument.getTeam(source, "team"), ScoreHolderArgument.getNamesWithDefaultWildcard(source, "members")))));
+								.executes((source) -> respawn(source, TeamArgument.getTeam(source, "team"),
+										ScoreHolderArgument.getNamesWithDefaultWildcard(source, "members")))));
 
 
 		dispatcher.register(root);
 	}
 
-	private static int reset(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+	private static int reset(CommandContext<CommandSourceStack> ctx) {
 		MinecraftServer server = ctx.getSource().getServer();
 		List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
-		ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+		ServerLevel overworld = server.overworld();
 		if (overworld != null) {
 			UHCSaveData saveData = UHCSaveData.get(overworld);
 			UHCTimerData timerData = UHCTimerData.get(overworld);
@@ -86,10 +88,7 @@ public class UHCCommands {
 				for (PlayerTeam team : scoreboard.getPlayerTeams()) {
 					if (team != null && team.getPlayers().size() > 0 && team != scoreboard.getPlayerTeam("spectator")) {
 						if (team.getPlayers() != null && !team.getPlayers().isEmpty()) {
-							List<String> foundPlayers = new ArrayList<>();
-							for (String players : team.getPlayers()) {
-								foundPlayers.add(players);
-							}
+							List<String> foundPlayers = new ArrayList<>(team.getPlayers());
 
 							for (String playerFound : foundPlayers) {
 								scoreboard.removePlayerFromTeam(playerFound, team);
@@ -116,16 +115,17 @@ public class UHCCommands {
 			double centerZ1 = centerZ - 7;
 			double centerZ2 = centerZ + 7;
 			ResourceKey<Level> spawnRoom = ResourceKey.create(Registry.DIMENSION_REGISTRY, saveData.getSpawnRoomDimension());
-			ServerLevel world = server.getLevel(spawnRoom);
+			ServerLevel level = server.getLevel(spawnRoom);
 			for (double i = centerX1; i <= centerX2; i++) {
 				for (double j = centerZ1; j <= centerZ2; j++) {
 					for (double k = 250; k <= 253; k++) {
-						world.setBlockAndUpdate(new BlockPos(i, k, j), Blocks.AIR.defaultBlockState());
+						level.setBlockAndUpdate(new BlockPos(i, k, j), Blocks.AIR.defaultBlockState());
 					}
 				}
 			}
 
-			server.getCommands().performCommand(ctx.getSource(), "/worldborder set " + server.getAbsoluteMaxWorldSize());
+			WorldBorder border = level.getWorldBorder(); //TODO: Check if this should be using the overworld like the command does
+			border.setSize(server.getAbsoluteMaxWorldSize());
 
 			timerData.resetAll();
 			timerData.setDirty();
@@ -139,9 +139,9 @@ public class UHCCommands {
 		return 0;
 	}
 
-	private static int placeSpawnroom(CommandContext<CommandSourceStack> ctx, String value) throws CommandSyntaxException {
+	private static int placeSpawnroom(CommandContext<CommandSourceStack> ctx, String value) {
 		MinecraftServer server = ctx.getSource().getServer();
-		ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+		ServerLevel overworld = server.overworld();
 		if (overworld != null) {
 			ServerLevel senderWorld = ctx.getSource().getLevel();
 			UHCSaveData saveData = UHCSaveData.get(overworld);
@@ -158,13 +158,13 @@ public class UHCCommands {
 				roomBlock = Blocks.BARRIER;
 			}
 			ResourceKey<Level> spawnRoom = ResourceKey.create(Registry.DIMENSION_REGISTRY, saveData.getSpawnRoomDimension());
-			ServerLevel world = server.getLevel(spawnRoom);
-			if (world != null) {
+			ServerLevel level = server.getLevel(spawnRoom);
+			if (level != null) {
 				if (value.equals("place")) {
 					for (double i = centerX1; i <= centerX2; i++) {
 						for (double j = centerZ1; j <= centerZ2; j++) {
 							for (double k = 250; k <= 253; k++) {
-								world.setBlockAndUpdate(new BlockPos(i, k, j), roomBlock.defaultBlockState());
+								level.setBlockAndUpdate(new BlockPos(i, k, j), roomBlock.defaultBlockState());
 							}
 						}
 					}
@@ -201,7 +201,7 @@ public class UHCCommands {
 		return 0;
 	}
 
-	private static int forceTeam(CommandContext<CommandSourceStack> ctx, PlayerTeam teamIn, Collection<String> players) throws CommandSyntaxException {
+	private static int forceTeam(CommandContext<CommandSourceStack> ctx, PlayerTeam teamIn, Collection<String> players) {
 		CommandSourceStack source = ctx.getSource();
 		Scoreboard scoreboard = source.getServer().getScoreboard();
 
@@ -214,9 +214,9 @@ public class UHCCommands {
 		return players.size();
 	}
 
-	private static int respawn(CommandContext<CommandSourceStack> ctx, PlayerTeam teamIn, Collection<String> players) throws CommandSyntaxException {
+	private static int respawn(CommandContext<CommandSourceStack> ctx, PlayerTeam teamIn, Collection<String> players) {
 		MinecraftServer server = ctx.getSource().getServer();
-		ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+		ServerLevel overworld = server.overworld();
 		Scoreboard scoreboard = server.getScoreboard();
 		if (overworld != null) {
 			UHCSaveData saveData = UHCSaveData.get(overworld);
@@ -251,7 +251,7 @@ public class UHCCommands {
 
 							player.teleportTo(pos.getX(), pos.getY(), pos.getZ());
 							if (!player.level.isClientSide) {
-								((ServerPlayer)player).setGameMode(GameType.SURVIVAL);
+								((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
 							}
 
 							if (scoreboard.getOrCreateObjective("health") != null)
@@ -341,7 +341,7 @@ public class UHCCommands {
 							}
 						}
 						if (!player.level.isClientSide) {
-							((ServerPlayer)player).setGameMode(GameType.SURVIVAL);
+							((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
 						}
 						if (scoreboard.getOrCreateObjective("health") != null)
 							scoreboard.resetPlayerScore(player.getName().getString(), scoreboard.getOrCreateObjective("health"));

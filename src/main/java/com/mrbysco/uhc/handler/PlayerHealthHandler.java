@@ -5,7 +5,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -17,7 +16,7 @@ public class PlayerHealthHandler {
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.phase == Phase.START && event.side.isServer()) {
 			Player player = event.player;
-			ServerLevel overworld = player.getServer().getLevel(Level.OVERWORLD);
+			ServerLevel overworld = player.getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				final CompoundTag entityData = player.getPersistentData();
@@ -47,7 +46,7 @@ public class PlayerHealthHandler {
 
 	@SubscribeEvent
 	public void respawnReset(PlayerEvent.Clone event) {
-		Player newPlayer = event.getPlayer();
+		Player newPlayer = event.getEntity();
 		final CompoundTag entityData = newPlayer.getPersistentData();
 
 		this.setHealth(newPlayer, 20);

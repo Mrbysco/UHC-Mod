@@ -25,18 +25,18 @@ import java.util.List;
 
 public class TimedActionHandler {
 	@SubscribeEvent
-	public void ScoreboardStuff(TickEvent.WorldTickEvent event) {
+	public void ScoreboardStuff(TickEvent.LevelTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Level world = event.world;
-			MinecraftServer server = world.getServer();
-			ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
+			Level level = event.level;
+			MinecraftServer server = level.getServer();
+			ServerLevel overworld = level.getServer().overworld();
 			if (server != null && overworld != null) {
 				List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
-				Scoreboard scoreboard = world.getScoreboard();
+				Scoreboard scoreboard = level.getScoreboard();
 
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
-				GameRules rules = world.getGameRules();
+				GameRules rules = level.getGameRules();
 
 				if (saveData.isUhcOnGoing()) {
 					if (saveData.isTimeLock()) {
@@ -45,12 +45,12 @@ public class TimedActionHandler {
 						if (timeFlag) {
 							if (rules.getBoolean(GameRules.RULE_DAYLIGHT)) {
 								if (saveData.getTimeMode().equals("Day")) {
-									if (world.isDay()) {
+									if (level.isDay()) {
 										if (rules.getBoolean(GameRules.RULE_DAYLIGHT))
 											rules.getRule(GameRules.RULE_DAYLIGHT).set(false, server);
 									}
 								} else if (saveData.getTimeMode().equals("Night")) {
-									if (!world.isDay()) {
+									if (!level.isDay()) {
 										if (rules.getBoolean(GameRules.RULE_DAYLIGHT))
 											rules.getRule(GameRules.RULE_DAYLIGHT).set(false, server);
 									}
@@ -83,7 +83,7 @@ public class TimedActionHandler {
 							++minuteAmount;
 							timerData.setMinuteMarkAmount(minuteAmount);
 							for (ServerPlayer player : playerList) {
-								FireworkRocketEntity rocket = new FireworkRocketEntity(world, player.getX(), player.getY() + 2, player.getZ(), ItemStack.EMPTY);
+								FireworkRocketEntity rocket = new FireworkRocketEntity(level, player.getX(), player.getY() + 2, player.getZ(), ItemStack.EMPTY);
 								player.playSound(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1F, 1F);
 								player.level.addFreshEntity(rocket);
 

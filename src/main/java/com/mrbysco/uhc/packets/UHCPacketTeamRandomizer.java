@@ -9,7 +9,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraftforge.network.NetworkEvent;
@@ -38,16 +37,16 @@ public class UHCPacketTeamRandomizer {
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();
-					ServerLevel world = serverPlayer.getLevel();
-					MinecraftServer server = world.getServer();
+					ServerLevel level = serverPlayer.getLevel();
+					MinecraftServer server = level.getServer();
 					List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
-					Scoreboard scoreboard = world.getScoreboard();
+					Scoreboard scoreboard = level.getScoreboard();
 
-					if (playerData.getBoolean("canEditUHC") == true) {
+					if (playerData.getBoolean("canEditUHC")) {
 						List<ServerPlayer> teamPlayers = new ArrayList<>(playerList);
 
 						for (Player player : playerList) {
@@ -87,7 +86,7 @@ public class UHCPacketTeamRandomizer {
 						ArrayList<String> possibleTeams = getTeams();
 
 						for (int i = 0; i < randomTeams; i++) {
-							String teamName = possibleTeams.get(possibleTeams.size() > 1 ? world.random.nextInt(possibleTeams.size()) : 0);
+							String teamName = possibleTeams.get(possibleTeams.size() > 1 ? level.random.nextInt(possibleTeams.size()) : 0);
 							possibleTeams.remove(teamName);
 							PlayerTeam team = scoreboard.getPlayerTeam(teamName);
 

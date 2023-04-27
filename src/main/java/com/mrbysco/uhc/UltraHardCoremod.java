@@ -14,7 +14,6 @@ import com.mrbysco.uhc.handler.TeamSpamHandler;
 import com.mrbysco.uhc.handler.TimedActionHandler;
 import com.mrbysco.uhc.handler.TimerHandler;
 import com.mrbysco.uhc.handler.UHCHandler;
-import com.mrbysco.uhc.lists.EntityDataChangeList;
 import com.mrbysco.uhc.lists.SpawnItemList;
 import com.mrbysco.uhc.packets.UHCPacketHandler;
 import com.mrbysco.uhc.registry.ModRecipes;

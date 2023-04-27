@@ -20,12 +20,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ScoreboardHandler {
 	@SubscribeEvent
-	public void ScoreboardStuff(TickEvent.WorldTickEvent event) {
+	public void ScoreboardStuff(TickEvent.LevelTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Level world = event.world;
-			ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
+			Level level = event.level;
+			ServerLevel overworld = level.getServer().overworld();
 			if (overworld != null) {
-				Scoreboard scoreboard = world.getScoreboard();
+				Scoreboard scoreboard = level.getScoreboard();
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 
 				for (ChatFormatting color : ChatFormatting.values()) {
@@ -89,11 +89,11 @@ public class ScoreboardHandler {
 	public void scoreboardPlayer(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
 			Player player = event.player;
-			Level world = player.level;
-			ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
+			Level level = player.level;
+			ServerLevel overworld = level.getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
-				Scoreboard scoreboard = world.getScoreboard();
+				Scoreboard scoreboard = level.getScoreboard();
 
 				if (!saveData.isUhcOnGoing() && !saveData.isUhcStarting()) {
 					if (player.getEffect(MobEffects.GLOWING) == null) {
@@ -103,7 +103,7 @@ public class ScoreboardHandler {
 
 				if (scoreboard.getPlayersTeam(player.getName().getString()) == scoreboard.getPlayerTeam("spectator") && saveData.isUhcOnGoing()) {
 					if (!player.isCreative())
-						((ServerPlayer)player).setGameMode(GameType.SPECTATOR);
+						((ServerPlayer) player).setGameMode(GameType.SPECTATOR);
 				}
 			}
 		}

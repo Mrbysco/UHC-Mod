@@ -29,23 +29,23 @@ public class UHCBookItem extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
-		if (worldIn.isClientSide) {
-			com.mrbysco.uhc.client.screen.UHCBookScreen.openScreen(playerIn);
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+		if (level.isClientSide) {
+			com.mrbysco.uhc.client.screen.UHCBookScreen.openScreen(player);
 		} else {
-			ServerLevel overworld = worldIn.getServer().getLevel(Level.OVERWORLD);
+			ServerLevel overworld = level.getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
-				UHCPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn), new UHCPacketMessage(saveData));
+				UHCPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new UHCPacketMessage(saveData));
 			}
 		}
 
-		return super.use(worldIn, playerIn, handIn);
+		return super.use(level, player, hand);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
-		tooltip.add(Component.literal("Ultra Hard Coremod"));
+	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> componentList, TooltipFlag flag) {
+		super.appendHoverText(stack, level, componentList, flag);
+		componentList.add(Component.literal("Ultra Hard Coremod"));
 	}
 }

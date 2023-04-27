@@ -8,7 +8,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraftforge.network.NetworkEvent;
@@ -17,10 +16,10 @@ import net.minecraftforge.network.NetworkEvent.Context;
 import java.util.function.Supplier;
 
 public class UHCPacketTeam {
-	public String playerName;
-	public String team;
-	public String teamName;
-	public int colorIndex;
+	public final String playerName;
+	public final String team;
+	public final String teamName;
+	public final int colorIndex;
 
 	public UHCPacketTeam(String name, String team, String teamName, int colorIndex) {
 		this.playerName = name;
@@ -59,7 +58,7 @@ public class UHCPacketTeam {
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();
@@ -67,7 +66,7 @@ public class UHCPacketTeam {
 						serverPlayer.sendSystemMessage(Component.translatable("book.uhc.team.antispam"));
 					} else {
 						if (saveData.areTeamsLocked()) {
-							if (playerData.getBoolean("canEditUHC") == true) {
+							if (playerData.getBoolean("canEditUHC")) {
 								switchTeams(serverPlayer, saveData.getMaxTeamSize());
 							} else {
 								serverPlayer.sendSystemMessage(Component.translatable("book.uhc.team.locked"));

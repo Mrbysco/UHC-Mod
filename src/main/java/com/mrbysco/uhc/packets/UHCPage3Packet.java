@@ -7,7 +7,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.minecraftforge.network.PacketDistributor;
@@ -15,15 +14,15 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.function.Supplier;
 
 public class UHCPage3Packet {
-	public boolean timeLock;
-	public int timeLockUntil;
-	public String timeLockMode;
-	public boolean minuteMark;
-	public int minuteEvery;
-	public boolean timedNames;
-	public int timedNamesAfter;
-	public boolean timedGlow;
-	public int timedGlowAfter;
+	public final boolean timeLock;
+	public final int timeLockUntil;
+	public final String timeLockMode;
+	public final boolean minuteMark;
+	public final int minuteEvery;
+	public final boolean timedNames;
+	public final int timedNamesAfter;
+	public final boolean timedGlow;
+	public final int timedGlowAfter;
 
 	public UHCPage3Packet(boolean timeLock, int timeLockUntil, String timeLockMode, boolean minuteMark, int minuteEvery,
 						  boolean timedNames, int timedNamesAfter, boolean timedGlow, int timedGlowAfter) {
@@ -61,7 +60,7 @@ public class UHCPage3Packet {
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();

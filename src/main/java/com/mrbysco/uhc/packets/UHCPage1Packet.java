@@ -9,7 +9,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.scores.PlayerTeam;
 import net.minecraft.world.scores.Scoreboard;
@@ -21,12 +20,12 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.function.Supplier;
 
 public class UHCPage1Packet {
-	public int randomTeams;
-	public int maxTeams;
-	public boolean teamCollision;
-	public boolean teamDamage;
-	public int difficulty;
-	public boolean teamsLocked;
+	public final int randomTeams;
+	public final int maxTeams;
+	public final boolean teamCollision;
+	public final boolean teamDamage;
+	public final int difficulty;
+	public final boolean teamsLocked;
 
 	public UHCPage1Packet(int randomTeam, int maxTeam, boolean collision, boolean teamDamage, int difficulty, boolean teamsLocked) {
 		this.randomTeams = randomTeam;
@@ -57,7 +56,7 @@ public class UHCPage1Packet {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
 				ServerLevel serverWorld = serverPlayer.getLevel();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();
@@ -68,11 +67,11 @@ public class UHCPage1Packet {
 					if (playerData.getBoolean("canEditUHC")) {
 						for (PlayerTeam team : scoreboard.getPlayerTeams()) {
 							if (teamDamage) {
-								if (team.isAllowFriendlyFire() != true) {
+								if (!team.isAllowFriendlyFire()) {
 									team.setAllowFriendlyFire(true);
 								}
 							} else {
-								if (team.isAllowFriendlyFire() != false) {
+								if (team.isAllowFriendlyFire()) {
 									team.setAllowFriendlyFire(false);
 								}
 							}

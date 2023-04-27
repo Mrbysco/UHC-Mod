@@ -173,11 +173,11 @@ public class UHCTimerData extends SavedData {
 		return compound;
 	}
 
-	public static UHCTimerData get(Level world) {
-		if (!(world instanceof ServerLevel)) {
+	public static UHCTimerData get(Level level) {
+		if (!(level instanceof ServerLevel)) {
 			throw new RuntimeException("Attempted to get the data from a client world. This is wrong.");
 		}
-		ServerLevel overworld = world.getServer().getLevel(Level.OVERWORLD);
+		ServerLevel overworld = level.getServer().overworld();
 
 		DimensionDataStorage storage = overworld.getDataStorage();
 		return storage.computeIfAbsent(UHCTimerData::load, UHCTimerData::new, DATA_NAME);

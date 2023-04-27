@@ -7,7 +7,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.minecraftforge.network.PacketDistributor;
@@ -15,15 +14,15 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.function.Supplier;
 
 public class UHCPage4Packet {
-	public boolean regenPotions;
-	public boolean level2Potions;
-	public boolean notchApples;
-	public boolean autoCook;
-	public boolean itemConversion;
-	public boolean netherTravel;
-	public boolean healthTab;
-	public boolean healthSide;
-	public boolean healthName;
+	public final boolean regenPotions;
+	public final boolean level2Potions;
+	public final boolean notchApples;
+	public final boolean autoCook;
+	public final boolean itemConversion;
+	public final boolean netherTravel;
+	public final boolean healthTab;
+	public final boolean healthSide;
+	public final boolean healthName;
 
 	public UHCPage4Packet(boolean regenPotions, boolean level2Potions, boolean notchApples, boolean autoCook, boolean itemConversion,
 						  boolean netherTravel, boolean healthTab, boolean healthSide, boolean healthName) {
@@ -61,7 +60,7 @@ public class UHCPage4Packet {
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();

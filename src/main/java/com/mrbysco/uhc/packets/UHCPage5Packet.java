@@ -9,7 +9,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelData;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkEvent.Context;
@@ -18,15 +17,15 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.function.Supplier;
 
 public class UHCPage5Packet {
-	public boolean weatherCycle;
-	public boolean mobGriefing;
-	public boolean customHealth;
-	public int maxHealth;
+	public final boolean weatherCycle;
+	public final boolean mobGriefing;
+	public final boolean customHealth;
+	public final int maxHealth;
 
-	public boolean randomSpawns;
-	public int spreadDistance;
-	public int spreadMaxRange;
-	public boolean spreadRespectTeam;
+	public final boolean randomSpawns;
+	public final int spreadDistance;
+	public final int spreadMaxRange;
+	public final boolean spreadRespectTeam;
 
 	public UHCPage5Packet(boolean weatherCycle, boolean mobGriefing, boolean customHealth, int maxHealth, boolean randomSpawns,
 						  int spreadDistance, int spreadMaxRange, boolean spreadRespectTeam) {
@@ -65,7 +64,7 @@ public class UHCPage5Packet {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
 				ServerLevel serverWorld = serverPlayer.getLevel();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();

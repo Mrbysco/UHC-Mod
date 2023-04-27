@@ -3,7 +3,7 @@ package com.mrbysco.uhc.lists.info;
 import net.minecraft.world.item.ItemStack;
 
 public class SpawnItemInfo {
-	private ItemStack[] stacks;
+	private final ItemStack[] stacks;
 
 	public SpawnItemInfo(ItemStack[] stacks) {
 		this.stacks = stacks;

@@ -7,7 +7,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.minecraftforge.network.PacketDistributor;
@@ -15,8 +14,8 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.function.Supplier;
 
 public class UHCPage6Packet {
-	public boolean graceEnabled;
-	public int graceTime;
+	public final boolean graceEnabled;
+	public final int graceTime;
 
 	public UHCPage6Packet(boolean graceEnabled, int graceTime) {
 		this.graceEnabled = graceEnabled;
@@ -37,7 +36,7 @@ public class UHCPage6Packet {
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();

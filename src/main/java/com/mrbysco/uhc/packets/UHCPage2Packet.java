@@ -7,7 +7,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkEvent.Context;
 import net.minecraftforge.network.PacketDistributor;
@@ -15,14 +14,14 @@ import net.minecraftforge.network.PacketDistributor;
 import java.util.function.Supplier;
 
 public class UHCPage2Packet {
-	public int borderSize;
-	public double centerX;
-	public double centerZ;
-	public boolean borderShrink;
-	public int timeUntil;
-	public int size;
-	public int over;
-	public String shrinkMode;
+	public final int borderSize;
+	public final double centerX;
+	public final double centerZ;
+	public final boolean borderShrink;
+	public final int timeUntil;
+	public final int size;
+	public final int over;
+	public final String shrinkMode;
 
 	public UHCPage2Packet(int borderSize, double centerX, double centerZ, boolean borderShrink, int timeUntil, int size, int over, String mode) {
 		this.borderSize = borderSize;
@@ -56,7 +55,7 @@ public class UHCPage2Packet {
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();

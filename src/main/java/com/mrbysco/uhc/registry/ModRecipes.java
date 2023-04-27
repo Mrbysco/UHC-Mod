@@ -2,9 +2,8 @@ package com.mrbysco.uhc.registry;
 
 import com.mrbysco.uhc.Reference;
 import com.mrbysco.uhc.recipes.AutoCookRecipe;
-import com.mrbysco.uhc.recipes.AutoCookRecipe.SerializerAutoCookRecipe;
 import com.mrbysco.uhc.recipes.ConversionRecipe;
-import com.mrbysco.uhc.recipes.ConversionRecipe.SerializerConversionRecipe;
+import com.mrbysco.uhc.recipes.NBTChangeRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -17,9 +16,12 @@ public class ModRecipes {
 
 	public static final RegistryObject<RecipeType<AutoCookRecipe>> AUTO_COOK_RECIPE_TYPE = RECIPE_TYPES.register("auto_cook_recipe", () -> new RecipeType<>() {
 	});
-	public static final RegistryObject<RecipeType<ConversionRecipe>> CONVERSION_RECIPE_TYPE = RECIPE_TYPES.register( "conversion_recipe", () -> new RecipeType<>() {
+	public static final RegistryObject<RecipeType<ConversionRecipe>> CONVERSION_RECIPE_TYPE = RECIPE_TYPES.register("conversion_recipe", () -> new RecipeType<>() {
+	});
+	public static final RegistryObject<RecipeType<NBTChangeRecipe>> NBT_CHANGE_TYPE = RECIPE_TYPES.register("nbt_change", () -> new RecipeType<>() {
 	});
 
-	public static final RegistryObject<SerializerAutoCookRecipe> AUTO_COOK_SERIALIZER = RECIPE_SERIALIZERS.register("auto_cook_recipe", SerializerAutoCookRecipe::new);
-	public static final RegistryObject<SerializerConversionRecipe> CONVERSION_SERIALIZER = RECIPE_SERIALIZERS.register("conversion_recipe", SerializerConversionRecipe::new);
+	public static final RegistryObject<AutoCookRecipe.SerializerAutoCookRecipe> AUTO_COOK_SERIALIZER = RECIPE_SERIALIZERS.register("auto_cook_recipe", AutoCookRecipe.SerializerAutoCookRecipe::new);
+	public static final RegistryObject<ConversionRecipe.SerializerConversionRecipe> CONVERSION_SERIALIZER = RECIPE_SERIALIZERS.register("conversion_recipe", ConversionRecipe.SerializerConversionRecipe::new);
+	public static final RegistryObject<NBTChangeRecipe.SerializerNBTChangeRecipe> NBT_CHANGE = RECIPE_SERIALIZERS.register("nbt_change", NBTChangeRecipe.SerializerNBTChangeRecipe::new);
 }

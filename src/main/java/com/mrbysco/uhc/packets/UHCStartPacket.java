@@ -14,7 +14,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -47,18 +46,18 @@ public class UHCStartPacket {
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
-				ServerLevel overworld = serverPlayer.getServer().getLevel(Level.OVERWORLD);
+				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();
-					ServerLevel world = serverPlayer.getLevel();
-					WorldBorder border = world.getWorldBorder();
-					MinecraftServer server = world.getServer();
+					ServerLevel level = serverPlayer.getLevel();
+					WorldBorder border = level.getWorldBorder(); //TODO: Check if this should be using the overworld like the command does
+					MinecraftServer server = level.getServer();
 					List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
-					Scoreboard scoreboard = world.getScoreboard();
-					LevelData info = world.getLevelData();
+					Scoreboard scoreboard = level.getScoreboard();
+					LevelData info = level.getLevelData();
 
-					if (playerData.getBoolean("canEditUHC") == true) {
+					if (playerData.getBoolean("canEditUHC")) {
 						List<ServerPlayer> soloPlayers = new ArrayList<>(playerList);
 						List<ServerPlayer> teamPlayers = new ArrayList<>(playerList);
 
@@ -78,40 +77,39 @@ public class UHCStartPacket {
 						if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
 							border.setCenter(centerX, centerZ);
 
-						int BorderSize = saveData.getBorderSize();
-						server.getCommands().performCommand(serverPlayer.createCommandSourceStack(), "/worldborder set " + BorderSize);
-						//border.setTransition(BorderSize);
+						int borderSize = saveData.getBorderSize();
+						border.setSize(borderSize);
 
 						double spreadDistance = saveData.getSpreadDistance();
 						double spreadMaxRange = saveData.getSpreadMaxRange();
 
-						if (spreadMaxRange >= (BorderSize / 2))
-							spreadMaxRange = (BorderSize / 2);
+						if (spreadMaxRange >= (borderSize / 2F))
+							spreadMaxRange = (borderSize / 2F);
 
-						world.setDayTime(0);
+						level.setDayTime(0);
 						info.setRaining(false);
 
 						if (saveData.isRandomSpawns()) {
 							try {
-								SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, world, saveData.isSpreadRespectTeam());
+								SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, level, saveData.isSpreadRespectTeam());
 							} catch (CommandRuntimeException e) {
 								e.printStackTrace();
 							}
 
 							try {
-								SpreadUtil.spread(teamPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, world, false);
+								SpreadUtil.spread(teamPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, level, false);
 							} catch (CommandRuntimeException e) {
 								e.printStackTrace();
 							}
 						} else {
-							for (Player player : playerList) {
+							for (ServerPlayer player : playerList) {
 								if (player.getTeam() != scoreboard.getPlayerTeam("solo")) {
 									BlockPos pos = TeamUtil.getPosForTeam(player.getTeam().getColor());
 
-									((ServerPlayer) player).connection.teleport(pos.getX(), pos.getY(), pos.getZ(), player.getYRot(), player.getXRot());
+									player.connection.teleport(pos.getX(), pos.getY(), pos.getZ(), player.getYRot(), player.getXRot());
 								} else {
 									try {
-										SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, world, false);
+										SpreadUtil.spread(soloPlayers, new SpreadPosition(centerX, centerZ), spreadDistance, spreadMaxRange, level, false);
 									} catch (CommandRuntimeException e) {
 										e.printStackTrace();
 									}
@@ -140,7 +138,7 @@ public class UHCStartPacket {
 							for (double i = centerX1; i <= centerX2; i++) {
 								for (double j = centerZ1; j <= centerZ2; j++) {
 									for (double k = 250; k <= 253; k++) {
-										world.setBlockAndUpdate(new BlockPos(i, k, j), Blocks.AIR.defaultBlockState());
+										level.setBlockAndUpdate(new BlockPos(i, k, j), Blocks.AIR.defaultBlockState());
 									}
 								}
 							}

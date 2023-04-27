@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 
 public class SpawnItemList {
-	public static ArrayList<SpawnItemInfo> spawnItemList = new ArrayList<>();
+	public static final ArrayList<SpawnItemInfo> spawnItemList = new ArrayList<>();
 
 	public static SpawnItemInfo spawnItem_info;
 

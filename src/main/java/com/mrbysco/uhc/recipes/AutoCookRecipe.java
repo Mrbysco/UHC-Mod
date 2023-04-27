@@ -44,7 +44,7 @@ public class AutoCookRecipe implements Recipe<Container> {
 	}
 
 	@Override
-	public boolean matches(Container inv, Level worldIn) {
+	public boolean matches(Container inv, Level level) {
 		return this.ingredient.test(inv.getItem(0));
 	}
 
@@ -94,9 +94,8 @@ public class AutoCookRecipe implements Recipe<Container> {
 			else {
 				String s1 = GsonHelper.getAsString(json, "result");
 				ResourceLocation resourcelocation = new ResourceLocation(s1);
-				itemstack = new ItemStack(Registry.ITEM.getOptional(resourcelocation).orElseThrow(() -> {
-					return new IllegalStateException("Item: " + s1 + " does not exist");
-				}));
+				itemstack = new ItemStack(Registry.ITEM.getOptional(resourcelocation).orElseThrow(() ->
+						new IllegalStateException("Item: " + s1 + " does not exist")));
 			}
 			float f = GsonHelper.getAsFloat(json, "experience", 0.0F);
 			return new AutoCookRecipe(recipeId, s, ingredient, itemstack, f);

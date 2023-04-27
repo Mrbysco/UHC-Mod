@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class RespawnInfo {
 	private final BlockState state;
-	public ArrayList<Team> teamsReached;
+	public final ArrayList<Team> teamsReached;
 	public boolean spawnerExists;
 	public boolean bossExists;
 

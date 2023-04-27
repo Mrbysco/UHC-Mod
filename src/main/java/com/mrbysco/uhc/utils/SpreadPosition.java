@@ -6,8 +6,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Material;
 
-import java.util.Random;
-
 public class SpreadPosition {
 	double x;
 	double z;
@@ -15,9 +13,9 @@ public class SpreadPosition {
 	public SpreadPosition() {
 	}
 
-	public SpreadPosition(double xIn, double zIn) {
-		this.x = xIn;
-		this.z = zIn;
+	public SpreadPosition(double x, double z) {
+		this.x = x;
+		this.z = z;
 	}
 
 	double dist(SpreadPosition pos) {
@@ -33,7 +31,7 @@ public class SpreadPosition {
 	}
 
 	float getLength() {
-		return Mth.sqrt((float)(this.x * this.x + this.z * this.z));
+		return Mth.sqrt((float) (this.x * this.x + this.z * this.z));
 	}
 
 	public void moveAway(SpreadPosition pos) {
@@ -41,35 +39,35 @@ public class SpreadPosition {
 		this.z -= pos.z;
 	}
 
-	public boolean clamp(double p_111093_1_, double p_111093_3_, double p_111093_5_, double p_111093_7_) {
+	public boolean clamp(double minX, double minZ, double maxX, double maxZ) {
 		boolean flag = false;
 
-		if (this.x < p_111093_1_) {
-			this.x = p_111093_1_;
+		if (this.x < minX) {
+			this.x = minX;
 			flag = true;
-		} else if (this.x > p_111093_5_) {
-			this.x = p_111093_5_;
+		} else if (this.x > maxX) {
+			this.x = maxX;
 			flag = true;
 		}
 
-		if (this.z < p_111093_3_) {
-			this.z = p_111093_3_;
+		if (this.z < minZ) {
+			this.z = minZ;
 			flag = true;
-		} else if (this.z > p_111093_7_) {
-			this.z = p_111093_7_;
+		} else if (this.z > maxZ) {
+			this.z = maxZ;
 			flag = true;
 		}
 
 		return flag;
 	}
 
-	public int getSpawnY(Level worldIn) {
+	public int getSpawnY(Level level) {
 		BlockPos blockpos = new BlockPos(this.x, 256.0D, this.z);
 
 		while (blockpos.getY() > 0) {
 			blockpos = blockpos.below();
 
-			if (worldIn.getBlockState(blockpos).getMaterial() != Material.AIR) {
+			if (level.getBlockState(blockpos).getMaterial() != Material.AIR) {
 				return blockpos.getY() + 1;
 			}
 		}
@@ -77,12 +75,12 @@ public class SpreadPosition {
 		return 257;
 	}
 
-	public boolean isSafe(Level worldIn) {
+	public boolean isSafe(Level level) {
 		BlockPos blockpos = new BlockPos(this.x, 256.0D, this.z);
 
 		while (blockpos.getY() > 0) {
 			blockpos = blockpos.below();
-			Material material = worldIn.getBlockState(blockpos).getMaterial();
+			Material material = level.getBlockState(blockpos).getMaterial();
 
 			if (material != Material.AIR) {
 				return !material.isLiquid() && material != Material.FIRE;
@@ -92,8 +90,8 @@ public class SpreadPosition {
 		return false;
 	}
 
-	public void randomize(RandomSource rand, double p_111097_2_, double p_111097_4_, double p_111097_6_, double p_111097_8_) {
-		this.x = Mth.nextDouble(rand, p_111097_2_, p_111097_6_);
-		this.z = Mth.nextDouble(rand, p_111097_4_, p_111097_8_);
+	public void randomize(RandomSource rand, double minX, double minZ, double maxX, double maxZ) {
+		this.x = Mth.nextDouble(rand, minX, maxX);
+		this.z = Mth.nextDouble(rand, minZ, maxZ);
 	}
 }

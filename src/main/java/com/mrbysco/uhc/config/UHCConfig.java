@@ -29,15 +29,15 @@ public class UHCConfig {
 
 			spawnDimension = builder
 					.comment("Configures the spawn room block placed for the showdown [Default: \"minecraft:overworld\"]")
-					.define("spawnDimension", "minecraft:overworld", o -> isValidResourceLocation(o));
+					.define("spawnDimension", "minecraft:overworld", UHCConfig::isValidResourceLocation);
 
 			spawnRoomBlock = builder
 					.comment("Configures the spawn room block placed by the /uhc spawnroom command [Default: \"minecraft:barrier\"]")
-					.define("spawnRoomBlock", "minecraft:barrier", o -> isValidResourceLocation(o));
+					.define("spawnRoomBlock", "minecraft:barrier", UHCConfig::isValidResourceLocation);
 
 			showdownBlock = builder
 					.comment("Configures the spawn room block placed for the showdown [Default: \"minecraft:stone_bricks\"]")
-					.define("showdownBlock", "minecraft:stone_bricks", o -> isValidResourceLocation(o));
+					.define("showdownBlock", "minecraft:stone_bricks", UHCConfig::isValidResourceLocation);
 
 			builder.pop();
 			builder.comment("Team Spawns")
@@ -64,7 +64,7 @@ public class UHCConfig {
 
 			teamSpawns = builder
 					.comment("Team Spawns (Setting the Y value to -1 will make it find the surface for the X and Y)")
-					.defineList("teamSpawns", Arrays.asList(spawnPositions), o -> isValidLocation(o));
+					.defineList("teamSpawns", Arrays.asList(spawnPositions), UHCConfig::isValidLocation);
 
 			builder.pop();
 			builder.comment("Mod Support")

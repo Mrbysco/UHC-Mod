@@ -52,7 +52,7 @@ public class UHCBookScreen extends Screen {
 	private final int bookTotalPages = 6;
 	private int currPage;
 
-	protected ArrayList<EditBox> textBoxList = new ArrayList<>();
+	protected final ArrayList<EditBox> textBoxList = new ArrayList<>();
 
 	/**
 	 * Buttons
@@ -61,7 +61,7 @@ public class UHCBookScreen extends Screen {
 	private PageButton buttonPreviousPage;
 	private Button buttonDone;
 
-	private ColorButton[] colorButtons = new ColorButton[17];
+	private final ColorButton[] colorButtons = new ColorButton[17];
 
 	private EditBox randSizeField;
 	private EditBox maxTeamSizeField;
@@ -165,7 +165,7 @@ public class UHCBookScreen extends Screen {
 	private boolean graceEnabled;
 	private int graceTime;
 
-	private CompoundTag playerData;
+	private final CompoundTag playerData;
 
 	public UHCBookScreen(Player player) {
 		super(Component.literal("U H C Book"));
@@ -184,9 +184,8 @@ public class UHCBookScreen extends Screen {
 
 		initValues();
 
-		this.buttonDone = this.addRenderableWidget(new Button(this.width / 2 - 100, 196, 200, 20, Component.translatable("gui.done"), (button) -> {
-			this.minecraft.setScreen((Screen) null);
-		}));
+		this.buttonDone = this.addRenderableWidget(new Button(this.width / 2 - 100, 196, 200, 20, Component.translatable("gui.done"),
+				(button) -> this.minecraft.setScreen((Screen) null)));
 
 		int i = (this.width - 192) / 2;
 		int j = 2;
@@ -485,8 +484,8 @@ public class UHCBookScreen extends Screen {
 			sendPage4Packet();
 			this.updateButtons();
 		}));
-		this.autoCookButton = this.addRenderableWidget(new BooleanButton(i + 43 + 90, j + 63, saveData.isAutoCook(), (button) -> {
-			boolean flag = saveData.isAutoCook();
+		this.autoCookButton = this.addRenderableWidget(new BooleanButton(i + 43 + 90, j + 63, saveData.isAutoCookEnabled(), (button) -> {
+			boolean flag = saveData.isAutoCookEnabled();
 			autoCook = !flag;
 			sendPage4Packet();
 			this.updateButtons();
@@ -615,8 +614,8 @@ public class UHCBookScreen extends Screen {
 		this.healthOnSide = saveData.isHealthOnSide();
 		this.healthUnderName = saveData.isHealthUnderName();
 
-		this.doDaylightCycle = saveData.DoDaylightCycle();
-		this.autoCook = saveData.isAutoCook();
+		this.doDaylightCycle = saveData.doDaylightCycle();
+		this.autoCook = saveData.isAutoCookEnabled();
 		this.itemConversion = saveData.isItemConversion();
 		this.applyCustomHealth = saveData.isApplyCustomHealth();
 		this.maxHealth = saveData.getMaxHealth();
@@ -818,8 +817,8 @@ public class UHCBookScreen extends Screen {
 			if (notchApplesButton.getBoolean() != saveData.isNotchApples())
 				notchApplesButton.setBoolean(saveData.isNotchApples());
 
-			if (autoCookButton.getBoolean() != saveData.isAutoCook())
-				autoCookButton.setBoolean(saveData.isAutoCook());
+			if (autoCookButton.getBoolean() != saveData.isAutoCookEnabled())
+				autoCookButton.setBoolean(saveData.isAutoCookEnabled());
 
 			if (itemConvertButton.getBoolean() != saveData.isItemConversion())
 				itemConvertButton.setBoolean(saveData.isItemConversion());
@@ -1863,14 +1862,14 @@ public class UHCBookScreen extends Screen {
 		}
 	}
 
-	public class ColorButton extends Button {
+	public static class ColorButton extends Button {
 		private final boolean solo;
 		private final boolean randomize;
-		public int color;
-		public Component name;
+		public final int color;
+		public final Component name;
 
-		public int textX;
-		public int textY;
+		public final int textX;
+		public final int textY;
 
 		public ColorButton(int x, int y, int widthIn, int heightIn, int textXIn, int textYIn, int colorIn, Component nameIn, Button.OnPress onPressIn) {
 			super(x, y, widthIn, heightIn, Component.empty(), onPressIn);

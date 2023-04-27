@@ -17,23 +17,23 @@ import java.util.Map;
 import java.util.Set;
 
 public class SpreadUtil {
-	public static void spread(List<ServerPlayer> players, SpreadPosition pos, double spreadDistance, double maxRange, Level worldIn, boolean respectTeams) throws CommandRuntimeException {
+	public static void spread(List<ServerPlayer> serverPlayers, SpreadPosition pos, double spreadDistance, double maxRange, Level level, boolean respectTeams) throws CommandRuntimeException {
 		RandomSource random = RandomSource.create();
 		double d0 = pos.x - maxRange;
 		double d1 = pos.z - maxRange;
 		double d2 = pos.x + maxRange;
 		double d3 = pos.z + maxRange;
-		SpreadPosition[] aSpreadUtil$position = createInitialPositions(random, respectTeams ? getNumberOfTeams(players) : players.size(), d0, d1, d2, d3);
-		int i = spreadPositions(pos, spreadDistance, worldIn, random, d0, d1, d2, d3, aSpreadUtil$position, respectTeams);
-		double d4 = setPlayerPositions(players, worldIn, aSpreadUtil$position, respectTeams);
+		SpreadPosition[] aSpreadUtil$position = createInitialPositions(random, respectTeams ? getNumberOfTeams(serverPlayers) : serverPlayers.size(), d0, d1, d2, d3);
+		int i = spreadPositions(pos, spreadDistance, level, random, d0, d1, d2, d3, aSpreadUtil$position, respectTeams);
+		double d4 = setPlayerPositions(serverPlayers, level, aSpreadUtil$position, respectTeams);
 	}
 
-	public static SpreadPosition[] createInitialPositions(RandomSource random, int p_110670_2_, double p_110670_3_, double p_110670_5_, double p_110670_7_, double p_110670_9_) {
-		SpreadPosition[] aSpreadUtil$position = new SpreadPosition[p_110670_2_];
+	public static SpreadPosition[] createInitialPositions(RandomSource randomSource, int count, double minX, double maxX, double minZ, double maxZ) {
+		SpreadPosition[] aSpreadUtil$position = new SpreadPosition[count];
 
 		for (int i = 0; i < aSpreadUtil$position.length; ++i) {
 			SpreadPosition SpreadUtil$position = new SpreadPosition();
-			SpreadUtil$position.randomize(random, p_110670_3_, p_110670_5_, p_110670_7_, p_110670_9_);
+			SpreadUtil$position.randomize(randomSource, minX, maxX, minZ, maxZ);
 			aSpreadUtil$position[i] = SpreadUtil$position;
 		}
 
@@ -54,7 +54,7 @@ public class SpreadUtil {
 		return set.size();
 	}
 
-	public static int spreadPositions(SpreadPosition spreadPosition, double p_110668_2_, Level worldIn, RandomSource random, double minX, double minZ, double maxX, double maxZ, SpreadPosition[] spreadPositions, boolean respectTeams) throws CommandRuntimeException {
+	public static int spreadPositions(SpreadPosition spreadPosition, double p_110668_2_, Level level, RandomSource random, double minX, double minZ, double maxX, double maxZ, SpreadPosition[] spreadPositions, boolean respectTeams) throws CommandRuntimeException {
 		boolean flag = true;
 		double d0 = 3.4028234663852886E38D;
 		int i;
@@ -104,7 +104,7 @@ public class SpreadUtil {
 
 			if (!flag) {
 				for (SpreadPosition SpreadUtil$position3 : spreadPositions) {
-					if (!SpreadUtil$position3.isSafe(worldIn)) {
+					if (!SpreadUtil$position3.isSafe(level)) {
 						SpreadUtil$position3.randomize(random, minX, minZ, maxX, maxZ);
 						flag = true;
 					}
@@ -119,16 +119,15 @@ public class SpreadUtil {
 		}
 	}
 
-	public static double setPlayerPositions(List<ServerPlayer> players, Level worldIn, SpreadPosition[] spreadPositions, boolean p_110671_4_) {
+	public static double setPlayerPositions(List<ServerPlayer> players, Level level, SpreadPosition[] spreadPositions, boolean respectTeams) {
 		double d0 = 0.0D;
 		int i = 0;
 		Map<Team, SpreadPosition> map = Maps.<Team, SpreadPosition>newHashMap();
 
-		for (int j = 0; j < players.size(); ++j) {
-			Entity entity = players.get(j);
+		for (Entity entity : players) {
 			SpreadPosition SpreadUtil$position;
 
-			if (p_110671_4_) {
+			if (respectTeams) {
 				Team team = entity instanceof Player ? entity.getTeam() : null;
 
 				if (!map.containsKey(team)) {
@@ -140,7 +139,7 @@ public class SpreadUtil {
 				SpreadUtil$position = spreadPositions[i++];
 			}
 
-			entity.teleportTo((double) ((float) Mth.floor(SpreadUtil$position.x) + 0.5F), (double) SpreadUtil$position.getSpawnY(worldIn), (double) Mth.floor(SpreadUtil$position.z) + 0.5D);
+			entity.teleportTo((double) ((float) Mth.floor(SpreadUtil$position.x) + 0.5F), (double) SpreadUtil$position.getSpawnY(level), (double) Mth.floor(SpreadUtil$position.z) + 0.5D);
 
 			double d2 = Double.MAX_VALUE;
 

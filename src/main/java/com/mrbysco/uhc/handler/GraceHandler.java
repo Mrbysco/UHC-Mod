@@ -20,18 +20,18 @@ public class GraceHandler {
 	public int graceTimer;
 
 	@SubscribeEvent
-	public void graceTimerEvent(TickEvent.WorldTickEvent event) {
+	public void graceTimerEvent(TickEvent.LevelTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer()) {
-			Level world = event.world;
-			MinecraftServer server = event.world.getServer();
-			ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+			Level level = event.level;
+			MinecraftServer server = level.getServer();
+			ServerLevel overworld = server.overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
 				List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 
 				if (!playerList.isEmpty() && saveData.isUhcOnGoing()) {
-					if (world.getGameTime() % 20 == 0) {
+					if (level.getGameTime() % 20 == 0) {
 						if (!saveData.isGraceFinished()) {
 							if (saveData.isGraceEnabled()) {
 								if (timerData.getGlowTimer() != this.graceTimer) {
@@ -66,14 +66,14 @@ public class GraceHandler {
 
 	@SubscribeEvent
 	public void graceTimerEvent(LivingAttackEvent event) {
-		Level world = event.getEntityLiving().level;
-		if (!world.isClientSide) {
-			MinecraftServer server = world.getServer();
-			ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+		Level level = event.getEntity().level;
+		if (!level.isClientSide) {
+			MinecraftServer server = level.getServer();
+			ServerLevel overworld = server.overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				if (saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
-					if (event.getEntityLiving() instanceof Player) {
+					if (event.getEntity() instanceof Player) {
 						Entity trueSource = event.getSource().getEntity();
 						if (trueSource instanceof Player) {
 							event.setCanceled(true);
@@ -86,14 +86,14 @@ public class GraceHandler {
 
 	@SubscribeEvent
 	public void graceTimerEvent(LivingHurtEvent event) {
-		Level world = event.getEntityLiving().level;
-		if (!world.isClientSide) {
-			MinecraftServer server = world.getServer();
-			ServerLevel overworld = server.getLevel(Level.OVERWORLD);
+		Level level = event.getEntity().level;
+		if (!level.isClientSide) {
+			MinecraftServer server = level.getServer();
+			ServerLevel overworld = server.overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				if (saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
-					if (event.getEntityLiving() instanceof Player) {
+					if (event.getEntity() instanceof Player) {
 						Entity trueSource = event.getSource().getEntity();
 						if (trueSource instanceof Player) {
 							event.setCanceled(true);

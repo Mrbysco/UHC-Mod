@@ -85,7 +85,7 @@ public class AutoCookRecipe implements Recipe<Container> {
 			String s = GsonHelper.getAsString(json, "group", "");
 			JsonElement jsonelement = (JsonElement) (GsonHelper.isArrayNode(json, "ingredient") ? GsonHelper.getAsJsonArray(json, "ingredient") : GsonHelper.getAsJsonObject(json, "ingredient"));
 			Ingredient ingredient = Ingredient.fromJson(jsonelement);
-			//Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
+			//Forge: Check if primitive string to keep vanilla or an object which can contain a count field.
 			if (!json.has("result"))
 				throw new com.google.gson.JsonSyntaxException("Missing result, expected to find a string or object");
 			ItemStack itemstack;

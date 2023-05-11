@@ -74,7 +74,6 @@ public class UltraHardCoremod {
 		UHCPacketHandler.registerMessages();
 
 		SpawnItemList.initializeSpawnItems();
-		EntityDataChangeList.initializeDataChanges();
 	}
 
 	public void onCommandRegister(RegisterCommandsEvent event) {

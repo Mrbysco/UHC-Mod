@@ -73,7 +73,7 @@ public class BorderHandler {
 			Level level = event.level;
 			MinecraftServer server = level.getServer();
 			ServerLevel overworld = server.overworld();
-			
+
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 

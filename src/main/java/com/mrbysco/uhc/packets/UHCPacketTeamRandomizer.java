@@ -41,15 +41,14 @@ public class UHCPacketTeamRandomizer {
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();
-					ServerLevel level = serverPlayer.getLevel();
-					MinecraftServer server = level.getServer();
-					List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+					ServerLevel level = serverPlayer.serverLevel();
+					List<ServerPlayer> playerList = level.players();
 					Scoreboard scoreboard = level.getScoreboard();
 
 					if (playerData.getBoolean("canEditUHC")) {
 						List<ServerPlayer> teamPlayers = new ArrayList<>(playerList);
 
-						for (Player player : playerList) {
+						for (ServerPlayer player : playerList) {
 							if (player.getTeam() == scoreboard.getPlayerTeam("spectator"))
 								teamPlayers.remove(player);
 							else
@@ -83,7 +82,7 @@ public class UHCPacketTeamRandomizer {
 						int playerAmount = playerList.size();
 						int amountPerTeam = (int) Math.ceil((double) playerAmount / (double) randomTeams);
 
-						ArrayList<String> possibleTeams = getTeams();
+						List<String> possibleTeams = getTeams();
 
 						for (int i = 0; i < randomTeams; i++) {
 							String teamName = possibleTeams.get(possibleTeams.size() > 1 ? level.random.nextInt(possibleTeams.size()) : 0);
@@ -114,8 +113,8 @@ public class UHCPacketTeamRandomizer {
 		ctx.setPacketHandled(true);
 	}
 
-	private static ArrayList<String> getTeams() {
-		ArrayList<String> teams = new ArrayList<>();
+	private static List<String> getTeams() {
+		List<String> teams = new ArrayList<>();
 
 		teams.add(ChatFormatting.DARK_RED.getName());
 		teams.add(ChatFormatting.GOLD.getName());

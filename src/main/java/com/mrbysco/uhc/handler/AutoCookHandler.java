@@ -29,7 +29,7 @@ public class AutoCookHandler {
 							new SimpleContainer(stack), level).orElse(null);
 					if (foundRecipe != null) {
 						for (int i = 0; i < stack.getCount(); i++) {
-							ItemEntity resultEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), foundRecipe.assemble(null));
+							ItemEntity resultEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), foundRecipe.assemble(null, level.registryAccess()));
 							level.addFreshEntity(resultEntity);
 						}
 

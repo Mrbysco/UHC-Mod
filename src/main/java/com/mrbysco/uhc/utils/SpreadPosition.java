@@ -1,10 +1,12 @@
 package com.mrbysco.uhc.utils;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class SpreadPosition {
 	double x;
@@ -61,33 +63,29 @@ public class SpreadPosition {
 		return flag;
 	}
 
-	public int getSpawnY(Level level) {
-		BlockPos blockpos = new BlockPos(this.x, 256.0D, this.z);
+	public int getSpawnY(BlockGetter getter, int y) {
+		BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(this.x, (double) (y + 1), this.z);
+		boolean flag = getter.getBlockState(blockpos$mutableblockpos).isAir();
+		blockpos$mutableblockpos.move(Direction.DOWN);
 
-		while (blockpos.getY() > 0) {
-			blockpos = blockpos.below();
-
-			if (level.getBlockState(blockpos).getMaterial() != Material.AIR) {
-				return blockpos.getY() + 1;
+		boolean flag2;
+		for (boolean flag1 = getter.getBlockState(blockpos$mutableblockpos).isAir(); blockpos$mutableblockpos.getY() > getter.getMinBuildHeight(); flag1 = flag2) {
+			blockpos$mutableblockpos.move(Direction.DOWN);
+			flag2 = getter.getBlockState(blockpos$mutableblockpos).isAir();
+			if (!flag2 && flag1 && flag) {
+				return blockpos$mutableblockpos.getY() + 1;
 			}
+
+			flag = flag1;
 		}
 
-		return 257;
+		return y + 1;
 	}
 
-	public boolean isSafe(Level level) {
-		BlockPos blockpos = new BlockPos(this.x, 256.0D, this.z);
-
-		while (blockpos.getY() > 0) {
-			blockpos = blockpos.below();
-			Material material = level.getBlockState(blockpos).getMaterial();
-
-			if (material != Material.AIR) {
-				return !material.isLiquid() && material != Material.FIRE;
-			}
-		}
-
-		return false;
+	public boolean isSafe(BlockGetter getter, int maxY) {
+		BlockPos blockpos = BlockPos.containing(this.x, (double) (this.getSpawnY(getter, maxY) - 1), this.z);
+		BlockState blockstate = getter.getBlockState(blockpos);
+		return blockpos.getY() < maxY && !blockstate.liquid() && !blockstate.is(BlockTags.FIRE);
 	}
 
 	public void randomize(RandomSource rand, double minX, double minZ, double maxX, double maxZ) {

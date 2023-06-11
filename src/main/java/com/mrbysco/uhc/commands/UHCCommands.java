@@ -20,7 +20,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ScoreHolderArgument;
 import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -113,12 +113,12 @@ public class UHCCommands {
 			double centerX2 = centerX + 7;
 			double centerZ1 = centerZ - 7;
 			double centerZ2 = centerZ + 7;
-			ResourceKey<Level> spawnRoom = ResourceKey.create(Registry.DIMENSION_REGISTRY, saveData.getSpawnRoomDimension());
+			ResourceKey<Level> spawnRoom = ResourceKey.create(Registries.DIMENSION, saveData.getSpawnRoomDimension());
 			ServerLevel level = server.getLevel(spawnRoom);
 			for (double i = centerX1; i <= centerX2; i++) {
 				for (double j = centerZ1; j <= centerZ2; j++) {
 					for (double k = 250; k <= 253; k++) {
-						level.setBlockAndUpdate(new BlockPos(i, k, j), Blocks.AIR.defaultBlockState());
+						level.setBlockAndUpdate(BlockPos.containing(i, k, j), Blocks.AIR.defaultBlockState());
 					}
 				}
 			}
@@ -131,8 +131,8 @@ public class UHCCommands {
 			saveData.resetAll();
 			saveData.setDirty();
 
-			UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(saveData));
-			ctx.getSource().sendSuccess(Component.translatable("commands.uhc.reset.success"), true);
+			UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(saveData.save(new CompoundTag())));
+			ctx.getSource().sendSuccess(() -> Component.translatable("commands.uhc.reset.success"), true);
 		}
 
 		return 0;
@@ -156,14 +156,14 @@ public class UHCCommands {
 			if (roomBlock == null) {
 				roomBlock = Blocks.BARRIER;
 			}
-			ResourceKey<Level> spawnRoom = ResourceKey.create(Registry.DIMENSION_REGISTRY, saveData.getSpawnRoomDimension());
+			ResourceKey<Level> spawnRoom = ResourceKey.create(Registries.DIMENSION, saveData.getSpawnRoomDimension());
 			ServerLevel level = server.getLevel(spawnRoom);
 			if (level != null) {
 				if (value.equals("place")) {
 					for (double i = centerX1; i <= centerX2; i++) {
 						for (double j = centerZ1; j <= centerZ2; j++) {
 							for (double k = 250; k <= 253; k++) {
-								level.setBlockAndUpdate(new BlockPos(i, k, j), roomBlock.defaultBlockState());
+								level.setBlockAndUpdate(BlockPos.containing(i, k, j), roomBlock.defaultBlockState());
 							}
 						}
 					}
@@ -173,10 +173,10 @@ public class UHCCommands {
 				} else {
 					for (double i = centerX1; i <= centerX2; i++) {
 						for (double j = centerZ1; j <= centerZ2; j++) {
-							senderWorld.setBlockAndUpdate(new BlockPos(i, 250, j), roomBlock.defaultBlockState());
+							senderWorld.setBlockAndUpdate(BlockPos.containing(i, 250, j), roomBlock.defaultBlockState());
 							if (j == centerZ1 || j == centerZ2) {
 								for (double k = 250; k <= 253; k++) {
-									senderWorld.setBlockAndUpdate(new BlockPos(i, k, j), roomBlock.defaultBlockState());
+									senderWorld.setBlockAndUpdate(BlockPos.containing(i, k, j), roomBlock.defaultBlockState());
 								}
 							}
 						}
@@ -184,16 +184,16 @@ public class UHCCommands {
 						if (i == centerX1 || i == centerX2) {
 							for (double j = centerZ1; j <= centerZ2; j++) {
 								for (double k = 250; k <= 253; k++) {
-									senderWorld.setBlockAndUpdate(new BlockPos(i, k, j), roomBlock.defaultBlockState());
+									senderWorld.setBlockAndUpdate(BlockPos.containing(i, k, j), roomBlock.defaultBlockState());
 								}
 							}
 						}
 					}
-					senderWorld.setDefaultSpawnPos(new BlockPos(centerX, 252, centerZ), 90F);
+					senderWorld.setDefaultSpawnPos(BlockPos.containing(centerX, 252, centerZ), 90F);
 					saveData.setSpawnRoom(true);
 					saveData.setSpawnRoomDimension(senderWorld.dimension().location());
 					saveData.setDirty();
-					ctx.getSource().sendSuccess(Component.translatable("commands.uhc.spawnroom.success"), true);
+					ctx.getSource().sendSuccess(() -> Component.translatable("commands.uhc.spawnroom.success"), true);
 				}
 			}
 		}
@@ -208,7 +208,7 @@ public class UHCCommands {
 			scoreboard.addPlayerToTeam(s, teamIn);
 		}
 
-		source.sendSuccess(Component.translatable("commands.uhc.forceteam.success", players.size(), teamIn.getFormattedDisplayName()), true);
+		source.sendSuccess(() -> Component.translatable("commands.uhc.forceteam.success", players.size(), teamIn.getFormattedDisplayName()), true);
 
 		return players.size();
 	}
@@ -244,12 +244,12 @@ public class UHCCommands {
 
 						if (teamMember != null) {
 							BlockPos pos = teamMember.blockPosition();
-							ResourceKey<Level> teamDimension = teamMember.level.dimension();
-							if (player.level.dimension() != teamDimension)
-								player.changeDimension((ServerLevel) teamMember.level, new UHCTeleporter(pos));
+							ResourceKey<Level> teamDimension = teamMember.level().dimension();
+							if (player.level().dimension() != teamDimension)
+								player.changeDimension((ServerLevel) teamMember.level(), new UHCTeleporter(pos));
 
 							player.teleportTo(pos.getX(), pos.getY(), pos.getZ());
-							if (!player.level.isClientSide) {
+							if (!player.level().isClientSide) {
 								((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
 							}
 
@@ -276,10 +276,10 @@ public class UHCCommands {
 							}
 
 							if (!dimensionLocation.isEmpty()) {
-								if (!player.level.dimension().location().toString().equals(dimensionLocation)) {
+								if (!player.level().dimension().location().toString().equals(dimensionLocation)) {
 									ResourceLocation location = ResourceLocation.tryParse(dimensionLocation);
 									if (location != null) {
-										ResourceKey<Level> deathDimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, location);
+										ResourceKey<Level> deathDimension = ResourceKey.create(Registries.DIMENSION, location);
 										ServerLevel dimensionWorld = ctx.getSource().getServer().getLevel(deathDimension);
 										player.changeDimension(dimensionWorld, new UHCTeleporter(deathPos));
 									}
@@ -288,13 +288,13 @@ public class UHCCommands {
 
 							player.teleportTo(deathPos.getX(), deathPos.getY(), deathPos.getZ());
 						} else {
-							ResourceKey<Level> deathDimension = ResourceKey.create(Registry.DIMENSION_REGISTRY, uhcData.getUHCDimension());
+							ResourceKey<Level> deathDimension = ResourceKey.create(Registries.DIMENSION, uhcData.getUHCDimension());
 							ServerLevel dimensionWorld = ctx.getSource().getServer().getLevel(deathDimension);
-							if (!player.level.dimension().location().equals(uhcData.getUHCDimension())) {
+							if (!player.level().dimension().location().equals(uhcData.getUHCDimension())) {
 								player.changeDimension(dimensionWorld, new UHCTeleporter());
 							}
 
-							ArrayList<ServerPlayer> playerList = new ArrayList<>(Collections.singletonList((ServerPlayer) player));
+							List<ServerPlayer> playerList = new ArrayList<>(Collections.singletonList((ServerPlayer) player));
 							WorldBorder border = dimensionWorld.getWorldBorder();
 
 							double centerX = uhcData.getBorderCenterX();
@@ -339,7 +339,7 @@ public class UHCCommands {
 								}
 							}
 						}
-						if (!player.level.isClientSide) {
+						if (!player.level().isClientSide) {
 							((ServerPlayer) player).setGameMode(GameType.SURVIVAL);
 						}
 						if (scoreboard.getOrCreateObjective("health") != null)

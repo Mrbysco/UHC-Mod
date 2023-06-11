@@ -3,6 +3,7 @@ package com.mrbysco.uhc.item;
 import com.mrbysco.uhc.data.UHCSaveData;
 import com.mrbysco.uhc.packets.UHCPacketHandler;
 import com.mrbysco.uhc.packets.UHCPacketMessage;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +37,7 @@ public class UHCBookItem extends Item {
 			ServerLevel overworld = level.getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
-				UHCPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new UHCPacketMessage(saveData));
+				UHCPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new UHCPacketMessage(saveData.save(new CompoundTag())));
 			}
 		}
 

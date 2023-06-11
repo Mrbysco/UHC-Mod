@@ -10,17 +10,19 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TeamSpamHandler {
 
 	private final String teamAntiSpam = Reference.MOD_PREFIX + "team_anti_spam";
-	private static final HashMap<Player, Integer> spammerList = new HashMap<>();
+	private static final Map<Player, Integer> spammerList = new HashMap<>();
 
 	@SubscribeEvent
 	public void teamSpamProtectionEvent(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
 			Player player = event.player;
-			Level level = player.level;
+			Level level = player.level();
 			CompoundTag playerData = player.getPersistentData();
 
 			if (playerData.getBoolean(teamAntiSpam)) {
@@ -30,9 +32,9 @@ public class TeamSpamHandler {
 
 			if (!spammerList.isEmpty()) {
 				if (level.getGameTime() % 20 == 0) {
-					ArrayList<Player> removalList = new ArrayList<>();
+					List<Player> removalList = new ArrayList<>();
 
-					for (HashMap.Entry<Player, Integer> entry : spammerList.entrySet()) {
+					for (Map.Entry<Player, Integer> entry : spammerList.entrySet()) {
 						Player listPlayer = entry.getKey();
 						Integer listInt = entry.getValue();
 

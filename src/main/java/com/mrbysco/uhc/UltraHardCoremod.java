@@ -18,8 +18,10 @@ import com.mrbysco.uhc.lists.SpawnItemList;
 import com.mrbysco.uhc.packets.UHCPacketHandler;
 import com.mrbysco.uhc.registry.ModRecipes;
 import com.mrbysco.uhc.registry.ModRegistry;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -43,6 +45,7 @@ public class UltraHardCoremod {
 		eventBus.register(UHCConfig.class);
 
 		eventBus.addListener(this::setup);
+		eventBus.addListener(this::fillCreativeTab);
 
 		ModRecipes.RECIPE_SERIALIZERS.register(eventBus);
 		ModRecipes.RECIPE_TYPES.register(eventBus);
@@ -74,6 +77,12 @@ public class UltraHardCoremod {
 		UHCPacketHandler.registerMessages();
 
 		SpawnItemList.initializeSpawnItems();
+	}
+
+	public void fillCreativeTab(final BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey().equals(CreativeModeTabs.TOOLS_AND_UTILITIES)) {
+			event.accept(ModRegistry.UHC_BOOK.get());
+		}
 	}
 
 	public void onCommandRegister(RegisterCommandsEvent event) {

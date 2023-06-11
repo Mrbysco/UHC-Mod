@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mrbysco.uhc.registry.ModRecipes;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -47,8 +48,8 @@ public class ConversionRecipe implements Recipe<Container> {
 		return results;
 	}
 
-	public ItemStack assemble(Container inventory) {
-		return getResultItem().copy();
+	public ItemStack assemble(Container inventory, RegistryAccess access) {
+		return getResultItem(access).copy();
 	}
 
 	public boolean canCraftInDimensions(int x, int y) {
@@ -61,7 +62,7 @@ public class ConversionRecipe implements Recipe<Container> {
 		return nonnulllist;
 	}
 
-	public ItemStack getResultItem() {
+	public ItemStack getResultItem(RegistryAccess access) {
 		return this.results.get(0);
 	}
 

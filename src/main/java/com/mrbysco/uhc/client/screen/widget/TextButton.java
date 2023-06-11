@@ -1,8 +1,8 @@
-package com.mrbysco.uhc.client.screen;
+package com.mrbysco.uhc.client.screen.widget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -13,7 +13,7 @@ public class TextButton extends Button {
 	private boolean shadow = true;
 
 	public TextButton(int x, int y, Component text, Minecraft mc, Button.OnPress onPressIn) {
-		super(x, y, mc.font.width(text), mc.font.lineHeight, text, onPressIn);
+		super(x, y, mc.font.width(text), mc.font.lineHeight, text, onPressIn, DEFAULT_NARRATION);
 		this.mc = mc;
 	}
 
@@ -33,8 +33,8 @@ public class TextButton extends Button {
 	}
 
 	@Override
-	public void renderButton(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-		Font renderer = mc.font;
+	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+		Font font = mc.font;
 
 		int colorInt = this.color;
 		if (color != 0) {
@@ -47,12 +47,12 @@ public class TextButton extends Button {
 
 		Component component = getMessage();
 		if (shadow) {
-			renderer.drawShadow(matrixStack, component, x, y, colorInt);
+			guiGraphics.drawString(font, component, getX(), getY(), colorInt);
 		} else {
-			renderer.draw(matrixStack, component, x, y, colorInt);
+			guiGraphics.drawString(font, component, getX(), getY(), colorInt, false);
 		}
 		if (this.isHoveredOrFocused()) {
-			this.renderToolTip(matrixStack, mouseX, mouseY);
+//			this.renderToolTip(matrixStack, mouseX, mouseY);
 		}
 	}
 }

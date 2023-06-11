@@ -4,7 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mrbysco.uhc.registry.ModRecipes;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -48,8 +49,8 @@ public class AutoCookRecipe implements Recipe<Container> {
 		return this.ingredient.test(inv.getItem(0));
 	}
 
-	public ItemStack assemble(Container inventory) {
-		return this.result.copy();
+	public ItemStack assemble(@Nullable Container inventory, RegistryAccess access) {
+		return getResultItem(access).copy();
 	}
 
 	public boolean canCraftInDimensions(int x, int y) {
@@ -62,7 +63,7 @@ public class AutoCookRecipe implements Recipe<Container> {
 		return nonnulllist;
 	}
 
-	public ItemStack getResultItem() {
+	public ItemStack getResultItem(RegistryAccess access) {
 		return this.result;
 	}
 
@@ -94,7 +95,7 @@ public class AutoCookRecipe implements Recipe<Container> {
 			else {
 				String s1 = GsonHelper.getAsString(json, "result");
 				ResourceLocation resourcelocation = new ResourceLocation(s1);
-				itemstack = new ItemStack(Registry.ITEM.getOptional(resourcelocation).orElseThrow(() ->
+				itemstack = new ItemStack(BuiltInRegistries.ITEM.getOptional(resourcelocation).orElseThrow(() ->
 						new IllegalStateException("Item: " + s1 + " does not exist")));
 			}
 			float f = GsonHelper.getAsFloat(json, "experience", 0.0F);

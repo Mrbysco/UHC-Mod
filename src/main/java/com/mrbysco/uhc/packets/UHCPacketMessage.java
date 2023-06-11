@@ -10,23 +10,22 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class UHCPacketMessage {
-	private final UHCSaveData data;
+	private final CompoundTag dataTag;
 
 	private UHCPacketMessage(FriendlyByteBuf buf) {
-		this.data = new UHCSaveData();
-		UHCSaveData.load(buf.readNbt());
+		dataTag = buf.readNbt();
 	}
 
-	public UHCPacketMessage(UHCSaveData data) {
-		this.data = data;
+	public UHCPacketMessage(CompoundTag data) {
+		this.dataTag = data;
 	}
 
-	public UHCPacketMessage(UUID playerUUID, UHCSaveData tag) {
-		this.data = tag;
+	public UHCPacketMessage(UUID playerUUID, CompoundTag tag) {
+		this.dataTag = tag;
 	}
 
 	public void encode(FriendlyByteBuf buf) {
-		buf.writeNbt(data.save(new CompoundTag()));
+		buf.writeNbt(dataTag);
 	}
 
 	public static UHCPacketMessage decode(final FriendlyByteBuf packetBuffer) {
@@ -36,7 +35,8 @@ public class UHCPacketMessage {
 	public void handle(Supplier<Context> context) {
 		NetworkEvent.Context ctx = context.get();
 		ctx.enqueueWork(() -> {
-			if (ctx.getDirection().getReceptionSide().isClient() && ctx.getSender() != null) {
+			UHCSaveData data = UHCSaveData.load(dataTag);
+			if (ctx.getDirection().getReceptionSide().isClient()) {
 				com.mrbysco.uhc.client.ClientHelper.updateBook(data);
 			}
 		});

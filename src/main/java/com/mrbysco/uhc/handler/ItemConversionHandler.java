@@ -20,6 +20,7 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ItemConversionHandler {
 
@@ -27,7 +28,7 @@ public class ItemConversionHandler {
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
 			Player player = event.player;
-			Level level = player.level;
+			Level level = player.level();
 			MinecraftServer server = level.getServer();
 			ServerLevel overworld = server.overworld();
 			if (overworld != null) {
@@ -85,7 +86,7 @@ public class ItemConversionHandler {
 			ServerLevel overworld = server.overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
-				ArrayList<Entity> entityList = new ArrayList<>(((ServerLevel) level).getEntities(EntityType.ITEM, Entity::isAlive));
+				List<Entity> entityList = new ArrayList<>(((ServerLevel) level).getEntities(EntityType.ITEM, Entity::isAlive));
 				for (Entity entity : entityList) {
 					if (entity instanceof ItemEntity item) {
 						BlockPos pos = item.blockPosition();

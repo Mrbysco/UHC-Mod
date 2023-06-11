@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "ultrahardcoremod:items/uhc_book"
+        "layer0": "ultrahardcoremod:item/uhc_book"
     }
 }

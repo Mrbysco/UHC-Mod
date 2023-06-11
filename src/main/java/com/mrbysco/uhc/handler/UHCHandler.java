@@ -12,8 +12,8 @@ import com.mrbysco.uhc.utils.PlayerHelper;
 import com.mrbysco.uhc.utils.UHCTeleporter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -138,7 +138,7 @@ public class UHCHandler {
 	public void UHCStartEventPlayer(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer()) {
 			Player player = event.player;
-			ServerLevel overworld = player.level.getServer().overworld();
+			ServerLevel overworld = player.level().getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				CompoundTag entityData = player.getPersistentData();
@@ -225,7 +225,7 @@ public class UHCHandler {
 	public void UhcEvents(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
 			Player player = event.player;
-			ServerLevel overworld = player.level.getServer().overworld();
+			ServerLevel overworld = player.level().getServer().overworld();
 			ItemStack bookStack = new ItemStack(ModRegistry.UHC_BOOK.get());
 
 			if (overworld != null) {
@@ -242,7 +242,7 @@ public class UHCHandler {
 							player.getInventory().setItem(39, editorLead());
 					}
 
-					if (!player.getInventory().getSelected().sameItem(bookStack)) {
+					if (!ItemStack.isSameItem(player.getInventory().getSelected(), bookStack)) {
 						if (!player.getInventory().contains(bookStack))
 							player.getInventory().add(bookStack);
 					}
@@ -272,7 +272,7 @@ public class UHCHandler {
 					Scoreboard scoreboard = level.getScoreboard();
 					MinecraftServer server = level.getServer();
 
-					ArrayList<PlayerTeam> teamsAlive = new ArrayList<>();
+					List<PlayerTeam> teamsAlive = new ArrayList<>();
 					for (PlayerTeam team : scoreboard.getPlayerTeams()) {
 						if (team.getPlayers().size() > 0 && team != scoreboard.getPlayerTeam("spectator")) {
 							if (teamsAlive.contains(team))
@@ -311,8 +311,8 @@ public class UHCHandler {
 								}
 
 								if (!teamsAlive.get(0).getPlayers().isEmpty() && teamsAlive.get(0).getPlayers().size() > 1) {
-									ArrayList<String> teamPlayers = new ArrayList<>(teamsAlive.get(0).getPlayers());
-									ArrayList<ServerPlayer> playersAlive = new ArrayList<>();
+									List<String> teamPlayers = new ArrayList<>(teamsAlive.get(0).getPlayers());
+									List<ServerPlayer> playersAlive = new ArrayList<>();
 
 									for (String playerName : teamPlayers) {
 										scoreboard.removePlayerFromTeam(playerName);
@@ -342,7 +342,7 @@ public class UHCHandler {
 
 		 if(!level.isClientSide) {
 		 if(event.getItemStack().getItem() == Items.FEATHER) {
-		 ArrayList<ServerPlayer> players = new ArrayList<>();
+		 List<ServerPlayer> players = new ArrayList<>();
 		 players.add((ServerPlayer)player);
 		 setupShowdownAndTeleport(level, players);
 		 }
@@ -350,7 +350,7 @@ public class UHCHandler {
 		 */
 	}
 
-	public void setupShowdownAndTeleport(Level level, ArrayList<ServerPlayer> players) {
+	public void setupShowdownAndTeleport(Level level, List<ServerPlayer> players) {
 		double centerX = 0;
 		double centerZ = 0;
 
@@ -367,10 +367,10 @@ public class UHCHandler {
 
 		for (double i = centerX1; i <= centerX2; i++) {
 			for (double j = centerZ1; j <= centerZ2; j++) {
-				level.setBlockAndUpdate(new BlockPos(i, 250, j), showdownBlock.defaultBlockState());
+				level.setBlockAndUpdate(BlockPos.containing(i, 250, j), showdownBlock.defaultBlockState());
 				if (j == centerZ1 || j == centerZ2) {
 					for (double k = 250; k <= 253; k++) {
-						level.setBlockAndUpdate(new BlockPos(i, k, j), showdownBlock.defaultBlockState());
+						level.setBlockAndUpdate(BlockPos.containing(i, k, j), showdownBlock.defaultBlockState());
 					}
 				}
 			}
@@ -378,7 +378,7 @@ public class UHCHandler {
 			if (i == centerX1 || i == centerX2) {
 				for (double j = centerZ1; j <= centerZ2; j++) {
 					for (double k = 250; k <= 253; k++) {
-						level.setBlockAndUpdate(new BlockPos(i, k, j), showdownBlock.defaultBlockState());
+						level.setBlockAndUpdate(BlockPos.containing(i, k, j), showdownBlock.defaultBlockState());
 					}
 				}
 			}
@@ -449,13 +449,13 @@ public class UHCHandler {
 	public void throwEvent(ItemTossEvent event) {
 		Entity entity = event.getEntity();
 		ItemStack stack = event.getEntity().getItem();
-		if (!entity.level.isClientSide) {
-			ServerLevel overworld = entity.level.getServer().overworld();
+		if (!entity.level().isClientSide) {
+			ServerLevel overworld = entity.level().getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 
 				if (!saveData.isUhcOnGoing()) {
-					if (stack.sameItem(new ItemStack(ModRegistry.UHC_BOOK.get()))) {
+					if (ItemStack.isSameItem(stack, new ItemStack(ModRegistry.UHC_BOOK.get()))) {
 						event.setCanceled(true);
 						event.setResult(Result.DENY);
 					}
@@ -472,7 +472,7 @@ public class UHCHandler {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 
 				if (saveData.isSpawnRoom() && !saveData.isUhcOnGoing()) {
-					ResourceKey<Level> dimensionKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, saveData.getSpawnRoomDimension());
+					ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, saveData.getSpawnRoomDimension());
 					ServerLevel dimensionWorld = event.level.getServer().getLevel(dimensionKey);
 					if (dimensionWorld != null) {
 						double centerX1 = saveData.getBorderCenterX() - 7;
@@ -485,12 +485,12 @@ public class UHCHandler {
 							double d1 = dimensionWorld.random.nextGaussian() * 0.02D;
 							double d2 = dimensionWorld.random.nextGaussian() * 0.02D;
 							for (double j = centerZ1; j <= centerZ2; j++) {
-								if (dimensionWorld.random.nextInt(10000) <= 4 && dimensionWorld.getBlockState(new BlockPos(i, 250, j)).useShapeForLightOcclusion())
+								if (dimensionWorld.random.nextInt(10000) <= 4 && dimensionWorld.getBlockState(BlockPos.containing(i, 250, j)).useShapeForLightOcclusion())
 									dimensionWorld.sendParticles(ParticleTypes.CRIT, i, 250 - 0.5, j, 3, d0, d1, d2, 0.0D);
 
 								if (j == centerZ1 || j == centerZ2) {
 									for (double k = 250; k <= 253; k++) {
-										if (dimensionWorld.random.nextInt(1000) <= 3 && dimensionWorld.getBlockState(new BlockPos(i, k, j)).useShapeForLightOcclusion())
+										if (dimensionWorld.random.nextInt(1000) <= 3 && dimensionWorld.getBlockState(BlockPos.containing(i, k, j)).useShapeForLightOcclusion())
 											dimensionWorld.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, i, k + 1.0D, j, 3, d0, d1, d2, 0.0D);
 									}
 								}
@@ -499,7 +499,7 @@ public class UHCHandler {
 							if (i == centerX1 || i == centerX2) {
 								for (double j = centerZ1; j <= centerZ2; j++) {
 									for (double k = 250; k <= 253; k++) {
-										if (dimensionWorld.random.nextInt(1000) <= 3 && dimensionWorld.getBlockState(new BlockPos(i, k, j)).useShapeForLightOcclusion())
+										if (dimensionWorld.random.nextInt(1000) <= 3 && dimensionWorld.getBlockState(BlockPos.containing(i, k, j)).useShapeForLightOcclusion())
 											dimensionWorld.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, i, k + 1.0D, j, 3, d0, d1, d2, 0.0D);
 									}
 								}
@@ -515,7 +515,7 @@ public class UHCHandler {
 	public void SpawnRoomPlayerEvent(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
 			Player player = event.player;
-			Level level = player.level;
+			Level level = player.level();
 			ServerLevel overworld = level.getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
@@ -527,13 +527,13 @@ public class UHCHandler {
 					double centerZ2 = saveData.getBorderCenterZ() + 7;
 
 					AABB hitbox = new AABB(centerX1 - 0.5f, 248 - 0.5f, centerZ1 - 0.5f, centerX2 + 0.5f, 260 + 0.5f, centerZ2 + 0.5f);
-					ArrayList<Player> collidingList = new ArrayList<>(level.getEntitiesOfClass(Player.class, hitbox));
+					List<Player> collidingList = new ArrayList<>(level.getEntitiesOfClass(Player.class, hitbox));
 
 					if (!collidingList.contains(player) && !player.isCreative() && !player.isSpectator()) {
-						if (player.level.dimension().location().equals(saveData.getSpawnRoomDimension())) {
+						if (player.level().dimension().location().equals(saveData.getSpawnRoomDimension())) {
 							((ServerPlayer) player).connection.teleport(saveData.getBorderCenterX(), 252, saveData.getBorderCenterZ(), player.getYRot(), player.getXRot());
-						} else if (!player.level.dimension().location().equals(saveData.getSpawnRoomDimension())) {
-							ResourceKey<Level> dimensionKey = ResourceKey.create(Registry.DIMENSION_REGISTRY, saveData.getSpawnRoomDimension());
+						} else if (!player.level().dimension().location().equals(saveData.getSpawnRoomDimension())) {
+							ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, saveData.getSpawnRoomDimension());
 							ServerLevel spawnRoomWorld = level.getServer().getLevel(dimensionKey);
 							if (spawnRoomWorld != null) {
 								player.changeDimension(spawnRoomWorld, new UHCTeleporter(player.blockPosition()));
@@ -552,7 +552,7 @@ public class UHCHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
 			Player player = event.player;
 			CompoundTag entityData = player.getPersistentData();
-			Level level = player.level;
+			Level level = player.level();
 
 			if (!level.isClientSide) {
 				if (!entityData.contains("canEditUHC"))
@@ -571,8 +571,8 @@ public class UHCHandler {
 	public void onNewPlayerJoin(PlayerLoggedInEvent event) {
 		Player player = event.getEntity();
 
-		if (!player.level.isClientSide) {
-			ServerLevel overworld = player.level.getServer().overworld();
+		if (!player.level().isClientSide) {
+			ServerLevel overworld = player.level().getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				ServerPlayer playerMP = (ServerPlayer) player;
@@ -587,9 +587,9 @@ public class UHCHandler {
 	@SubscribeEvent
 	public void DimensionChangeEvent(EntityTravelToDimensionEvent event) {
 		if (event.getEntity() instanceof Player player) {
-			Level level = player.level;
+			Level level = player.level();
 			if (!level.isClientSide) {
-				ServerLevel overworld = player.level.getServer().overworld();
+				ServerLevel overworld = player.level().getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					if (saveData.isUhcOnGoing()) {
@@ -611,23 +611,23 @@ public class UHCHandler {
 		CompoundTag originalData = originalPlayer.getPersistentData();
 		CompoundTag newData = newPlayer.getPersistentData();
 
-		if (!newPlayer.level.isClientSide) {
+		if (!newPlayer.level().isClientSide) {
 			originalData.putBoolean("canEditUHC", newData.getBoolean("canEditUHC"));
 
 			BlockPos deathPos = originalPlayer.blockPosition();
 			newData.putLong("deathPos", deathPos.asLong());
-			newData.putString("deathDim", originalPlayer.level.dimension().location().toString());
-			((ServerPlayer) newPlayer).setRespawnPosition(originalPlayer.level.dimension(), deathPos, originalPlayer.getYRot(), true, false);
+			newData.putString("deathDim", originalPlayer.level().dimension().location().toString());
+			((ServerPlayer) newPlayer).setRespawnPosition(originalPlayer.level().dimension(), deathPos, originalPlayer.getYRot(), true, false);
 		}
 	}
 
 	@SubscribeEvent
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		Player player = event.getEntity();
-		Level level = player.level;
+		Level level = player.level();
 		if (!level.isClientSide) {
 			Scoreboard scoreboard = level.getScoreboard();
-			ServerLevel overworld = player.level.getServer().overworld();
+			ServerLevel overworld = player.level().getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				if (saveData.isUhcOnGoing()) {
@@ -651,7 +651,7 @@ public class UHCHandler {
 						for (int i = 0; i < 10; i++) {
 							if (level.random.nextInt(10) < 3) {
 								FireworkRocketEntity rocket = new FireworkRocketEntity(level, player.getX(), player.getY() + 3, player.getZ(), getFirework(level.random));
-								player.level.addFreshEntity(rocket);
+								player.level().addFreshEntity(rocket);
 							}
 						}
 					}
@@ -671,7 +671,7 @@ public class UHCHandler {
 						for (int i = 0; i < 10; i++) {
 							if (level.random.nextInt(10) < 3) {
 								FireworkRocketEntity rocket = new FireworkRocketEntity(level, winningPlayer.getX(), winningPlayer.getY() + 3, winningPlayer.getZ(), getFirework(level.random));
-								player.level.addFreshEntity(rocket);
+								player.level().addFreshEntity(rocket);
 							}
 						}
 					}
@@ -691,7 +691,7 @@ public class UHCHandler {
 						for (int i = 0; i < 10; i++) {
 							if (level.random.nextInt(10) < 3) {
 								FireworkRocketEntity rocket = new FireworkRocketEntity(level, winningPlayer.getX(), winningPlayer.getY() + 3, winningPlayer.getZ(), getFirework(level.random));
-								player.level.addFreshEntity(rocket);
+								player.level().addFreshEntity(rocket);
 							}
 						}
 					}
@@ -743,7 +743,7 @@ public class UHCHandler {
 					scoreboard.addPlayerToTeam(player.getName().getString(), soloTeam);
 				}
 
-				UHCPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new UHCPacketMessage(saveData));
+				UHCPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), new UHCPacketMessage(saveData.save(new CompoundTag())));
 			}
 		}
 	}

@@ -85,7 +85,7 @@ public class TimedActionHandler {
 							for (ServerPlayer player : playerList) {
 								FireworkRocketEntity rocket = new FireworkRocketEntity(level, player.getX(), player.getY() + 2, player.getZ(), ItemStack.EMPTY);
 								player.playSound(SoundEvents.FIREWORK_ROCKET_LAUNCH, 1F, 1F);
-								player.level.addFreshEntity(rocket);
+								player.level().addFreshEntity(rocket);
 
 								int minutesDone = minutes * minuteAmount;
 								if (minuteAmount == 1) {

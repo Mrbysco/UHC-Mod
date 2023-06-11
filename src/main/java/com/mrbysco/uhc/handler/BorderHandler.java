@@ -123,7 +123,7 @@ public class BorderHandler {
 
 						AABB hitbox = new AABB(saveData.getBorderCenterX() - 0.5f, 0 - 0.5f, saveData.getBorderCenterZ() - 0.5f, saveData.getBorderCenterX() + 0.5f, 256 + 0.5f, saveData.getBorderCenterZ() + 0.5f)
 								.expandTowards(-20, -20, -20).expandTowards(20, 20, 20);
-						ArrayList<ServerPlayer> collidingList = new ArrayList<>(level.getEntitiesOfClass(ServerPlayer.class, hitbox));
+						List<ServerPlayer> collidingList = new ArrayList<>(level.getEntitiesOfClass(ServerPlayer.class, hitbox));
 
 						if (collidingList.isEmpty()) {
 							controlled = false;

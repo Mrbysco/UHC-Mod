@@ -63,7 +63,7 @@ public class UHCPage5Packet {
 		ctx.enqueueWork(() -> {
 			if (ctx.getDirection().getReceptionSide().isServer() && ctx.getSender() != null) {
 				ServerPlayer serverPlayer = ctx.getSender();
-				ServerLevel serverWorld = serverPlayer.getLevel();
+				ServerLevel serverWorld = serverPlayer.serverLevel();
 				ServerLevel overworld = serverPlayer.getServer().overworld();
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
@@ -102,7 +102,7 @@ public class UHCPage5Packet {
 						saveData.setSpreadRespectTeam(spreadRespectTeam);
 						saveData.setDirty();
 
-						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(serverPlayer.getUUID(), saveData));
+						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(saveData.save(new CompoundTag())));
 					} else {
 						serverPlayer.sendSystemMessage(Component.literal("You don't have permissions to edit the UHC book").withStyle(ChatFormatting.RED));
 					}

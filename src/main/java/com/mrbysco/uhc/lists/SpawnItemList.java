@@ -4,9 +4,10 @@ import com.mrbysco.uhc.lists.info.SpawnItemInfo;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SpawnItemList {
-	public static final ArrayList<SpawnItemInfo> spawnItemList = new ArrayList<>();
+	public static final List<SpawnItemInfo> spawnItemList = new ArrayList<>();
 
 	public static SpawnItemInfo spawnItem_info;
 

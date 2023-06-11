@@ -50,7 +50,7 @@ public class UHCStartPacket {
 				if (overworld != null) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);
 					CompoundTag playerData = serverPlayer.getPersistentData();
-					ServerLevel level = serverPlayer.getLevel();
+					ServerLevel level = serverPlayer.serverLevel();
 					WorldBorder border = level.getWorldBorder(); //TODO: Check if this should be using the overworld like the command does
 					MinecraftServer server = level.getServer();
 					List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
@@ -138,7 +138,7 @@ public class UHCStartPacket {
 							for (double i = centerX1; i <= centerX2; i++) {
 								for (double j = centerZ1; j <= centerZ2; j++) {
 									for (double k = 250; k <= 253; k++) {
-										level.setBlockAndUpdate(new BlockPos(i, k, j), Blocks.AIR.defaultBlockState());
+										level.setBlockAndUpdate(BlockPos.containing(i, k, j), Blocks.AIR.defaultBlockState());
 									}
 								}
 							}
@@ -147,7 +147,7 @@ public class UHCStartPacket {
 							saveData.setDirty();
 						}
 
-						saveData.setUHCDimension(serverPlayer.level.dimension().location());
+						saveData.setUHCDimension(serverPlayer.level().dimension().location());
 						saveData.setUhcStarting(true);
 						saveData.setDirty();
 					} else {

@@ -89,7 +89,7 @@ public class ScoreboardHandler {
 	public void scoreboardPlayer(TickEvent.PlayerTickEvent event) {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
 			Player player = event.player;
-			Level level = player.level;
+			Level level = player.level();
 			ServerLevel overworld = level.getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);

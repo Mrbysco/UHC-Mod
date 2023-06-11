@@ -85,7 +85,7 @@ public class UHCPacketTeam {
 	private final String teamAntiSpam = Reference.MOD_PREFIX + "team_anti_spam";
 
 	private void switchTeams(ServerPlayer serverPlayer, int maxTeamSize) {
-		Scoreboard scoreboard = serverPlayer.getLevel().getScoreboard();
+		Scoreboard scoreboard = serverPlayer.serverLevel().getScoreboard();
 		CompoundTag playerData = serverPlayer.getPersistentData();
 		PlayerTeam scorePlayerTeam = scoreboard.getPlayerTeam(team);
 		if (team.equals("solo")) {

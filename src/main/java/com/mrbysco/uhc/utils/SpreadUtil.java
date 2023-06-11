@@ -1,6 +1,5 @@
 package com.mrbysco.uhc.utils;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.network.chat.Component;
@@ -12,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.Team;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,7 +104,7 @@ public class SpreadUtil {
 
 			if (!flag) {
 				for (SpreadPosition SpreadUtil$position3 : spreadPositions) {
-					if (!SpreadUtil$position3.isSafe(level)) {
+					if (!SpreadUtil$position3.isSafe(level, 255)) {
 						SpreadUtil$position3.randomize(random, minX, minZ, maxX, maxZ);
 						flag = true;
 					}
@@ -122,7 +122,7 @@ public class SpreadUtil {
 	public static double setPlayerPositions(List<ServerPlayer> players, Level level, SpreadPosition[] spreadPositions, boolean respectTeams) {
 		double d0 = 0.0D;
 		int i = 0;
-		Map<Team, SpreadPosition> map = Maps.<Team, SpreadPosition>newHashMap();
+		Map<Team, SpreadPosition> map = new HashMap<>();
 
 		for (Entity entity : players) {
 			SpreadPosition SpreadUtil$position;
@@ -139,7 +139,7 @@ public class SpreadUtil {
 				SpreadUtil$position = spreadPositions[i++];
 			}
 
-			entity.teleportTo((double) ((float) Mth.floor(SpreadUtil$position.x) + 0.5F), (double) SpreadUtil$position.getSpawnY(level), (double) Mth.floor(SpreadUtil$position.z) + 0.5D);
+			entity.teleportTo((double) ((float) Mth.floor(SpreadUtil$position.x) + 0.5F), (double) SpreadUtil$position.getSpawnY(level, 255), (double) Mth.floor(SpreadUtil$position.z) + 0.5D);
 
 			double d2 = Double.MAX_VALUE;
 

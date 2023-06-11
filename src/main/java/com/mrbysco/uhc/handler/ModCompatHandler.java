@@ -96,9 +96,9 @@ public class ModCompatHandler {
 							BlockState state = info.getState();
 							AABB hitbox = new AABB(pos.getX() - 0.5f, 0 - 0.5f, pos.getZ() - 0.5f, pos.getX() + 0.5f, 256 + 0.5f, pos.getZ() + 0.5f)
 									.expandTowards(-50, -50, -50).expandTowards(50, 50, 50);
-							ArrayList<ServerPlayer> collidingList = new ArrayList<>(serverLevel.getEntitiesOfClass(ServerPlayer.class, hitbox));
+							List<ServerPlayer> collidingList = new ArrayList<>(serverLevel.getEntitiesOfClass(ServerPlayer.class, hitbox));
 
-							ArrayList<Monster> collidingBossMobs = new ArrayList<>(serverLevel.getEntitiesOfClass(Monster.class, hitbox));
+							List<Monster> collidingBossMobs = new ArrayList<>(serverLevel.getEntitiesOfClass(Monster.class, hitbox));
 
 							if (serverLevel.getBlockState(pos).getBlock() instanceof twilightforest.block.BossSpawnerBlock) {
 								if (!info.isSpawnerExists())

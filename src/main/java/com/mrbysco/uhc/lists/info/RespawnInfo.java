@@ -4,10 +4,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.scores.Team;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RespawnInfo {
 	private final BlockState state;
-	public final ArrayList<Team> teamsReached;
+	public final List<Team> teamsReached;
 	public boolean spawnerExists;
 	public boolean bossExists;
 

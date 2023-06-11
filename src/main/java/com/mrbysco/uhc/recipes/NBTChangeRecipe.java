@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mrbysco.uhc.UltraHardCoremod;
 import com.mrbysco.uhc.registry.ModRecipes;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
@@ -40,15 +41,15 @@ public class NBTChangeRecipe implements Recipe<Container> {
 		return false;
 	}
 
-	public ItemStack assemble(Container inventory) {
-		return getResultItem();
+	public ItemStack assemble(Container inventory, RegistryAccess access) {
+		return getResultItem(access).copy();
 	}
 
 	public boolean canCraftInDimensions(int x, int y) {
 		return false;
 	}
 
-	public ItemStack getResultItem() {
+	public ItemStack getResultItem(RegistryAccess access) {
 		return ItemStack.EMPTY;
 	}
 

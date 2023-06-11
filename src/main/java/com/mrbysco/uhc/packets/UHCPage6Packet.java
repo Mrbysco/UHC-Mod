@@ -46,7 +46,7 @@ public class UHCPage6Packet {
 						saveData.setGraceTime(graceTime);
 						saveData.setDirty();
 
-						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(serverPlayer.getUUID(), saveData));
+						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(saveData.save(new CompoundTag())));
 					} else {
 						serverPlayer.sendSystemMessage(Component.literal("You don't have permissions to edit the UHC book").withStyle(ChatFormatting.RED));
 					}

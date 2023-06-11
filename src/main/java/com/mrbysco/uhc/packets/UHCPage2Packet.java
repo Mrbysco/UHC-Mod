@@ -71,7 +71,7 @@ public class UHCPage2Packet {
 						saveData.setShrinkMode(shrinkMode);
 						saveData.setDirty();
 
-						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(serverPlayer.getUUID(), saveData));
+						UHCPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new UHCPacketMessage(serverPlayer.getUUID(), saveData.save(new CompoundTag())));
 					} else {
 						serverPlayer.sendSystemMessage(Component.literal("You don't have permissions to edit the UHC book").withStyle(ChatFormatting.RED));
 					}

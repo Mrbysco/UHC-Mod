@@ -66,7 +66,7 @@ public class GraceHandler {
 
 	@SubscribeEvent
 	public void graceTimerEvent(LivingAttackEvent event) {
-		Level level = event.getEntity().level;
+		Level level = event.getEntity().level();
 		if (!level.isClientSide) {
 			MinecraftServer server = level.getServer();
 			ServerLevel overworld = server.overworld();
@@ -86,7 +86,7 @@ public class GraceHandler {
 
 	@SubscribeEvent
 	public void graceTimerEvent(LivingHurtEvent event) {
-		Level level = event.getEntity().level;
+		Level level = event.getEntity().level();
 		if (!level.isClientSide) {
 			MinecraftServer server = level.getServer();
 			ServerLevel overworld = server.overworld();

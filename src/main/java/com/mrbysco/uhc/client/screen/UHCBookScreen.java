@@ -284,7 +284,7 @@ public class UHCBookScreen extends Screen {
 			this.updateButtons();
 		}));
 		this.colorButtons[16] = this.addRenderableWidget(new ColorButton(i + 43 + 15, j + 70, 56, 10, i + 92, j + 71, 0xFFAAAAAA,
-				Component.translatable("color.random.name"), false, true, (button) -> {
+				Component.translatable("color.random"), false, true, (button) -> {
 			sendTeamRandomizerPacket();
 			this.updateButtons();
 		}));

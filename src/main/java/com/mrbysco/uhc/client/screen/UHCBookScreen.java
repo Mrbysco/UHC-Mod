@@ -25,13 +25,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.PageButton;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.player.Player;
@@ -298,11 +299,13 @@ public class UHCBookScreen extends Screen {
 			sendPage1Packet();
 			this.updateButtons();
 		}));
+		this.resetRandButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.resetTeamSizeButton = this.addRenderableWidget(new ResetButton(i + 43 + 94, j + 99, (button) -> {
 			maxTeamSize = -1;
 			sendPage1Packet();
 			this.updateButtons();
 		}));
+		this.resetTeamSizeButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.collisionButton = this.addRenderableWidget(new BooleanButton(i + 43 + 74, j + 113, saveData.isTeamCollision(), (button) -> {
 			boolean flag = saveData.isTeamCollision();
 			teamCollision = !flag;
@@ -321,16 +324,19 @@ public class UHCBookScreen extends Screen {
 			sendPage2Packet();
 			this.updateButtons();
 		}));
+		this.resetBorderSizeButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.resetBorderCenterXButton = this.addRenderableWidget(new ResetButton(i + 43 + 92, j + 60, (button) -> {
 			borderCenterX = originalBorderCenterX;
 			sendPage2Packet();
 			this.updateButtons();
 		}));
+		this.resetBorderCenterXButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.resetBorderCenterZButton = this.addRenderableWidget(new ResetButton(i + 43 + 92, j + 74, (button) -> {
 			borderCenterZ = originalBorderCenterZ;
 			sendPage2Packet();
 			this.updateButtons();
 		}));
+		this.resetBorderCenterZButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.centerCurrentXButton = this.addRenderableWidget(new LocationButton(i + 43 + 76, j + 60, (button) -> {
 			double playerX = editingPlayer.getX();
 			borderCenterX = playerX;
@@ -354,16 +360,19 @@ public class UHCBookScreen extends Screen {
 			sendPage2Packet();
 			this.updateButtons();
 		}));
+		this.resetShrinkTimerButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.resetShrinkSizeButton = this.addRenderableWidget(new ResetButton(i + 43 + 92, j + 116, (button) -> {
 			shrinkSize = 256;
 			sendPage2Packet();
 			this.updateButtons();
 		}));
+		this.resetShrinkSizeButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.resetShrinkOverTimeButton = this.addRenderableWidget(new ResetButton(i + 43 + 92, j + 128, (button) -> {
 			shrinkOvertime = 60;
 			sendPage2Packet();
 			this.updateButtons();
 		}));
+		this.resetShrinkOverTimeButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.shrinkModeButton = this.addRenderableWidget(new TextButton(i + 43 + 31, j + 140,
 				Component.literal(saveData.getShrinkMode()), minecraft, (button) -> {
 			if (saveData.getShrinkMode().equals("Shrink")) {
@@ -403,11 +412,13 @@ public class UHCBookScreen extends Screen {
 			sendPage3Packet();
 			this.updateButtons();
 		}));
+		this.resetTimeLockTimerButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.resetMinuteMarkTimerButton = this.addRenderableWidget(new ResetButton(i + 43 + 80, j + 77, (button) -> {
 			minuteMarkTime = 30;
 			sendPage3Packet();
 			this.updateButtons();
 		}));
+		this.resetMinuteMarkTimerButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.minuteMarkButton = this.addRenderableWidget(new BooleanButton(i + 43 + 60, j + 64, saveData.isMinuteMark(), (button) -> {
 			boolean flag = saveData.isMinuteMark();
 			minuteMark = !flag;
@@ -425,6 +436,7 @@ public class UHCBookScreen extends Screen {
 			sendPage3Packet();
 			this.updateButtons();
 		}));
+		this.resetNameTimerButton.setTooltip(Tooltip.create(Reference.resetString));
 		this.glowButton = this.addRenderableWidget(new BooleanButton(i + 43 + 60, j + 119, saveData.isTimedGlow(), (button) -> {
 			boolean flag = saveData.isTimedGlow();
 			timedGlow = !flag;
@@ -436,6 +448,7 @@ public class UHCBookScreen extends Screen {
 			sendPage3Packet();
 			this.updateButtons();
 		}));
+		this.resetGlowTimerButton.setTooltip(Tooltip.create(Reference.resetString));
 
 
 		this.healthTabButton = this.addRenderableWidget(new BooleanButton(i + 43 + 90, j + 109, saveData.isHealthInTab(), (button) -> {
@@ -570,19 +583,19 @@ public class UHCBookScreen extends Screen {
 		setupField(difficultyField, 1, 0xFFFFAA00, String.valueOf(saveData.getDifficulty()));
 
 		shrinkTimerField = new NumberEditbox(font, i + 43 + 52, j + 107, 32, 8, Component.empty(), 0);
-		setupField(shrinkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkTimer()));
+		setupField(shrinkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkTimer()), Reference.minuteMessageString);
 
 		shrinkSizeField = new NumberEditbox(font, i + 43 + 28, j + 118, 32, 8, Component.empty(), 0);
 		setupField(shrinkSizeField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkSize()));
 
 		shrinkOvertimeField = new NumberEditbox(font, i + 43 + 32, j + 129, 32, 8, Component.empty(), 0);
-		setupField(shrinkOvertimeField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkOvertime()));
+		setupField(shrinkOvertimeField, 4, 0xFFFFAA00, String.valueOf(saveData.getShrinkOvertime()), Reference.minuteMessageString);
 
 		timeLockTimerField = new NumberEditbox(font, i + 43 + 52, j + 41, 32, 8, Component.empty(), 0);
-		setupField(timeLockTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getTimeLockTimer()));
+		setupField(timeLockTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getTimeLockTimer()), Reference.minuteMessageString);
 
 		minMarkTimerField = new NumberEditbox(font, i + 43 + 38, j + 80, 32, 8, Component.empty(), 0);
-		setupField(minMarkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getMinuteMarkTime()));
+		setupField(minMarkTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getMinuteMarkTime()), Reference.minuteMessageString);
 
 		nameTimerField = new NumberEditbox(font, i + 43 + 38, j + 106, 32, 8, Component.empty(), 0);
 		setupField(nameTimerField, 4, 0xFFFFAA00, String.valueOf(saveData.getNameTimer()));
@@ -668,6 +681,18 @@ public class UHCBookScreen extends Screen {
 
 		this.graceEnabled = saveData.isGraceEnabled();
 		this.graceTime = saveData.getGraceTime();
+	}
+
+	public void setupField(NumberEditbox field, int maxLength, int textColor, String initialValue,
+						   Component tooltipComponent) {
+		field.setFocused(false);
+		field.setCanLoseFocus(true);
+		field.setMaxLength(maxLength);
+		field.setValue(initialValue);
+		field.setBordered(false);
+		field.setTextColor(textColor);
+		field.setTooltip(Tooltip.create(tooltipComponent));
+		textBoxList.add(field);
 	}
 
 	public void setupField(NumberEditbox field, int maxLength, int textColor, String initialValue) {
@@ -781,6 +806,25 @@ public class UHCBookScreen extends Screen {
 
 			if (!shrinkModeButton.getMessage().getString().equals(saveData.getShrinkMode()))
 				shrinkModeButton.setMessage(Component.literal(saveData.getShrinkMode()));
+
+			if (shrinkModeButton.visible && shrinkModeButton.isHoveredOrFocused()) {
+				Component ShrinkMode = Component.literal(saveData.getShrinkMode());
+				if (ShrinkMode.getString().equals("Shrink")) {
+					MutableComponent shrinkComponent = Component.translatable("book.uhc.explain.shrinkmodeshrink").append("\n")
+							.append(Component.translatable("book.uhc.explain.shrinkmodeshrink2"));
+					shrinkModeButton.setTooltip(Tooltip.create(shrinkComponent));
+				}
+				if (ShrinkMode.getString().equals("Arena")) {
+					MutableComponent arenaComponent = Component.translatable("book.uhc.explain.shrinkmodearena")
+							.append(Component.translatable("book.uhc.explain.shrinkmodearena2"));
+					shrinkModeButton.setTooltip(Tooltip.create(arenaComponent));
+				}
+				if (ShrinkMode.getString().equals("Control")) {
+					MutableComponent controlComponent = Component.translatable("book.uhc.explain.shrinkmodecontrol")
+							.append(Component.translatable("book.uhc.explain.shrinkmodecontrol2"));
+					shrinkModeButton.setTooltip(Tooltip.create(controlComponent));
+				}
+			}
 		}
 
 		if (this.currPage == 2) {
@@ -792,6 +836,12 @@ public class UHCBookScreen extends Screen {
 
 			if (!timeModeButton.getMessage().getString().equals(saveData.getTimeMode()))
 				timeModeButton.setMessage(Component.literal(saveData.getTimeMode()));
+
+			Component TimeMode = Component.literal(saveData.getTimeMode());
+			if (TimeMode.getString().equals("Day"))
+				timeModeButton.setTooltip(Tooltip.create(Reference.timeModeDayText));
+			if (TimeMode.getString().equals("Night"))
+				timeModeButton.setTooltip(Tooltip.create(Reference.timeModeNightText));
 
 			if (minuteMarkButton.getBoolean() != saveData.isMinuteMark())
 				minuteMarkButton.setBoolean(saveData.isMinuteMark());
@@ -984,46 +1034,13 @@ public class UHCBookScreen extends Screen {
 
 		int i = (this.width - 192) / 2;
 		int j = 2;
-		guiGraphics.blit(BookViewScreen.BOOK_LOCATION, i, 2, 0, 0, 192, 192);
+		guiGraphics.blit(BOOK_TEXTURE, i, 2, 0, 0, 192, 192);
 
 		String s4 = I18n.get("book.pageIndicator", this.currPage + 1, this.bookTotalPages);
 
 		int j1 = this.font.width(s4);
 		guiGraphics.drawString(font, s4, i - j1 + 192 - 44, 18, 0, false);
 
-		List<FormattedCharSequence> ShrinkModeShrink = new ArrayList<>();
-		ShrinkModeShrink.add(Component.translatable("book.uhc.explain.shrinkmodeshrink").getVisualOrderText());
-		ShrinkModeShrink.add(Component.translatable("book.uhc.explain.shrinkmodeshrink2").getVisualOrderText());
-		List<FormattedCharSequence> ShrinkModeArena = new ArrayList<>();
-		ShrinkModeArena.add(Component.translatable("book.uhc.explain.shrinkmodearena").getVisualOrderText());
-		ShrinkModeArena.add(Component.translatable("book.uhc.explain.shrinkmodearena2").getVisualOrderText());
-		List<FormattedCharSequence> ShrinkModeControl = new ArrayList<>();
-		ShrinkModeControl.add(Component.translatable("book.uhc.explain.shrinkmodecontrol").getVisualOrderText());
-		ShrinkModeControl.add(Component.translatable("book.uhc.explain.shrinkmodecontrol2").getVisualOrderText());
-
-		final Component minuteMessageString = Component.translatable("book.uhc.option.minutes");
-		final Component locationString = Component.translatable("book.uhc.option.location");
-		final Component resetString = Component.translatable("book.uhc.option.reset");
-		final Component TimeLockString = Component.translatable("book.uhc.option.timelock");
-		final Component minMarkString = Component.translatable("book.uhc.option.minmark");
-		final Component timedNameString = Component.translatable("book.uhc.option.timedname");
-		final Component timedGlowString = Component.translatable("book.uhc.option.timedglow");
-		final Component timeModeDayText = Component.translatable("book.uhc.option.timemodeday");
-		final Component timeModeNightText = Component.translatable("book.uhc.option.timemodenight");
-		final Component netherTravelString = Component.translatable("book.uhc.option.nether");
-		final Component regenPotionsString = Component.translatable("book.uhc.option.regenpotion");
-		final Component level2PotionsString = Component.translatable("book.uhc.option.level2potion");
-		final Component notchApplesString = Component.translatable("book.uhc.option.notchapples");
-		final Component autoCookString = Component.translatable("book.uhc.option.autocook");
-		final Component itemConvertString = Component.translatable("book.uhc.option.convertion");
-
-		final Component weatherString = Component.translatable("book.uhc.option.weather");
-		final Component mobGriefingString = Component.translatable("book.uhc.option.mobgriefing");
-		final Component customHealthString = Component.translatable("book.uhc.option.customhealth");
-		final Component randomSpawnString = Component.translatable("book.uhc.option.randomspawns");
-		final Component spreadDistanceString = Component.translatable("book.uhc.option.spreaddistance");
-		final Component spreadMaxRangeString = Component.translatable("book.uhc.option.spreadrange");
-		final Component spreadRespectTeamString = Component.translatable("book.uhc.option.spreadteams");
 		//TODO: Check if we can use .setTooltip instead of manually drawing the tooltip upon hover
 
 		final Component graceString = Component.translatable("book.uhc.option.grace");
@@ -1100,17 +1117,10 @@ public class UHCBookScreen extends Screen {
 
 			Component ShrinkModeString = Component.translatable("book.uhc.option.shrinkmode");
 			guiGraphics.drawString(this.font, ShrinkModeString, i + 44, j + 140, 0xFF555555, false);
-
-			boolean flag = hoverBoolean(mouseX, mouseY, shrinkTimerField.getX(), shrinkTimerField.getY(),
-					shrinkTimerField.getWidth(), shrinkTimerField.getHeight());
-			boolean flag1 = hoverBoolean(mouseX, mouseY, shrinkOvertimeField.getX(), shrinkOvertimeField.getY(),
-					shrinkOvertimeField.getWidth(), shrinkOvertimeField.getHeight());
-			if ((flag && !shrinkTimerField.isFocused()) || (flag1 && !shrinkOvertimeField.isFocused()))
-				guiGraphics.drawCenteredString(font, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 		}
 
 		if (this.currPage == 2) {
-			guiGraphics.drawString(this.font, TimeLockString, i + 38, j + 28, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.TimeLockString, i + 38, j + 28, 0xFF555555, false);
 			timeLockTimerField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
 			Component TimeLockTimerString = Component.translatable("book.uhc.option.timelocktimer");
@@ -1119,44 +1129,37 @@ public class UHCBookScreen extends Screen {
 			Component TimeLockModeString = Component.translatable("book.uhc.option.timelockmode");
 			guiGraphics.drawString(this.font, TimeLockModeString, i + 44, j + 53, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, minMarkString, i + 38, j + 68, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.minMarkString, i + 38, j + 68, 0xFF555555, false);
 
 			Component minMarkTimerString = Component.translatable("book.uhc.option.minmarktime");
 			guiGraphics.drawString(this.font, minMarkTimerString, i + 44, j + 80, 0xFF555555, false);
 			minMarkTimerField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-			guiGraphics.drawString(this.font, timedNameString, i + 38, j + 94, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.timedNameString, i + 38, j + 94, 0xFF555555, false);
 
 			Component timedNameTimerString = Component.translatable("book.uhc.option.timednametime");
 			guiGraphics.drawString(this.font, timedNameTimerString, i + 44, j + 106, 0xFF555555, false);
 			nameTimerField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-			guiGraphics.drawString(this.font, timedGlowString, i + 38, j + 122, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.timedGlowString, i + 38, j + 122, 0xFF555555, false);
 
 			Component timedGlowStringTimerString = Component.translatable("book.uhc.option.timedglowtime");
 			guiGraphics.drawString(this.font, timedGlowStringTimerString, i + 44, j + 134, 0xFF555555, false);
 			glowTimerField.render(guiGraphics, mouseX, mouseY, partialTicks);
-
-			boolean flag = hoverBoolean(mouseX, mouseY, timeLockTimerField.getX(), timeLockTimerField.getY(),
-					timeLockTimerField.getWidth(), timeLockTimerField.getHeight());
-			boolean flag1 = hoverBoolean(mouseX, mouseY, minMarkTimerField.getX(), minMarkTimerField.getY(),
-					minMarkTimerField.getWidth(), minMarkTimerField.getHeight());
-			if ((flag && !timeLockTimerField.isFocused()) || (flag1 && !minMarkTimerField.isFocused()))
-				guiGraphics.drawCenteredString(font, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 		}
 
 		if (this.currPage == 3) {
-			guiGraphics.drawString(this.font, regenPotionsString, i + 38, j + 28, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.regenPotionsString, i + 38, j + 28, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, level2PotionsString, i + 38, j + 40, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.level2PotionsString, i + 38, j + 40, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, notchApplesString, i + 38, j + 52, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.notchApplesString, i + 38, j + 52, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, autoCookString, i + 38, j + 68, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.autoCookString, i + 38, j + 68, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, itemConvertString, i + 38, j + 80, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.itemConvertString, i + 38, j + 80, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, netherTravelString, i + 38, j + 98, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.netherTravelString, i + 38, j + 98, 0xFF555555, false);
 
 			Component healthInTabString = Component.translatable("book.uhc.option.healthtab");
 			guiGraphics.drawString(this.font, healthInTabString, i + 38, j + 114, 0xFF555555, false);
@@ -1169,25 +1172,25 @@ public class UHCBookScreen extends Screen {
 		}
 
 		if (this.currPage == 4) {
-			guiGraphics.drawString(this.font, weatherString, i + 38, j + 28, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.weatherString, i + 38, j + 28, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, mobGriefingString, i + 38, j + 40, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.mobGriefingString, i + 38, j + 40, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, customHealthString, i + 38, j + 57, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.customHealthString, i + 38, j + 57, 0xFF555555, false);
 
 			Component healthMaxString = Component.translatable("book.uhc.option.maxhealth");
 			guiGraphics.drawString(this.font, healthMaxString, i + 44, j + 69, 0xFF555555, false);
 			maxHealthField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-			guiGraphics.drawString(this.font, randomSpawnString, i + 38, j + 86, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.randomSpawnString, i + 38, j + 86, 0xFF555555, false);
 
-			guiGraphics.drawString(this.font, spreadDistanceString, i + 44, j + 98, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.spreadDistanceString, i + 44, j + 98, 0xFF555555, false);
 			spreadDistanceField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-			guiGraphics.drawString(this.font, spreadMaxRangeString, i + 44, j + 110, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.spreadMaxRangeString, i + 44, j + 110, 0xFF555555, false);
 			spreadMaxRangeField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-			guiGraphics.drawString(this.font, spreadRespectTeamString, i + 44, j + 122, 0xFF555555, false);
+			guiGraphics.drawString(this.font, Reference.spreadRespectTeamString, i + 44, j + 122, 0xFF555555, false);
 
 			Component healthExplain = Component.translatable("book.uhc.explain.healthExplain");
 			boolean flag2 = hoverBoolean(mouseX, mouseY, maxHealthField.getX(), maxHealthField.getY(),
@@ -1203,35 +1206,9 @@ public class UHCBookScreen extends Screen {
 
 			Component GraceTimerString = Component.translatable("book.uhc.option.gracetimer");
 			guiGraphics.drawString(this.font, GraceTimerString, i + 44, j + 41, 0xFF555555, false);
-
-			boolean flag = hoverBoolean(mouseX, mouseY, graceTimeField.getX(), graceTimeField.getY(),
-					graceTimeField.getWidth(), graceTimeField.getHeight());
-			if (flag && !timeLockTimerField.isFocused())
-				guiGraphics.drawCenteredString(font, minuteMessageString, mouseX, mouseY + 5, 0xFFFF5555);
 		}
 
-		if (shrinkModeButton.visible && shrinkModeButton.isHoveredOrFocused()) {
-			Component ShrinkMode = Component.literal(saveData.getShrinkMode());
-			if (ShrinkMode.getString().equals("Shrink")) {
-				guiGraphics.renderTooltip(this.font, ShrinkModeShrink, mouseX, mouseY);
-			}
-			if (ShrinkMode.getString().equals("Arena")) {
-				guiGraphics.renderTooltip(this.font, ShrinkModeArena, mouseX, mouseY);
-			}
-			if (ShrinkMode.getString().equals("Control")) {
-				guiGraphics.renderTooltip(this.font, ShrinkModeControl, mouseX, mouseY);
-			}
-		}
-
-		if (timeModeButton.visible && timeModeButton.isHoveredOrFocused()) {
-			Component TimeMode = Component.literal(saveData.getTimeMode());
-			if (TimeMode.getString().equals("Day"))
-				guiGraphics.renderTooltip(this.font, timeModeDayText, mouseX, mouseY);
-			if (TimeMode.getString().equals("Night"))
-				guiGraphics.renderTooltip(this.font, timeModeNightText, mouseX, mouseY);
-		}
-
-		if (this.currPage == 2 && hoverBoolean(mouseX, mouseY, i + 38, j + 28, font.width(TimeLockString), font.lineHeight)) {
+		if (this.currPage == 2 && hoverBoolean(mouseX, mouseY, i + 38, j + 28, font.width(Reference.TimeLockString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, Component.translatable("book.uhc.explain.timelock"), mouseX, mouseY);
 		}
 
@@ -1245,13 +1222,13 @@ public class UHCBookScreen extends Screen {
 		timedGlowExplain.add(Component.translatable("book.uhc.explain.timeglow").getVisualOrderText());
 		timedGlowExplain.add(Component.translatable("book.uhc.explain.timeglow2").getVisualOrderText());
 
-		if (this.currPage == 2 && hoverBoolean(mouseX, mouseY, i + 38, j + 68, font.width(minMarkString), font.lineHeight)) {
+		if (this.currPage == 2 && hoverBoolean(mouseX, mouseY, i + 38, j + 68, font.width(Reference.minMarkString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, MinuteMarkExplain, mouseX, mouseY);
 		}
-		if (this.currPage == 2 && hoverBoolean(mouseX, mouseY, i + 38, j + 94, font.width(timedNameString), font.lineHeight)) {
+		if (this.currPage == 2 && hoverBoolean(mouseX, mouseY, i + 38, j + 94, font.width(Reference.timedNameString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, timedNameExplain, mouseX, mouseY);
 		}
-		if (this.currPage == 2 && hoverBoolean(mouseX, mouseY, i + 38, j + 122, font.width(timedGlowString), font.lineHeight)) {
+		if (this.currPage == 2 && hoverBoolean(mouseX, mouseY, i + 38, j + 122, font.width(Reference.timedGlowString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, timedGlowExplain, mouseX, mouseY);
 		}
 
@@ -1265,13 +1242,13 @@ public class UHCBookScreen extends Screen {
 		notchApplesExplain.add(Component.translatable("book.uhc.explain.notchapple").getVisualOrderText());
 		notchApplesExplain.add(Component.translatable("book.uhc.explain.notchapple2").getVisualOrderText());
 
-		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 28, font.width(regenPotionsString), font.lineHeight)) {
+		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 28, font.width(Reference.regenPotionsString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, regenPotionExplain, mouseX, mouseY);
 		}
-		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 40, font.width(level2PotionsString), font.lineHeight)) {
+		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 40, font.width(Reference.level2PotionsString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, level2PotionExplain, mouseX, mouseY);
 		}
-		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 52, font.width(notchApplesString), font.lineHeight)) {
+		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 52, font.width(Reference.notchApplesString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, notchApplesExplain, mouseX, mouseY);
 		}
 
@@ -1286,46 +1263,46 @@ public class UHCBookScreen extends Screen {
 		itemConvertExplain.add(Component.translatable("book.uhc.explain.itemconvert3").getVisualOrderText());
 		itemConvertExplain.add(Component.translatable("book.uhc.explain.itemconvert4").getVisualOrderText());
 		itemConvertExplain.add(Component.translatable("book.uhc.explain.itemconvert5").getVisualOrderText());
-		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 68, font.width(autoCookString), font.lineHeight)) {
+		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 68, font.width(Reference.autoCookString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, autoSmeltExplain, mouseX, mouseY);
 		}
-		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 80, font.width(itemConvertString), font.lineHeight)) {
+		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 38, j + 80, font.width(Reference.itemConvertString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, itemConvertExplain, mouseX, mouseY);
 		}
 
 		Component netherTravelExplain = Component.translatable("book.uhc.explain.nether");
-		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 35, j + 98, font.width(netherTravelString), font.lineHeight)) {
+		if (this.currPage == 3 && hoverBoolean(mouseX, mouseY, i + 35, j + 98, font.width(Reference.netherTravelString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, netherTravelExplain, mouseX, mouseY);
 		}
 
 		Component weatherExplain = Component.translatable("book.uhc.explain.weather");
-		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 38, j + 28, font.width(weatherString), font.lineHeight)) {
+		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 38, j + 28, font.width(Reference.weatherString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, weatherExplain, mouseX, mouseY);
 		}
 		Component mobGriefingExplain = Component.translatable("book.uhc.explain.mobgriefing");
-		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 38, j + 40, font.width(mobGriefingString), font.lineHeight)) {
+		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 38, j + 40, font.width(Reference.mobGriefingString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, mobGriefingExplain, mouseX, mouseY);
 		}
 		Component customHealthExplain = Component.translatable("book.uhc.explain.customhealth");
-		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 38, j + 57, font.width(customHealthString), font.lineHeight)) {
+		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 38, j + 57, font.width(Reference.customHealthString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, customHealthExplain, mouseX, mouseY);
 		}
 		List<FormattedCharSequence> randomSpawnsExplain = new ArrayList<>();
 		randomSpawnsExplain.add(Component.translatable("book.uhc.explain.randomspawns").getVisualOrderText());
 		randomSpawnsExplain.add(Component.translatable("book.uhc.explain.randomspawns2").getVisualOrderText());
-		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 38, j + 86, font.width(randomSpawnString), font.lineHeight)) {
+		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 38, j + 86, font.width(Reference.randomSpawnString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, randomSpawnsExplain, mouseX, mouseY);
 		}
 		Component spreadDistanceExplain = Component.translatable("book.uhc.explain.spreaddistance");
-		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 44, j + 98, font.width(spreadDistanceString), font.lineHeight)) {
+		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 44, j + 98, font.width(Reference.spreadDistanceString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, spreadDistanceExplain, mouseX, mouseY);
 		}
 		Component spreadMaxRangeExplain = Component.translatable("book.uhc.explain.spreadrange");
-		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 44, j + 110, font.width(spreadMaxRangeString), font.lineHeight)) {
+		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 44, j + 110, font.width(Reference.spreadMaxRangeString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, spreadMaxRangeExplain, mouseX, mouseY);
 		}
 		Component spreadRespectTeamExplain = Component.translatable("book.uhc.explain.spreadteams");
-		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 44, j + 122, font.width(spreadRespectTeamString), font.lineHeight)) {
+		if (this.currPage == 4 && hoverBoolean(mouseX, mouseY, i + 44, j + 122, font.width(Reference.spreadRespectTeamString), font.lineHeight)) {
 			guiGraphics.renderTooltip(this.font, spreadRespectTeamExplain, mouseX, mouseY);
 		}
 		List<FormattedCharSequence> gracePeriodExplain = new ArrayList<>();

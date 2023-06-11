@@ -1,8 +1,8 @@
 package com.mrbysco.uhc.client.screen.widget;
 
+import com.mrbysco.uhc.client.screen.UHCBookScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.network.chat.Component;
 
 public class StartButton extends Button {
@@ -20,7 +20,7 @@ public class StartButton extends Button {
 		if (this.isMouseOver(mouseX, mouseY))
 			textureX += 85;
 
-		guiGraphics.blit(BookViewScreen.BOOK_LOCATION, getX(), getY(), textureX, textureY, 85, 22);
+		guiGraphics.blit(UHCBookScreen.BOOK_TEXTURE, getX(), getY(), textureX, textureY, 85, 22);
 		if (this.isHoveredOrFocused()) {
 //				this.renderToolTip(guiGraphics, mouseX, mouseY);
 		}

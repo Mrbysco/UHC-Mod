@@ -1,9 +1,9 @@
 package com.mrbysco.uhc.client.screen.widget;
 
 import com.mrbysco.uhc.Reference;
+import com.mrbysco.uhc.client.screen.UHCBookScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -34,7 +34,7 @@ public class LockButton extends Button {
 		if (!lockValue)
 			textureX += 16;
 
-		guiGraphics.blit(BookViewScreen.BOOK_LOCATION, getX(), getY(), textureX, textureY, 15, 13);
+		guiGraphics.blit(UHCBookScreen.BOOK_TEXTURE, getX(), getY(), textureX, textureY, 15, 13);
 		if (this.isHoveredOrFocused()) {
 //			this.renderToolTip(guiGraphics, mouseX, mouseY);
 		}

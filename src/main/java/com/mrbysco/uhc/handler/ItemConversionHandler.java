@@ -26,9 +26,9 @@ public class ItemConversionHandler {
 
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Player player = event.player;
-			Level level = player.level();
+		Player player = event.player;
+		Level level = player.level();
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			MinecraftServer server = level.getServer();
 			ServerLevel overworld = server.overworld();
 			if (overworld != null) {
@@ -80,8 +80,8 @@ public class ItemConversionHandler {
 
 	@SubscribeEvent
 	public void onWorldTick(TickEvent.LevelTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Level level = event.level;
+		Level level = event.level;
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			MinecraftServer server = level.getServer();
 			ServerLevel overworld = server.overworld();
 			if (overworld != null) {

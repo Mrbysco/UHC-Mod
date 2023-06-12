@@ -21,8 +21,8 @@ public class GraceHandler {
 
 	@SubscribeEvent
 	public void graceTimerEvent(TickEvent.LevelTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer()) {
-			Level level = event.level;
+		Level level = event.level;
+		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			MinecraftServer server = level.getServer();
 			ServerLevel overworld = server.overworld();
 			if (overworld != null) {

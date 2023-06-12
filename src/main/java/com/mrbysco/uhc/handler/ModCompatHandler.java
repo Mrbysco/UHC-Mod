@@ -41,7 +41,9 @@ public class ModCompatHandler {
 
 	@SubscribeEvent
 	public void TwilightHandler(TickEvent.LevelTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && ModList.get().isLoaded("twilightforest")) {
+		Level level = event.level;
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() &&
+				level.dimension().equals(Level.OVERWORLD) && ModList.get().isLoaded("twilightforest")) {
 			ServerLevel serverLevel = (ServerLevel) event.level;
 
 			Scoreboard scoreboard = serverLevel.getScoreboard();

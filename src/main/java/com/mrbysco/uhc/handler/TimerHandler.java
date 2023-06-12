@@ -21,10 +21,10 @@ public class TimerHandler {
 
 	@SubscribeEvent
 	public void timerEvent(TickEvent.LevelTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer()) {
-			Level level = event.level;
-			ServerLevel overworld = level.getServer().overworld();
-			if (overworld != null && level.getGameTime() % 20 == 0) {
+		Level level = event.level;
+		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
+			if (level.getGameTime() % 20 == 0) {
+				ServerLevel overworld = (ServerLevel) level;
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);
 				MinecraftServer server = level.getServer();

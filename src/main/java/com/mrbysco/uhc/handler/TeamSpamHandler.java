@@ -2,6 +2,8 @@ package com.mrbysco.uhc.handler;
 
 import com.mrbysco.uhc.Reference;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
@@ -20,9 +22,9 @@ public class TeamSpamHandler {
 
 	@SubscribeEvent
 	public void teamSpamProtectionEvent(TickEvent.PlayerTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Player player = event.player;
-			Level level = player.level();
+		Player player = event.player;
+		Level level = player.level();
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			CompoundTag playerData = player.getPersistentData();
 
 			if (playerData.getBoolean(teamAntiSpam)) {

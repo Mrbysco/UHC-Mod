@@ -26,10 +26,10 @@ import java.util.List;
 public class TimedActionHandler {
 	@SubscribeEvent
 	public void ScoreboardStuff(TickEvent.LevelTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Level level = event.level;
+		Level level = event.level;
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
+			ServerLevel overworld = (ServerLevel) level;
 			MinecraftServer server = level.getServer();
-			ServerLevel overworld = level.getServer().overworld();
 			if (server != null && overworld != null) {
 				List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 				Scoreboard scoreboard = level.getScoreboard();

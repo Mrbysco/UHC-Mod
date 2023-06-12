@@ -26,8 +26,8 @@ public class GameRuleHandler {
 
 	@SubscribeEvent
 	public void GameRules(TickEvent.LevelTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Level level = event.level;
+		Level level = event.level;
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			MinecraftServer server = level.getServer();
 			GameRules rules = server.getGameRules();
 			ServerLevel overworld = server.overworld();

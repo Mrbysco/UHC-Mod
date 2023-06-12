@@ -21,8 +21,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class ScoreboardHandler {
 	@SubscribeEvent
 	public void ScoreboardStuff(TickEvent.LevelTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Level level = event.level;
+		Level level = event.level;
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			ServerLevel overworld = level.getServer().overworld();
 			if (overworld != null) {
 				Scoreboard scoreboard = level.getScoreboard();
@@ -87,9 +87,9 @@ public class ScoreboardHandler {
 
 	@SubscribeEvent
 	public void scoreboardPlayer(TickEvent.PlayerTickEvent event) {
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer()) {
-			Player player = event.player;
-			Level level = player.level();
+		Player player = event.player;
+		Level level = player.level();
+		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			ServerLevel overworld = level.getServer().overworld();
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);

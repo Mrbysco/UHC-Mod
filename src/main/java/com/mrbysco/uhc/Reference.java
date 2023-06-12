@@ -33,9 +33,9 @@ public class Reference {
 
 	public static final Component shrinkTooltip = Component.translatable("book.uhc.explain.shrinkmodeshrink").append(" ")
 			.append(Component.translatable("book.uhc.explain.shrinkmodeshrink2"));
-	public static final Component arenaTooltip = Component.translatable("book.uhc.explain.shrinkmodearena").append("\n")
+	public static final Component arenaTooltip = Component.translatable("book.uhc.explain.shrinkmodearena").append(" ")
 			.append(Component.translatable("book.uhc.explain.shrinkmodearena2"));
-	public static final Component controlTooltip = Component.translatable("book.uhc.explain.shrinkmodecontrol").append("\n")
+	public static final Component controlTooltip = Component.translatable("book.uhc.explain.shrinkmodecontrol").append(" ")
 			.append(Component.translatable("book.uhc.explain.shrinkmodecontrol2"));
 	public static final Component healthExplain = Component.translatable("book.uhc.explain.healthExplain");
 	public static final Component timeLockTooltip = Component.translatable("book.uhc.explain.timelock");

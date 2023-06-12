@@ -14,6 +14,7 @@ import com.mrbysco.uhc.utils.SpreadPosition;
 import com.mrbysco.uhc.utils.SpreadUtil;
 import com.mrbysco.uhc.utils.TeamUtil;
 import com.mrbysco.uhc.utils.UHCTeleporter;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -22,7 +23,10 @@ import net.minecraft.commands.arguments.TeamArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -162,17 +166,6 @@ public class UHCCommands {
 				if (value.equals("place")) {
 					for (double i = centerX1; i <= centerX2; i++) {
 						for (double j = centerZ1; j <= centerZ2; j++) {
-							for (double k = 250; k <= 253; k++) {
-								level.setBlockAndUpdate(BlockPos.containing(i, k, j), roomBlock.defaultBlockState());
-							}
-						}
-					}
-					saveData.setSpawnRoom(false);
-					saveData.setSpawnRoomDimension(Level.OVERWORLD.location());
-					saveData.setDirty();
-				} else {
-					for (double i = centerX1; i <= centerX2; i++) {
-						for (double j = centerZ1; j <= centerZ2; j++) {
 							senderWorld.setBlockAndUpdate(BlockPos.containing(i, 250, j), roomBlock.defaultBlockState());
 							if (j == centerZ1 || j == centerZ2) {
 								for (double k = 250; k <= 253; k++) {
@@ -193,7 +186,29 @@ public class UHCCommands {
 					saveData.setSpawnRoom(true);
 					saveData.setSpawnRoomDimension(senderWorld.dimension().location());
 					saveData.setDirty();
-					ctx.getSource().sendSuccess(() -> Component.translatable("commands.uhc.spawnroom.success"), true);
+
+					BlockPos centerPos = BlockPos.containing(centerX, 250, centerZ);
+					MutableComponent position = ComponentUtils.wrapInSquareBrackets(
+							Component.literal(centerPos.toShortString())).withStyle((style) ->
+							style.withColor(ChatFormatting.GOLD)
+									.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND,
+											"/tp @s " + centerPos.getX() + " " + centerPos.getY() + " " + centerPos.getZ())));
+
+					ctx.getSource().sendSuccess(() -> Component.translatable("commands.uhc.spawnroom.success", position), true);
+				} else {
+					for (double i = centerX1; i <= centerX2; i++) {
+						for (double j = centerZ1; j <= centerZ2; j++) {
+							for (double k = 250; k <= 253; k++) {
+								BlockPos pos = BlockPos.containing(i, k, j);
+								if (level.getBlockState(pos).is(roomBlock))
+									level.removeBlock(pos, true);
+							}
+						}
+					}
+					saveData.setSpawnRoom(false);
+					saveData.setSpawnRoomDimension(Level.OVERWORLD.location());
+					saveData.setDirty();
+					ctx.getSource().sendSuccess(() -> Component.translatable("commands.uhc.spawnroom.success1"), true);
 				}
 			}
 		}

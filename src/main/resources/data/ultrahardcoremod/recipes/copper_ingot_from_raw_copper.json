@@ -1,8 +1,8 @@
 {
   "type": "ultrahardcoremod:auto_cook_recipe",
   "ingredient": {
-    "tag": "minecraft:iron_ores"
+    "tag": "forge:raw_materials/copper"
   },
-  "result": "minecraft:iron_ingot",
+  "result": "minecraft:copper_ingot",
   "experience": 0.7
 }

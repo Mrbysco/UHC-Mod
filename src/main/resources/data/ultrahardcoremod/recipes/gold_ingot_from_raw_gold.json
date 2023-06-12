@@ -1,0 +1,8 @@
+{
+  "type": "ultrahardcoremod:auto_cook_recipe",
+  "ingredient": {
+    "tag": "forge:raw_materials/gold"
+  },
+  "result": "minecraft:gold_ingot",
+  "experience": 1.0
+}

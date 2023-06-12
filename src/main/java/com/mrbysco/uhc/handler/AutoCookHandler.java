@@ -19,7 +19,7 @@ public class AutoCookHandler {
 	public void onEntityJoin(EntityJoinLevelEvent event) {
 		Level level = event.getLevel();
 		if (!level.isClientSide && event.getEntity() instanceof ItemEntity itemEntity) {
-			ServerLevel overworld = event.getLevel().getServer().overworld();
+			ServerLevel overworld = (ServerLevel) level;
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				if (saveData.isAutoCookEnabled() && saveData.isUhcOnGoing() && event.getLevel().dimension().location().equals(saveData.getUHCDimension())) {

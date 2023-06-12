@@ -4,7 +4,6 @@ import com.mrbysco.uhc.data.UHCSaveData;
 import com.mrbysco.uhc.recipes.ConversionRecipe;
 import com.mrbysco.uhc.registry.ModRecipes;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
@@ -29,8 +28,7 @@ public class ItemConversionHandler {
 		Player player = event.player;
 		Level level = player.level();
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
-			MinecraftServer server = level.getServer();
-			ServerLevel overworld = server.overworld();
+			ServerLevel overworld = (ServerLevel) level;
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 
@@ -82,8 +80,7 @@ public class ItemConversionHandler {
 	public void onWorldTick(TickEvent.LevelTickEvent event) {
 		Level level = event.level;
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
-			MinecraftServer server = level.getServer();
-			ServerLevel overworld = server.overworld();
+			ServerLevel overworld = (ServerLevel) level;
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				List<Entity> entityList = new ArrayList<>(((ServerLevel) level).getEntities(EntityType.ITEM, Entity::isAlive));

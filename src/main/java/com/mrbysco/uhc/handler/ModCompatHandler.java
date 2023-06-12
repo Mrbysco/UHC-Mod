@@ -47,7 +47,7 @@ public class ModCompatHandler {
 			ServerLevel serverLevel = (ServerLevel) event.level;
 
 			Scoreboard scoreboard = serverLevel.getScoreboard();
-			ServerLevel overworld = serverLevel.getServer().overworld();
+			ServerLevel overworld = (ServerLevel) level;
 			MinecraftServer server = serverLevel.getServer();
 			UHCSaveData saveData = UHCSaveData.get(overworld);
 			UHCTimerData timerData = UHCTimerData.get(overworld);

@@ -30,7 +30,7 @@ public class GameRuleHandler {
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			MinecraftServer server = level.getServer();
 			GameRules rules = server.getGameRules();
-			ServerLevel overworld = server.overworld();
+			ServerLevel overworld = (ServerLevel) level;
 			if (overworld != null) {
 				if (overworld.getGameTime() % 20 == 0) {
 					UHCSaveData saveData = UHCSaveData.get(overworld);

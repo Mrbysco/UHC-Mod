@@ -24,7 +24,7 @@ public class GraceHandler {
 		Level level = event.level;
 		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
 			MinecraftServer server = level.getServer();
-			ServerLevel overworld = server.overworld();
+			ServerLevel overworld = (ServerLevel) level;
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				UHCTimerData timerData = UHCTimerData.get(overworld);

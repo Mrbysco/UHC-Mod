@@ -23,7 +23,7 @@ public class ScoreboardHandler {
 	public void ScoreboardStuff(TickEvent.LevelTickEvent event) {
 		Level level = event.level;
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
-			ServerLevel overworld = level.getServer().overworld();
+			ServerLevel overworld = (ServerLevel) level;
 			if (overworld != null) {
 				Scoreboard scoreboard = level.getScoreboard();
 				UHCSaveData saveData = UHCSaveData.get(overworld);
@@ -90,7 +90,7 @@ public class ScoreboardHandler {
 		Player player = event.player;
 		Level level = player.level();
 		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
-			ServerLevel overworld = level.getServer().overworld();
+			ServerLevel overworld = (ServerLevel) level;
 			if (overworld != null) {
 				UHCSaveData saveData = UHCSaveData.get(overworld);
 				Scoreboard scoreboard = level.getScoreboard();

@@ -76,7 +76,7 @@ public record StartUHCPayload() implements CustomPacketPayload {
 
 						double centerX = saveData.getBorderCenterX();
 						double centerZ = saveData.getBorderCenterZ();
-						if (border.getCenterX() != centerX && border.getCenterZ() != centerZ)
+						if (border.getCenterX() != centerX || border.getCenterZ() != centerZ)
 							border.setCenter(centerX, centerZ);
 
 						int borderSize = saveData.getBorderSize();

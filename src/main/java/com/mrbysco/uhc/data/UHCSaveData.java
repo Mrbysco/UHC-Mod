@@ -47,10 +47,10 @@ public class UHCSaveData extends SavedData {
 		tag.putInt("difficulty", 3);
 
 		tag.putInt("borderSize", 2048);
-		tag.putDouble("borderCenterX", Integer.MAX_VALUE);
-		tag.putDouble("borderCenterZ", Integer.MAX_VALUE);
-		tag.putDouble("originalBorderCenterX", Integer.MAX_VALUE);
-		tag.putDouble("originalBorderCenterZ", Integer.MAX_VALUE);
+		tag.putDouble("borderCenterX", 0.0D);
+		tag.putDouble("borderCenterZ", 0.0D);
+		tag.putDouble("originalBorderCenterX", 0.0D);
+		tag.putDouble("originalBorderCenterZ", 0.0D);
 
 		tag.putBoolean("shrinkEnabled", false);
 		tag.putInt("shrinkTimer", 60);
@@ -120,10 +120,10 @@ public class UHCSaveData extends SavedData {
 		this.data.putInt("difficulty", 3);
 
 		this.data.putInt("borderSize", 2048);
-		this.data.putDouble("borderCenterX", Integer.MAX_VALUE);
-		this.data.putDouble("borderCenterZ", Integer.MAX_VALUE);
-		this.data.putDouble("originalBorderCenterX", Integer.MAX_VALUE);
-		this.data.putDouble("originalBorderCenterZ", Integer.MAX_VALUE);
+		this.data.putDouble("borderCenterX", 0.0D);
+		this.data.putDouble("borderCenterZ", 0.0D);
+		this.data.putDouble("originalBorderCenterX", 0.0D);
+		this.data.putDouble("originalBorderCenterZ", 0.0D);
 
 		this.data.putBoolean("shrinkEnabled", false);
 		this.data.putInt("shrinkTimer", 60);

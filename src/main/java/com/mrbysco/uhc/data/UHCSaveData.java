@@ -2,6 +2,7 @@ package com.mrbysco.uhc.data;
 
 import com.mrbysco.uhc.Reference;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -19,7 +20,153 @@ public class UHCSaveData extends SavedData {
 	}
 
 	public UHCSaveData() {
-		this(new CompoundTag());
+		this(getDefaultTag());
+	}
+
+	private static CompoundTag getDefaultTag() {
+		CompoundTag tag = new CompoundTag();
+
+		tag.putBoolean("friendlyFire", true);
+		tag.putBoolean("teamCollision", true);
+		tag.putBoolean("healthInTab", true);
+		tag.putBoolean("healthOnSide", false);
+		tag.putBoolean("healthUnderName", false);
+
+		tag.putBoolean("uhcStarting", false);
+		tag.putBoolean("uhcOnGoing", false);
+		tag.putBoolean("uhcIsFinished", false);
+		tag.putBoolean("uhcShowdownOnGoing", false);
+		tag.putBoolean("uhcShowdownFinished", false);
+		tag.putBoolean("autoCook", false);
+		tag.putBoolean("itemConversion", false);
+		tag.putBoolean("applyCustomHealth", false);
+		tag.putInt("maxHealth", 20);
+
+		tag.putInt("randomTeamSize", 6);
+		tag.putInt("maxTeamSize", -1);
+		tag.putInt("difficulty", 3);
+
+		tag.putInt("borderSize", 2048);
+		tag.putDouble("borderCenterX", Integer.MAX_VALUE);
+		tag.putDouble("borderCenterZ", Integer.MAX_VALUE);
+		tag.putDouble("originalBorderCenterX", Integer.MAX_VALUE);
+		tag.putDouble("originalBorderCenterZ", Integer.MAX_VALUE);
+
+		tag.putBoolean("shrinkEnabled", false);
+		tag.putInt("shrinkTimer", 60);
+		tag.putInt("shrinkSize", 256);
+		tag.putInt("shrinkOvertime", 60);
+		tag.putString("shrinkMode", "Shrink");
+		tag.putBoolean("shrinkApplied", false);
+
+		tag.putBoolean("timeLock", false);
+		tag.putInt("timeLockTimer", 60);
+		tag.putBoolean("timeLockApplied", false);
+		tag.putString("timeMode", "Day");
+
+		tag.putBoolean("minuteMark", false);
+		tag.putInt("minuteMarkTime", 30);
+		tag.putBoolean("timedNames", false);
+		tag.putInt("nameTimer", 30);
+		tag.putBoolean("timedNamesApplied", false);
+		tag.putBoolean("timedGlow", false);
+		tag.putInt("glowTime", 30);
+		tag.putBoolean("glowTimeApplied", false);
+
+		tag.putBoolean("netherEnabled", true);
+		tag.putBoolean("regenPotions", true);
+		tag.putBoolean("level2Potions", true);
+		tag.putBoolean("notchApples", true);
+
+		tag.putBoolean("weatherEnabled", true);
+		tag.putBoolean("mobGriefing", true);
+
+		tag.putBoolean("randomSpawns", true);
+		tag.putInt("spreadDistance", 100);
+		tag.putInt("spreadMaxRange", 2048);
+		tag.putBoolean("spreadRespectTeam", true);
+
+		tag.putBoolean("spawnRoom", false);
+		tag.putString("spawnRoomDimension", "minecraft:overworld");
+
+		tag.putBoolean("graceEnabled", false);
+		tag.putInt("graceTime", 20);
+		tag.putBoolean("graceFinished", false);
+		tag.putBoolean("twilightRespawn", false);
+		tag.putBoolean("teamsLocked", false);
+
+		return tag;
+	}
+
+	public void resetAll(RegistryAccess registryAccess) {
+		this.data.putBoolean("friendlyFire", true);
+		this.data.putBoolean("teamCollision", true);
+		this.data.putBoolean("healthInTab", true);
+		this.data.putBoolean("healthOnSide", false);
+		this.data.putBoolean("healthUnderName", false);
+
+		this.data.putBoolean("uhcStarting", false);
+		this.data.putBoolean("uhcOnGoing", false);
+		this.data.putBoolean("uhcIsFinished", false);
+		this.data.putBoolean("uhcShowdownOnGoing", false);
+		this.data.putBoolean("uhcShowdownFinished", false);
+		this.data.putBoolean("autoCook", false);
+		this.data.putBoolean("itemConversion", false);
+		this.data.putBoolean("applyCustomHealth", false);
+		this.data.putInt("maxHealth", 20);
+
+		this.data.putInt("randomTeamSize", 6);
+		this.data.putInt("maxTeamSize", -1);
+		this.data.putInt("difficulty", 3);
+
+		this.data.putInt("borderSize", 2048);
+		this.data.putDouble("borderCenterX", Integer.MAX_VALUE);
+		this.data.putDouble("borderCenterZ", Integer.MAX_VALUE);
+		this.data.putDouble("originalBorderCenterX", Integer.MAX_VALUE);
+		this.data.putDouble("originalBorderCenterZ", Integer.MAX_VALUE);
+
+		this.data.putBoolean("shrinkEnabled", false);
+		this.data.putInt("shrinkTimer", 60);
+		this.data.putInt("shrinkSize", 256);
+		this.data.putInt("shrinkOvertime", 60);
+		this.data.putString("shrinkMode", "Shrink");
+		this.data.putBoolean("shrinkApplied", false);
+
+		this.data.putBoolean("timeLock", false);
+		this.data.putInt("timeLockTimer", 60);
+		this.data.putBoolean("timeLockApplied", false);
+		this.data.putString("timeMode", "Day");
+
+		this.data.putBoolean("minuteMark", false);
+		this.data.putInt("minuteMarkTime", 30);
+		this.data.putBoolean("timedNames", false);
+		this.data.putInt("nameTimer", 30);
+		this.data.putBoolean("timedNamesApplied", false);
+		this.data.putBoolean("timedGlow", false);
+		this.data.putInt("glowTime", 30);
+		this.data.putBoolean("glowTimeApplied", false);
+
+		this.data.putBoolean("netherEnabled", true);
+		this.data.putBoolean("regenPotions", true);
+		this.data.putBoolean("level2Potions", true);
+		this.data.putBoolean("notchApples", true);
+
+		this.data.putBoolean("weatherEnabled", true);
+		this.data.putBoolean("mobGriefing", true);
+
+		this.data.putBoolean("randomSpawns", true);
+		this.data.putInt("spreadDistance", 100);
+		this.data.putInt("spreadMaxRange", 2048);
+		this.data.putBoolean("spreadRespectTeam", true);
+
+		this.data.putBoolean("spawnRoom", false);
+		this.data.putString("spawnRoomDimension", "minecraft:overworld");
+
+		this.data.putBoolean("graceEnabled", false);
+		this.data.putInt("graceTime", 20);
+		this.data.putBoolean("graceFinished", false);
+		this.data.putBoolean("twilightRespawn", false);
+		this.data.putBoolean("teamsLocked", false);
 	}
 
 	@Override
@@ -401,7 +548,11 @@ public class UHCSaveData extends SavedData {
 	}
 
 	public ResourceLocation getSpawnRoomDimension() {
-		return ResourceLocation.tryParse(this.data.getString("spawnRoomDimension"));
+		String dimensionId = this.data.getString("spawnRoomDimension");
+		if (dimensionId.isEmpty()) {
+			return Level.OVERWORLD.location();
+		}
+		return ResourceLocation.tryParse(dimensionId);
 	}
 
 	public void setSpawnRoomDimension(ResourceLocation spawnRoomDimension) {

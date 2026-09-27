@@ -12,7 +12,7 @@ public class TextButton extends Button {
 	private int hoverColor = 0xFFFF5555;
 	private boolean shadow = true;
 
-	public TextButton(int x, int y, Component text, Minecraft mc, Button.OnPress onPressIn) {
+	public TextButton(int x, int y, Component text, Minecraft mc, OnPress onPressIn) {
 		super(x, y, mc.font.width(text), mc.font.lineHeight, text, onPressIn, DEFAULT_NARRATION);
 		this.mc = mc;
 	}

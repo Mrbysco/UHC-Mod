@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 public class BooleanButton extends Button {
 	protected boolean booleanValue;
 
-	public BooleanButton(int x, int y, boolean booleanIn, Button.OnPress onPressIn) {
+	public BooleanButton(int x, int y, boolean booleanIn, OnPress onPressIn) {
 		super(x, y, 15, 13, Component.empty(), onPressIn, DEFAULT_NARRATION);
 		this.booleanValue = booleanIn;
 	}

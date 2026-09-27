@@ -19,7 +19,7 @@ public class ColorButton extends Button {
 	public final int textX;
 	public final int textY;
 
-	public ColorButton(int x, int y, int widthIn, int heightIn, int textXIn, int textYIn, int colorIn, Component nameIn, Button.OnPress onPressIn) {
+	public ColorButton(int x, int y, int widthIn, int heightIn, int textXIn, int textYIn, int colorIn, Component nameIn, OnPress onPressIn) {
 		super(x, y, widthIn, heightIn, Component.empty(), onPressIn, DEFAULT_NARRATION);
 		this.textX = textXIn;
 		this.textY = textYIn;
@@ -29,7 +29,7 @@ public class ColorButton extends Button {
 		this.randomize = false;
 	}
 
-	public ColorButton(int x, int y, int widthIn, int heightIn, int textXIn, int textYIn, int colorIn, Component nameIn, boolean soloIn, Button.OnPress onPressIn) {
+	public ColorButton(int x, int y, int widthIn, int heightIn, int textXIn, int textYIn, int colorIn, Component nameIn, boolean soloIn, OnPress onPressIn) {
 		super(x, y, widthIn, heightIn, Component.empty(), onPressIn, DEFAULT_NARRATION);
 		this.textX = textXIn;
 		this.textY = textYIn;
@@ -39,7 +39,7 @@ public class ColorButton extends Button {
 		this.randomize = false;
 	}
 
-	public ColorButton(int x, int y, int widthIn, int heightIn, int textXIn, int textYIn, int colorIn, Component nameIn, boolean soloIn, boolean randomizeIn, Button.OnPress onPressIn) {
+	public ColorButton(int x, int y, int widthIn, int heightIn, int textXIn, int textYIn, int colorIn, Component nameIn, boolean soloIn, boolean randomizeIn, OnPress onPressIn) {
 		super(x, y, widthIn, heightIn, Component.empty(), onPressIn, DEFAULT_NARRATION);
 		this.textX = textXIn;
 		this.textY = textYIn;

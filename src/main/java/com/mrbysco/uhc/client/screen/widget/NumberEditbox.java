@@ -63,7 +63,7 @@ public class NumberEditbox extends EditBox {
 					value = value.replace("-", "");
 				}
 			}
-			super.setValue(String.format("%." + decimalPoints + "f", Float.parseFloat(value)));
+			super.setValue(String.format(("%." + decimalPoints + "f"), Float.parseFloat(value)));
 		}
 	}
 

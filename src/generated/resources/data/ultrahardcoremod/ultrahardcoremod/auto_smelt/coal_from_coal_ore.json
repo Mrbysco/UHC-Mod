@@ -1,0 +1,10 @@
+{
+  "experience": 0.1,
+  "ingredient": {
+    "item": "minecraft:coal_ore"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:coal"
+  }
+}

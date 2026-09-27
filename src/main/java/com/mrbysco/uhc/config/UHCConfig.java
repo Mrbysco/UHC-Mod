@@ -2,11 +2,11 @@ package com.mrbysco.uhc.config;
 
 import com.mrbysco.uhc.UltraHardCoremod;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.ConfigValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -23,7 +23,7 @@ public class UHCConfig {
 
 		public final IntValue twilightRespawnTime;
 
-		Common(ForgeConfigSpec.Builder builder) {
+		Common(ModConfigSpec.Builder builder) {
 			builder.comment("General settings")
 					.push("general");
 
@@ -64,7 +64,7 @@ public class UHCConfig {
 
 			teamSpawns = builder
 					.comment("Team Spawns (Setting the Y value to -1 will make it find the surface for the X and Y)")
-					.defineList("teamSpawns", Arrays.asList(spawnPositions), UHCConfig::isValidLocation);
+					.defineList("teamSpawns", Arrays.asList(spawnPositions), String::new, UHCConfig::isValidLocation);
 
 			builder.pop();
 			builder.comment("Mod Support")
@@ -111,11 +111,11 @@ public class UHCConfig {
 		return false;
 	}
 
-	public static final ForgeConfigSpec commonSpec;
+	public static final ModConfigSpec commonSpec;
 	public static final Common COMMON;
 
 	static {
-		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+		final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
 		commonSpec = specPair.getRight();
 		COMMON = specPair.getLeft();
 	}

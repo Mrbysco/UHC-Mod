@@ -1,0 +1,10 @@
+{
+  "experience": 0.35,
+  "ingredient": {
+    "item": "minecraft:cod"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:cooked_cod"
+  }
+}

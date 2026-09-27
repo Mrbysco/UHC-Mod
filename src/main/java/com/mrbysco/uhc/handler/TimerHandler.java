@@ -2,46 +2,46 @@ package com.mrbysco.uhc.handler;
 
 import com.mrbysco.uhc.data.UHCSaveData;
 import com.mrbysco.uhc.data.UHCTimerData;
+import com.mrbysco.uhc.util.UHCHelper;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@EventBusSubscriber
 public class TimerHandler {
-	public int shrinkTimeUntil;
-	public int timeLockTimer;
-	public int minuteMarkTimer;
-	public int nameTimer;
-	public int glowTimer;
+	public static int shrinkTimeUntil;
+	public static int timeLockTimer;
+	public static int minuteMarkTimer;
+	public static int nameTimer;
+	public static int glowTimer;
 
 	@SubscribeEvent
-	public void timerEvent(TickEvent.LevelTickEvent event) {
-		Level level = event.level;
-		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
-			if (level.getGameTime() % 20 == 0) {
-				ServerLevel overworld = (ServerLevel) level;
-				UHCSaveData saveData = UHCSaveData.get(overworld);
-				UHCTimerData timerData = UHCTimerData.get(overworld);
+	public static void timerEvent(LevelTickEvent.Post event) {
+		Level level = event.getLevel();
+		if (!level.isClientSide() && level.dimension().equals(Level.OVERWORLD) && level.getGameTime() % 20 == 0 && UHCHelper.isUHCOnGoing(level)) {
+				UHCSaveData saveData = UHCSaveData.get(level);
+				UHCTimerData timerData = UHCTimerData.get(level);
 				MinecraftServer server = level.getServer();
 				List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 
-				if (!playerList.isEmpty() && saveData.isUhcOnGoing()) {
+				if (!playerList.isEmpty()) {
 					if (!saveData.isShrinkApplied()) {
 						if (saveData.isShrinkEnabled()) {
-							if (timerData.getShrinkTimeUntil() != this.shrinkTimeUntil) {
-								this.shrinkTimeUntil = timerData.getShrinkTimeUntil();
+							if (timerData.getShrinkTimeUntil() != shrinkTimeUntil) {
+								shrinkTimeUntil = timerData.getShrinkTimeUntil();
 							}
 
 							if (timerData.getShrinkTimeUntil() >= tickTime(saveData.getShrinkTimer())) {
-								this.shrinkTimeUntil = tickTime(saveData.getShrinkTimer());
+								shrinkTimeUntil = tickTime(saveData.getShrinkTimer());
 							} else {
-								++this.shrinkTimeUntil;
-								timerData.setShrinkTimeUntil(this.shrinkTimeUntil);
+								++shrinkTimeUntil;
+								timerData.setShrinkTimeUntil(shrinkTimeUntil);
 								timerData.setDirty();
 							}
 						} else {
@@ -54,14 +54,14 @@ public class TimerHandler {
 
 					if (!saveData.isTimeLockApplied()) {
 						if (saveData.isTimeLock()) {
-							if (timerData.getTimeLockTimer() != this.timeLockTimer)
-								this.timeLockTimer = timerData.getTimeLockTimer();
+							if (timerData.getTimeLockTimer() != timeLockTimer)
+								timeLockTimer = timerData.getTimeLockTimer();
 
 							if (timerData.getTimeLockTimer() >= tickTime(saveData.getTimeLockTimer())) {
-								this.timeLockTimer = tickTime(saveData.getTimeLockTimer());
+								timeLockTimer = tickTime(saveData.getTimeLockTimer());
 							} else {
-								++this.timeLockTimer;
-								timerData.setTimeLockTimer(this.timeLockTimer);
+								++timeLockTimer;
+								timerData.setTimeLockTimer(timeLockTimer);
 								timerData.setDirty();
 							}
 						} else {
@@ -73,15 +73,15 @@ public class TimerHandler {
 					}
 
 					if (saveData.isMinuteMark()) {
-						if (timerData.getMinuteMarkTimer() != this.minuteMarkTimer) {
-							this.minuteMarkTimer = timerData.getMinuteMarkTimer();
+						if (timerData.getMinuteMarkTimer() != minuteMarkTimer) {
+							minuteMarkTimer = timerData.getMinuteMarkTimer();
 						}
 
 						if (timerData.getMinuteMarkTimer() >= tickTime(saveData.getMinuteMarkTime())) {
-							this.minuteMarkTimer = tickTime(saveData.getMinuteMarkTime());
+							minuteMarkTimer = tickTime(saveData.getMinuteMarkTime());
 						} else {
-							++this.minuteMarkTimer;
-							timerData.setMinuteMarkTimer(this.minuteMarkTimer);
+							++minuteMarkTimer;
+							timerData.setMinuteMarkTimer(minuteMarkTimer);
 							timerData.setDirty();
 						}
 					} else {
@@ -93,14 +93,14 @@ public class TimerHandler {
 
 					if (!saveData.isTimedNamesApplied()) {
 						if (saveData.isTimedNames()) {
-							if (timerData.getNameTimer() != this.nameTimer)
-								this.nameTimer = timerData.getNameTimer();
+							if (timerData.getNameTimer() != nameTimer)
+								nameTimer = timerData.getNameTimer();
 
 							if (timerData.getNameTimer() >= tickTime(saveData.getNameTimer())) {
-								this.nameTimer = tickTime(saveData.getNameTimer());
+								nameTimer = tickTime(saveData.getNameTimer());
 							} else {
-								++this.nameTimer;
-								timerData.setNameTimer(this.nameTimer);
+								++nameTimer;
+								timerData.setNameTimer(nameTimer);
 								timerData.setDirty();
 							}
 						} else {
@@ -113,14 +113,14 @@ public class TimerHandler {
 
 					if (!saveData.isGlowTimeApplied()) {
 						if (saveData.isTimedGlow()) {
-							if (timerData.getGlowTimer() != this.glowTimer)
-								this.glowTimer = timerData.getGlowTimer();
+							if (timerData.getGlowTimer() != glowTimer)
+								glowTimer = timerData.getGlowTimer();
 
 							if (timerData.getGlowTimer() >= tickTime(saveData.getGlowTime())) {
-								this.glowTimer = tickTime(saveData.getGlowTime());
+								glowTimer = tickTime(saveData.getGlowTime());
 							} else {
-								++this.glowTimer;
-								timerData.setGlowTimer(this.glowTimer);
+								++glowTimer;
+								timerData.setGlowTimer(glowTimer);
 								timerData.setDirty();
 							}
 						} else {
@@ -131,7 +131,7 @@ public class TimerHandler {
 						}
 					}
 				}
-			}
+
 		}
 	}
 

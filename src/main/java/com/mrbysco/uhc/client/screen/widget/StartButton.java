@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 
 public class StartButton extends Button {
 
-	public StartButton(int x, int y, Button.OnPress onPressIn) {
+	public StartButton(int x, int y, OnPress onPressIn) {
 		super(x, y, 85, 22, Component.empty(), onPressIn, DEFAULT_NARRATION);
 	}
 

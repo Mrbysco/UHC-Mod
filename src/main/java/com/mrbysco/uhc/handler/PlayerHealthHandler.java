@@ -1,57 +1,57 @@
 package com.mrbysco.uhc.handler;
 
 import com.mrbysco.uhc.data.UHCSaveData;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.server.level.ServerLevel;
+import com.mrbysco.uhc.registry.UHCDataAttachments;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.Objects;
+
+@EventBusSubscriber
 public class PlayerHealthHandler {
 
 	@SubscribeEvent
-	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		Player player = event.player;
+	public static void onPlayerTick(PlayerTickEvent.Pre event) {
+		Player player = event.getEntity();
 		Level level = player.level();
-		if (event.phase == Phase.START && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
-			ServerLevel overworld = (ServerLevel) level;
-			if (overworld != null) {
-				UHCSaveData saveData = UHCSaveData.get(overworld);
-				final CompoundTag entityData = player.getPersistentData();
+		if (!level.isClientSide() && level.dimension().equals(Level.OVERWORLD)) {
+			UHCSaveData saveData = UHCSaveData.get(level);
 
-				double baseHealth = player.getAttribute(Attributes.MAX_HEALTH).getBaseValue();
-				double maxHealth = (double) saveData.getMaxHealth();
+			double baseHealth = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH)).getBaseValue();
+			double maxHealth = saveData.getMaxHealth();
 
-				if (saveData.isApplyCustomHealth()) {
-					if (baseHealth != maxHealth) {
-						this.setHealth(player, saveData.getMaxHealth());
-						entityData.putBoolean("modifiedMaxHealth", true);
-					}
-				} else {
-					if (baseHealth != 20.0) {
-						this.setHealth(player, 20.0f);
-						entityData.remove("modifiedMaxHealth");
-					}
+			if (saveData.isApplyCustomHealth()) {
+				if (baseHealth != maxHealth) {
+					setHealth(player, saveData.getMaxHealth());
+					player.setData(UHCDataAttachments.MODIFIED_MAX_HEALTH, true);
+				}
+			} else {
+				if (baseHealth != 20.0) {
+					setHealth(player, 20.0f);
+					player.removeData(UHCDataAttachments.MODIFIED_MAX_HEALTH);
 				}
 			}
 		}
 	}
 
-	public void setHealth(Player entity, float maxHealth) {
-		entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(maxHealth);
-		entity.setHealth(maxHealth);
+	private static void setHealth(Player entity, float maxHealth) {
+		var instance = entity.getAttribute(Attributes.MAX_HEALTH);
+		if (instance != null) {
+			instance.setBaseValue(maxHealth);
+			entity.setHealth(maxHealth);
+		}
 	}
 
 	@SubscribeEvent
-	public void respawnReset(PlayerEvent.Clone event) {
+	public static void respawnReset(PlayerEvent.Clone event) {
 		Player newPlayer = event.getEntity();
-		final CompoundTag entityData = newPlayer.getPersistentData();
 
-		this.setHealth(newPlayer, 20);
-		entityData.putBoolean("modifiedMaxHealth", false);
+		setHealth(newPlayer, 20);
+		newPlayer.setData(UHCDataAttachments.MODIFIED_MAX_HEALTH, false);
 	}
 }

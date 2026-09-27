@@ -2,81 +2,58 @@ package com.mrbysco.uhc.handler;
 
 import com.mrbysco.uhc.data.UHCSaveData;
 import com.mrbysco.uhc.data.UHCTimerData;
+import com.mrbysco.uhc.util.UHCHelper;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@EventBusSubscriber
 public class GraceHandler {
-	public int graceTimer;
+	public static int graceTimer;
 
 	@SubscribeEvent
-	public void graceTimerEvent(TickEvent.LevelTickEvent event) {
-		Level level = event.level;
-		if (event.phase.equals(TickEvent.Phase.END) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
+	public static void graceTimerEvent(LevelTickEvent.Post event) {
+		Level level = event.getLevel();
+		if (!level.isClientSide() && level.dimension().equals(Level.OVERWORLD) && level.getGameTime() % 20 == 0 && UHCHelper.isUHCOnGoing(level)) {
 			MinecraftServer server = level.getServer();
-			ServerLevel overworld = (ServerLevel) level;
-			if (overworld != null) {
-				UHCSaveData saveData = UHCSaveData.get(overworld);
-				UHCTimerData timerData = UHCTimerData.get(overworld);
-				List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
+			UHCSaveData saveData = UHCSaveData.get(level);
+			UHCTimerData timerData = UHCTimerData.get(level);
+			List<ServerPlayer> playerList = new ArrayList<>(server.getPlayerList().getPlayers());
 
-				if (!playerList.isEmpty() && saveData.isUhcOnGoing()) {
-					if (level.getGameTime() % 20 == 0) {
-						if (!saveData.isGraceFinished()) {
-							if (saveData.isGraceEnabled()) {
-								if (timerData.getGlowTimer() != this.graceTimer) {
-									this.graceTimer = timerData.getGlowTimer();
-									if (saveData.isGraceFinished()) {
-										saveData.setGraceFinished(false);
-										saveData.setDirty();
-									}
-								}
-
-								if (timerData.getGlowTimer() >= TimerHandler.tickTime(saveData.getGraceTime())) {
-									this.graceTimer = TimerHandler.tickTime(saveData.getGraceTime());
-									saveData.setGraceFinished(true);
-									saveData.setDirty();
-								} else {
-									++this.graceTimer;
-									timerData.setGraceTimer(this.graceTimer);
-									timerData.setDirty();
-								}
-							} else {
-								if (timerData.getGraceTimer() != 0) {
-									timerData.setGraceTimer(0);
-									timerData.setDirty();
-								}
+			if (!playerList.isEmpty()) {
+				if (!saveData.isGraceFinished()) {
+					if (saveData.isGraceEnabled()) {
+						if (timerData.getGlowTimer() != graceTimer) {
+							graceTimer = timerData.getGlowTimer();
+							if (saveData.isGraceFinished()) {
+								saveData.setGraceFinished(false);
+								saveData.setDirty();
 							}
 						}
-					}
-				}
-			}
-		}
-	}
 
-	@SubscribeEvent
-	public void graceTimerEvent(LivingAttackEvent event) {
-		Level level = event.getEntity().level();
-		if (!level.isClientSide) {
-			MinecraftServer server = level.getServer();
-			ServerLevel overworld = server.overworld();
-			if (overworld != null) {
-				UHCSaveData saveData = UHCSaveData.get(overworld);
-				if (saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
-					if (event.getEntity() instanceof Player) {
-						Entity trueSource = event.getSource().getEntity();
-						if (trueSource instanceof Player) {
-							event.setCanceled(true);
+						if (timerData.getGlowTimer() >= TimerHandler.tickTime(saveData.getGraceTime())) {
+							graceTimer = TimerHandler.tickTime(saveData.getGraceTime());
+							saveData.setGraceFinished(true);
+							saveData.setDirty();
+						} else {
+							++graceTimer;
+							timerData.setGraceTimer(graceTimer);
+							timerData.setDirty();
+						}
+					} else {
+						if (timerData.getGraceTimer() != 0) {
+							timerData.setGraceTimer(0);
+							timerData.setDirty();
 						}
 					}
 				}
@@ -85,19 +62,31 @@ public class GraceHandler {
 	}
 
 	@SubscribeEvent
-	public void graceTimerEvent(LivingHurtEvent event) {
+	public static void graceTimerEvent(LivingIncomingDamageEvent event) {
 		Level level = event.getEntity().level();
-		if (!level.isClientSide) {
-			MinecraftServer server = level.getServer();
-			ServerLevel overworld = server.overworld();
-			if (overworld != null) {
-				UHCSaveData saveData = UHCSaveData.get(overworld);
-				if (saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
-					if (event.getEntity() instanceof Player) {
-						Entity trueSource = event.getSource().getEntity();
-						if (trueSource instanceof Player) {
-							event.setCanceled(true);
-						}
+		if (!level.isClientSide()) {
+			UHCSaveData saveData = UHCSaveData.get(level);
+			if (saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
+				if (event.getEntity() instanceof Player) {
+					Entity trueSource = event.getSource().getEntity();
+					if (trueSource instanceof Player) {
+						event.setCanceled(true);
+					}
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void graceTimerEvent(LivingDamageEvent.Pre event) {
+		Level level = event.getEntity().level();
+		if (!level.isClientSide()) {
+			UHCSaveData saveData = UHCSaveData.get(level);
+			if (saveData.isGraceEnabled() && !saveData.isGraceFinished()) {
+				if (event.getEntity() instanceof Player) {
+					Entity trueSource = event.getSource().getEntity();
+					if (trueSource instanceof Player) {
+						event.setNewDamage(0);
 					}
 				}
 			}

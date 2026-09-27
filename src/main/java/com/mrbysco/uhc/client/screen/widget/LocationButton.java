@@ -6,7 +6,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
 public class LocationButton extends Button {
-	public LocationButton(int x, int y, Button.OnPress onPressIn) {
+	public LocationButton(int x, int y, OnPress onPressIn) {
 		super(x, y, 14, 13, Component.empty(), onPressIn, DEFAULT_NARRATION);
 	}
 

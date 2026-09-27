@@ -1,0 +1,10 @@
+{
+  "experience": 1.0,
+  "ingredient": {
+    "item": "minecraft:emerald_ore"
+  },
+  "result": {
+    "count": 1,
+    "id": "minecraft:emerald"
+  }
+}

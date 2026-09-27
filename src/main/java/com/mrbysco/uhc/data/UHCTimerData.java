@@ -1,6 +1,7 @@
 package com.mrbysco.uhc.data;
 
 import com.mrbysco.uhc.Reference;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -8,7 +9,6 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 
 public class UHCTimerData extends SavedData {
-
 	private static final String DATA_NAME = Reference.MOD_ID + "_timer_data";
 
 	private int shrinkTimeUntil;
@@ -21,19 +21,6 @@ public class UHCTimerData extends SavedData {
 	private int uhcStartTimer;
 	private int graceTimer;
 	private int twilightBossGraceTimer;
-
-	public UHCTimerData(String name) {
-		this.shrinkTimeUntil = 0;
-		this.timeLockTimer = 0;
-		this.minuteMarkTimer = 0;
-		this.minuteMarkAmount = 0;
-		this.nameTimer = 0;
-		this.glowTimer = 0;
-		this.controlled = false;
-		this.uhcStartTimer = 0;
-		this.graceTimer = 0;
-		this.twilightBossGraceTimer = 0;
-	}
 
 	public UHCTimerData() {
 		this.shrinkTimeUntil = 0;
@@ -141,45 +128,45 @@ public class UHCTimerData extends SavedData {
 		this.twilightBossGraceTimer = twilightBossGraceTimer;
 	}
 
-	public static UHCTimerData load(CompoundTag nbt) {
-		UHCTimerData timerData = new UHCTimerData();
-
-		timerData.shrinkTimeUntil = nbt.getInt("shrinkTimeUntil");
-		timerData.timeLockTimer = nbt.getInt("timeLockTimer");
-		timerData.minuteMarkTimer = nbt.getInt("minuteMarkTimer");
-		timerData.minuteMarkAmount = nbt.getInt("minuteMarkAmount");
-		timerData.nameTimer = nbt.getInt("nameTimer");
-		timerData.glowTimer = nbt.getInt("glowTimer");
-		timerData.controlled = nbt.getBoolean("pointControlled");
-		timerData.uhcStartTimer = nbt.getInt("uhcStartTimer");
-		timerData.graceTimer = nbt.getInt("graceTimer");
-		timerData.twilightBossGraceTimer = nbt.getInt("twilightBossGraceTimer");
-
-		return timerData;
+	@Override
+	public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
+		tag.putInt("shrinkTimeUntil", shrinkTimeUntil);
+		tag.putInt("timeLockTimer", timeLockTimer);
+		tag.putInt("minuteMarkTimer", minuteMarkTimer);
+		tag.putInt("minuteMarkAmount", minuteMarkAmount);
+		tag.putInt("nameTimer", nameTimer);
+		tag.putInt("glowTimer", glowTimer);
+		tag.putBoolean("pointControlled", controlled);
+		tag.putInt("uhcStartTimer", uhcStartTimer);
+		tag.putInt("graceTimer", graceTimer);
+		tag.putInt("twilightBossGraceTimer", twilightBossGraceTimer);
+		return tag;
 	}
 
-	@Override
-	public CompoundTag save(CompoundTag compound) {
-		compound.putInt("shrinkTimeUntil", shrinkTimeUntil);
-		compound.putInt("timeLockTimer", timeLockTimer);
-		compound.putInt("minuteMarkTimer", minuteMarkTimer);
-		compound.putInt("minuteMarkAmount", minuteMarkAmount);
-		compound.putInt("nameTimer", nameTimer);
-		compound.putInt("glowTimer", glowTimer);
-		compound.putBoolean("pointControlled", controlled);
-		compound.putInt("uhcStartTimer", uhcStartTimer);
-		compound.putInt("graceTimer", graceTimer);
-		compound.putInt("twilightBossGraceTimer", twilightBossGraceTimer);
-		return compound;
+	public static UHCTimerData load(CompoundTag tag, HolderLookup.Provider provider) {
+		UHCTimerData timerData = new UHCTimerData();
+
+		timerData.shrinkTimeUntil = tag.getInt("shrinkTimeUntil");
+		timerData.timeLockTimer = tag.getInt("timeLockTimer");
+		timerData.minuteMarkTimer = tag.getInt("minuteMarkTimer");
+		timerData.minuteMarkAmount = tag.getInt("minuteMarkAmount");
+		timerData.nameTimer = tag.getInt("nameTimer");
+		timerData.glowTimer = tag.getInt("glowTimer");
+		timerData.controlled = tag.getBoolean("pointControlled");
+		timerData.uhcStartTimer = tag.getInt("uhcStartTimer");
+		timerData.graceTimer = tag.getInt("graceTimer");
+		timerData.twilightBossGraceTimer = tag.getInt("twilightBossGraceTimer");
+
+		return timerData;
 	}
 
 	public static UHCTimerData get(Level level) {
 		if (!(level instanceof ServerLevel)) {
 			throw new RuntimeException("Attempted to get the data from a client world. This is wrong.");
 		}
-		ServerLevel overworld = level.getServer().overworld();
+		ServerLevel overworld = level.getServer().getLevel(Level.OVERWORLD);
 
 		DimensionDataStorage storage = overworld.getDataStorage();
-		return storage.computeIfAbsent(UHCTimerData::load, UHCTimerData::new, DATA_NAME);
+		return storage.computeIfAbsent(new Factory<>(UHCTimerData::new, UHCTimerData::load), DATA_NAME);
 	}
 }

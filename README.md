@@ -8,7 +8,7 @@ This mod is a UHC mod inspired by Gerrybrano's [UHC Blox](https://www.planetmine
 
 ## License ##
 * Ultra Hard Coremod is licensed under the MIT License
-  - (c) 2022 Mrbysco and ShyNieke
+  - (c) 2026 Mrbysco and ShyNieke
   - [![License](https://img.shields.io/badge/License-MIT-red.svg?style=flat)](http://opensource.org/licenses/MIT)
 
 ## Downloads ##

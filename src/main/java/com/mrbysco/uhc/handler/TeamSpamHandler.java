@@ -1,31 +1,30 @@
 package com.mrbysco.uhc.handler;
 
-import com.mrbysco.uhc.Reference;
-import net.minecraft.nbt.CompoundTag;
+import com.mrbysco.uhc.registry.UHCDataAttachments;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@EventBusSubscriber
 public class TeamSpamHandler {
 
-	private final String teamAntiSpam = Reference.MOD_PREFIX + "team_anti_spam";
 	private static final Map<Player, Integer> spammerList = new HashMap<>();
 
 	@SubscribeEvent
-	public void teamSpamProtectionEvent(TickEvent.PlayerTickEvent event) {
-		Player player = event.player;
+	public static void teamSpamProtectionEvent(PlayerTickEvent.Pre event) {
+		Player player = event.getEntity();
 		Level level = player.level();
-		if (event.phase.equals(TickEvent.Phase.START) && event.side.isServer() && level.dimension().equals(Level.OVERWORLD)) {
-			CompoundTag playerData = player.getPersistentData();
+		if (!level.isClientSide() && level.dimension().equals(Level.OVERWORLD)) {
 
-			if (playerData.getBoolean(teamAntiSpam)) {
+			if (player.getData(UHCDataAttachments.TEAM_ANTI_SPAM)) {
 				if (!spammerList.containsKey(player))
 					spammerList.put(player, 0);
 			}
@@ -46,8 +45,7 @@ public class TeamSpamHandler {
 					}
 
 					for (Player remove : removalList) {
-						CompoundTag removePlayerData = player.getPersistentData();
-						removePlayerData.putBoolean(teamAntiSpam, false);
+						remove.setData(UHCDataAttachments.TEAM_ANTI_SPAM, false);
 						spammerList.remove(remove);
 					}
 				}
@@ -56,8 +54,8 @@ public class TeamSpamHandler {
 	}
 
 	@SubscribeEvent
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
+	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
 		Player player = event.getEntity();
-		player.getPersistentData().remove(teamAntiSpam);
+		player.removeData(UHCDataAttachments.TEAM_ANTI_SPAM);
 	}
 }

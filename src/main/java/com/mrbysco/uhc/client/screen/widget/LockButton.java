@@ -1,17 +1,14 @@
 package com.mrbysco.uhc.client.screen.widget;
 
-import com.mrbysco.uhc.Reference;
 import com.mrbysco.uhc.client.screen.UHCBookScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 public class LockButton extends Button {
-	public static final ResourceLocation BOOK_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/book.png");
 	protected boolean lockValue;
 
-	public LockButton(int x, int y, boolean booleanIn, Button.OnPress onPressIn) {
+	public LockButton(int x, int y, boolean booleanIn, OnPress onPressIn) {
 		super(x, y, 15, 13, Component.empty(), onPressIn, DEFAULT_NARRATION);
 		this.lockValue = booleanIn;
 	}

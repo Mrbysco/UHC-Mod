@@ -6,7 +6,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
 public class ResetButton extends Button {
-	public ResetButton(int x, int y, Button.OnPress onPressIn) {
+	public ResetButton(int x, int y, OnPress onPressIn) {
 		super(x, y, 16, 13, Component.empty(), onPressIn, DEFAULT_NARRATION);
 	}
 

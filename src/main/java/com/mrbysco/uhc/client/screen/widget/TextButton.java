@@ -23,36 +23,18 @@ public class TextButton extends Button {
 		this.width = mc.font.width(message);
 	}
 
-	public void shadowEnabled(boolean shadow) {
-		this.shadow = shadow;
-	}
-
-	public void setColors(int normal, int hover) {
-		this.hoverColor = hover;
-		this.color = normal;
-	}
-
 	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		Font font = mc.font;
 
 		int colorInt = this.color;
-		if (color != 0) {
-			colorInt = color;
-		} else if (!this.active) {
+		if (!this.active) {
 			colorInt = 0xAAAAAA;
 		} else if (isMouseOver(mouseX, mouseY)) {
 			colorInt = this.hoverColor;
 		}
 
 		Component component = getMessage();
-		if (shadow) {
-			guiGraphics.drawString(font, component, getX(), getY(), colorInt);
-		} else {
-			guiGraphics.drawString(font, component, getX(), getY(), colorInt, false);
-		}
-		if (this.isHoveredOrFocused()) {
-//			this.renderToolTip(matrixStack, mouseX, mouseY);
-		}
+		guiGraphics.drawString(font, component, getX(), getY(), colorInt, shadow);
 	}
 }

@@ -26,7 +26,7 @@ public record UHCSyncPayload(CompoundTag data) implements CustomPacketPayload {
 	public static class Handler {
 		public static void handle(final UHCSyncPayload payload, final IPayloadContext context) {
 			context.enqueueWork(() -> {
-						UHCSaveData data = UHCSaveData.load(payload.data, RegistryAccess.EMPTY);
+						UHCSaveData data = UHCSaveData.load(payload.data, context.player().registryAccess());
 						com.mrbysco.uhc.client.ClientHelper.updateBook(data);
 					})
 					.exceptionally(e -> {

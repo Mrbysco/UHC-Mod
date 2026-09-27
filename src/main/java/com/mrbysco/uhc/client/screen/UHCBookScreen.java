@@ -711,6 +711,7 @@ public class UHCBookScreen extends Screen {
 		field.setTextColor(textColor);
 		field.setTooltip(Tooltip.create(tooltipComponent));
 		textBoxList.add(field);
+		this.addWidget(field);
 	}
 
 	public void setupField(NumberEditbox field, int maxLength, int textColor, String initialValue) {
@@ -721,6 +722,7 @@ public class UHCBookScreen extends Screen {
 		field.setBordered(false);
 		field.setTextColor(textColor);
 		textBoxList.add(field);
+		this.addWidget(field);
 	}
 
 	@Override
@@ -974,7 +976,6 @@ public class UHCBookScreen extends Screen {
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-		this.setFocused((GuiEventListener) null);
 
 		int i = (this.width - 192) / 2;
 		int j = 2;

@@ -51,7 +51,7 @@ public class NumberEditbox extends EditBox {
 	@Override
 	public void setValue(String value) {
 		if (value.isEmpty()) {
-			super.setValue("0");
+			super.setValue("");
 		} else {
 			//Minus checking
 			boolean containsMinus = value.contains("-");
